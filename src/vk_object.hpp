@@ -8,7 +8,14 @@
 #include <iostream>
 #include <vector>
 
-
+/**
+ * 
+ * @brief Basically, all this is is just geting the required vulkan stuf
+ * out of the way. later on i will make a class specificaly for vulkan. 
+ * right now i just want to get vulkan running on the window and render a
+ * basic triangle. "small" things first, ya know? 
+ * 
+ */
 
 namespace SimpleEngine{
 
