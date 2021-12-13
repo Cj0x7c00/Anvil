@@ -6,8 +6,11 @@
 #include "../include/GLFW/glfw3.h"
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <cstring>
+#include <cstdlib>
+#include <optional>
 
 /**
  * 
@@ -26,14 +29,24 @@ namespace SimpleEngine{
         public:
 
             VkInstance m_instance;
+            VkDevice device;
+            VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+            VkQueue graphicsQueue;
             
-
             const std::vector<const char*> validationLayers = {
                 "VK_LAYER_KHRONOS_validation"
             };
 
             VkDebugUtilsMessengerEXT debugMessenger;
             VkDebugUtilsMessengerCreateInfoEXT debCreateInfo{};
+
+            struct QueueFamilyIndices {
+                std::optional<uint32_t> graphicsFamily;
+
+                bool isComplete() {
+                    return graphicsFamily.has_value();
+                }
+            };
 
 #ifdef NDEBUG
             const bool enableValidationLayers = false;
@@ -142,8 +155,12 @@ namespace SimpleEngine{
                 VkDebugUtilsMessageTypeFlagsEXT messageType,
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                 void* pUserData) {
+                
 
-                std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+                if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+                    // Message is important enough to show
+                    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+                }
 
                 return VK_FALSE;
             }
@@ -169,10 +186,108 @@ namespace SimpleEngine{
                 }
             }
 
+            void PickPhysicalDevice(){
+                LOGGER.LOG("Picking physical device", 0);
+
+                uint32_t deviceCount = 0;
+                vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
+
+                if (deviceCount == 0) {
+                    throw std::runtime_error("failed to find GPUs with Vulkan support!");
+                }
+
+                std::vector<VkPhysicalDevice> devices(deviceCount);
+                vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
+
+                for (const auto& device : devices) {
+                    if (isDeviceSuitable(device)) {
+                        physicalDevice = device;
+                        break;
+                    }
+                }
+
+                if (physicalDevice == VK_NULL_HANDLE) {
+                    throw std::runtime_error("failed to find a suitable GPU!");
+                }
+
+            }
+
+            bool isDeviceSuitable(VkPhysicalDevice device) {
+                QueueFamilyIndices indices = findQueueFamilies(device);
+
+                return indices.isComplete();
+            }
+
+            QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+                QueueFamilyIndices indices;
+
+                uint32_t queueFamilyCount = 0;
+                vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+                std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+                vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+                int i = 0;
+                for (const auto& queueFamily : queueFamilies) {
+                    if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                        indices.graphicsFamily = i;
+                    }
+
+                    if (indices.isComplete()) {
+                        break;
+                    }
+
+                    i++;
+                }
+
+                return indices;
+            }
+
+            void CreateLogicalDevice(){
+                LOGGER.LOG("Creating Logical Device", 0);
+
+                QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+
+                VkDeviceQueueCreateInfo queueCreateInfo{};
+                queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+                queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+                queueCreateInfo.queueCount = 1;
+
+                float queuePriority = 1.0f;
+                queueCreateInfo.pQueuePriorities = &queuePriority;
+
+                VkPhysicalDeviceFeatures deviceFeatures{};
+
+                VkDeviceCreateInfo createInfo{};
+                createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+
+                createInfo.pQueueCreateInfos = &queueCreateInfo;
+                createInfo.queueCreateInfoCount = 1;
+
+                createInfo.pEnabledFeatures = &deviceFeatures;
+
+                createInfo.enabledExtensionCount = 0;
+
+                if (enableValidationLayers) {
+                    createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+                    createInfo.ppEnabledLayerNames = validationLayers.data();
+                } else {
+                    createInfo.enabledLayerCount = 0;
+                }
+
+                if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+                    LOGGER.LOG("Failed to create logical device", 2);
+                }
+
+                vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+            }
+
             void InitVulkan(){
                 LOGGER.LOG("Initializing Vulkan", 1);
                 CreateInstance();
                 SetupDebugMessenger();
+                PickPhysicalDevice();
+                CreateLogicalDevice();
             }
 
             void Clean(){
@@ -180,6 +295,7 @@ namespace SimpleEngine{
                     DestroyDebugUtilsMessengerEXT(m_instance, debugMessenger, nullptr);
                 }
                 vkDestroyInstance(m_instance, nullptr);
+                vkDestroyDevice(device, nullptr);
             }
 
     };

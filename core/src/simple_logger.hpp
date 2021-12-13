@@ -10,9 +10,9 @@ class logger{
         /* LOG instructions: ("str of what you want to say", <loggin code>) 
 
         logging codes:
-            1-info 
-            2-debug
-            3-error, will stop the program 
+            0-info 
+            1-debug
+            2-error, will stop the program 
         */
         void LOG(std::string log_msg, int log_code){
 
