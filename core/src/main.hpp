@@ -22,8 +22,7 @@ namespace SimpleEngine{
             }
 
             void ShutDown(){
-                //vkDestroyDevice( SEWindow.device, nullptr );
-	            vkDestroyInstance( vkobj.m_instance, nullptr );
+                vkobj.Clean();
                 glfwDestroyWindow(SEWindow.seWindow);
                 glfwTerminate();
             }
