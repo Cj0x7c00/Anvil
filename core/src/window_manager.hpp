@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "simple_logger.hpp"
+#include "vk_object.hpp"
 
 #include "../include/Vulkan/vulkan.h"
 #include "../include/GLFW/glfw3.h"
@@ -39,10 +40,12 @@ namespace SimpleEngine
 
             void CreateVulkanWindow(){
 
+                LOGGER.LOG("creating vulkan window", 1);
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
                 seWindow = glfwCreateWindow(width, height, "Engine 0.0.0", NULL, NULL);
+                vkobj.InitVulkan();
 
 
 
