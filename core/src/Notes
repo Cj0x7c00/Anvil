@@ -1,3 +1,8 @@
 ALWAYS INIT THE GLFW LIBRARY BEFORE YOU CALL glfwVulkanSupported().
 ^^^ OR ELSE IT WILL ALWAYS RETURN FALSE! ^^^ 
 
+to compile:
+    make sure you have the Vulkan SDK and the GLFW library ready to go.
+
+    run: g++ main.cpp -o main -lglfw -lvulkan -std=c++17
+   then: ./main 
