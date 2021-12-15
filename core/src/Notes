@@ -1,8 +1,41 @@
-ALWAYS INIT THE GLFW LIBRARY BEFORE YOU CALL glfwVulkanSupported().
+/* ALWAYS INIT THE GLFW LIBRARY BEFORE YOU CALL glfwVulkanSupported().
 ^^^ OR ELSE IT WILL ALWAYS RETURN FALSE! ^^^ 
+
 
 to compile:
     make sure you have the Vulkan SDK and the GLFW library ready to go.
 
     run: g++ main.cpp -o main -lglfw -lvulkan -std=c++17
    then: ./main 
+
+
+HOW TO: HEADER FILES
+
+declare your class and class members/functions in the header like so:
+
+/=================CLASS.H=================
+namespace ns{
+    class A{
+        int a = 2;
+        int b = 2;
+
+        public:
+            int RETURN_SUM();
+    }
+}
++++++++++++++++++CLASS.H+++++++++++++++++/
+
+then, in your cpp file, "fill in" the functions...
+
+/================CLASS.CPP================
+#include "CLASS.H"
+namespace np{
+    int A::RETURN_SUM(){
+        return a+b
+    }
+}
+++++++++++++++++CLASS.CPP++++++++++++++++/
+
+
+
+*/
