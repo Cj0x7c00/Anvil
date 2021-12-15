@@ -6,8 +6,7 @@
 class logger{
 
     public:
-
-        /* LOG instructions: ("str of what you want to say", <loggin code>) 
+        /* LOG  instructions: ("str of what you want to say", <loggin code>) 
 
         logging codes:
             0-info 
