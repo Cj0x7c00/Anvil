@@ -1,21 +1,21 @@
 #pragma once
 
 #include "../include/GLFW/glfw3.h"
-#include "window_manager.hpp"
-#include "vk_object.hpp"
+#include "window_manager.cpp"
+#include "vk_object.cpp"
 
 namespace SimpleEngine{
 
     class App{
         public:
-            SimpleEngine::SEWindow SEWindow;
-            SimpleEngine::VK_OBJ vkobj;
+            WindowManager WindowManager;
+            VK_OBJ vkobj;
 
             void Start(){
                 
-                SEWindow.Init();
+                WindowManager.Init();
         
-                while (!glfwWindowShouldClose(SEWindow.seWindow)){
+                while (!glfwWindowShouldClose(WindowManager.Window)){
 
                     glfwPollEvents();
                 }
@@ -23,7 +23,7 @@ namespace SimpleEngine{
 
             void ShutDown(){
                 vkobj.Clean();
-                glfwDestroyWindow(SEWindow.seWindow);
+                glfwDestroyWindow(WindowManager.Window);
                 glfwTerminate();
             }
     };
