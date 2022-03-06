@@ -1,40 +1,43 @@
 #include "window_manager.hpp"
-
-namespace SimpleEngine{
+namespace AnvilEngine
+{
 
     void WindowManager::CreateSimpleWindow(){
-
+       
         Window = glfwCreateWindow(width, height, "Engine 0.0.0", NULL, NULL);
+
         glfwMakeContextCurrent(Window);
 
         if (!Window){
             glfwTerminate();
-            LOGGER.LOG("failed to create window", 2);
-            glfwTerminate();
+            ENGINE_ERROR("Failed to init glfw");
         }
     }
 
     void WindowManager::CreateVulkanWindow(){
 
-        LOGGER.LOG("creating vulkan window", 1);
+        ENGINE_DEBUG("Creating Vulkan Window");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         Window = glfwCreateWindow(width, height, "Engine 0.0.0", NULL, NULL);
         vkobj.InitVulkan();
+        vkobj.CreateSurface(Window);
     }
 
     void WindowManager::Init(){
 
         // init glfw
         if(!glfwInit()){
-            LOGGER.LOG("Couldnt init glfw library", 2);
+            ENGINE_ERROR("couldn't init glfw");
         }
 
-        // check if we cam do better than OpeGL
+        // check if we can do better than OpenGL
         if (CheckForVulkanSupport()){
             CreateVulkanWindow();
         } else{
+            ENGINE_INFO("Creating simple window");
+            ENGINE_WARN("OpenGL is depricated on Apple devices");
             CreateSimpleWindow();
         }
     }
@@ -42,14 +45,12 @@ namespace SimpleEngine{
     bool WindowManager::CheckForVulkanSupport(){
         if (GLFW_TRUE == glfwVulkanSupported())
         {
-            LOGGER.LOG("Vulkan is Supported!", 0);
+            ENGINE_INFO("VulkanAPI supported");
             return true;
         } else {
-            LOGGER.LOG("Vulkan not supported!", 0);
+
             return false;
         }
     }
-        
     
-
 }

@@ -1,19 +1,12 @@
 #pragma once
+#include "anvpch.cpp"
+#include <GLFW/glfw3.h>
+#include "settings.hpp"
+#include "vk_object.cpp" // vulkan
 
 
 
-#include <iostream>
-#include <vector>
-
-#include "simple_logger.hpp"
-#include "vk_object.cpp"
-
-#include "../include/Vulkan/vulkan.h"
-#include "../include/GLFW/glfw3.h"
-
-
-
-namespace SimpleEngine
+namespace AnvilEngine
 {
 
     // Window Management class
@@ -38,8 +31,11 @@ namespace SimpleEngine
             // Check for vk support. If not, we will use a basic window
             bool CheckForVulkanSupport();
 
+
+
             
     }; //class
 
-} //SimpleEngine
+
+} //AnvilEngine
 
