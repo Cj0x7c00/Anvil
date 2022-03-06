@@ -239,6 +239,7 @@ namespace AnvilEngine{
     void VK_OBJ::CreateSurface(GLFWwindow* window){
         ENGINE_DEBUG("Creating window surface");
         try{
+            // FUCK THIS STUPID FUNCTION KEEPT GIVING ME A EXC_BAD_ACCESS MAN FUCK //
             if (glfwCreateWindowSurface(m_instance, window, NULL, &m_surface) != VK_SUCCESS){
                 ENGINE_ERROR("Failed to create a vulkan suface");
             }
