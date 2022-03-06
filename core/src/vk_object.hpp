@@ -1,15 +1,6 @@
 #pragma once
-
-#include "simple_logger.hpp"
-#include "../include/Vulkan/vulkan.h"
-#include "../include/GLFW/glfw3.h"
-
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-#include <cstring>
-#include <cstdlib>
-#include <optional>
+#include "settings.hpp"
+#include "anvpch.hpp"
 
 /**
  * 
@@ -20,22 +11,22 @@
  * 
  */
 
-namespace SimpleEngine{
+namespace AnvilEngine{
 
     class VK_OBJ
     {
 
         public:
 
-            VkInstance m_instance;
-            VkDevice device;
-            VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-            VkQueue graphicsQueue;
-            VkSurfaceKHR surface;
+            VkInstance m_instance = VK_NULL_HANDLE;
+            VkDevice m_device = VK_NULL_HANDLE;
+            VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
+            VkQueue m_graphicsQueue = VK_NULL_HANDLE;
+            VkSurfaceKHR m_surface = VK_NULL_HANDLE;
             
             const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 
-            VkDebugUtilsMessengerEXT debugMessenger;
+            VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
             VkDebugUtilsMessengerCreateInfoEXT debCreateInfo{};
 
             struct QueueFamilyIndices {
@@ -57,13 +48,14 @@ namespace SimpleEngine{
             VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, 
                 const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
                 const VkAllocationCallbacks* pAllocator, 
-                VkDebugUtilsMessengerEXT* pDebugMessenger) ;
+                VkDebugUtilsMessengerEXT* pDebugMessenger);
 
             void DestroyDebugUtilsMessengerEXT(VkInstance instance, 
                 VkDebugUtilsMessengerEXT debugMessenger, 
                 const VkAllocationCallbacks* pAllocator);
 
             bool checkValidationLayerSupport();
+
             std::vector<const char*> getRequiredExtensions();
             static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
                 VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -73,10 +65,8 @@ namespace SimpleEngine{
 
             void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debCreateInfo);
 
-            /*
             void SetupDebugMessenger();
-            */
-
+            
             void PickPhysicalDevice();
 
             bool isDeviceSuitable(VkPhysicalDevice device);
@@ -86,7 +76,9 @@ namespace SimpleEngine{
             void CreateLogicalDevice();
 
             void InitVulkan();
-            
+
+            void CreateSurface(GLFWwindow* window);
+
             void Clean();
     };
 
@@ -94,4 +86,4 @@ namespace SimpleEngine{
 
 
 
-} //SimpleEngine
+} //AnvilEngine
