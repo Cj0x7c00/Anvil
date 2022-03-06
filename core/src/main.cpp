@@ -1,21 +1,20 @@
 #include "main.hpp"
-#include <iostream>
-#include "simple_logger.hpp"
+#include "window_manager.hpp"
 
+AnvilEngine::AnvilEngineApplication app;    
 
-SimpleEngine::App app;    
+int main(){
 
-int main(void){
-
+    ENGINE_INFO("Attempting to start engine");    
     try {
-
-        LOGGER.LOG("Running App", 0);
+        ENGINE_INFO("Starting Engine");
+        ENGINE_INFO(glfwGetVersionString());
         app.Start();
-        LOGGER.LOG("Shutting Down App", 0);
+        ENGINE_INFO("Stopping Engine");
         app.ShutDown();
+        
     } 
     catch (std::exception &e){
-        LOGGER.LOG("Failed to run app!", 0);
         std::cout << e.what();
     }
 }

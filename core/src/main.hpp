@@ -1,18 +1,15 @@
 #pragma once
-
-#include "../include/GLFW/glfw3.h"
 #include "window_manager.cpp"
-#include "vk_object.cpp"
+#include <GLFW/glfw3.h>
 
-namespace SimpleEngine{
 
-    class App{
+namespace AnvilEngine{
+
+    class AnvilEngineApplication{
         public:
             WindowManager WindowManager;
-            VK_OBJ vkobj;
 
             void Start(){
-                
                 WindowManager.Init();
         
                 while (!glfwWindowShouldClose(WindowManager.Window)){
@@ -25,7 +22,9 @@ namespace SimpleEngine{
                 vkobj.Clean();
                 glfwDestroyWindow(WindowManager.Window);
                 glfwTerminate();
+
             }
+
     };
 
 }
