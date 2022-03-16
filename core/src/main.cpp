@@ -3,9 +3,7 @@
 
 AnvilEngine::AnvilEngineApplication app;    
 
-int main(){
-
-    ENGINE_INFO("Attempting to start engine");    
+int main(){    
     try {
         ENGINE_INFO("Starting Engine");
         ENGINE_INFO(glfwGetVersionString());
