@@ -1,8 +1,13 @@
 #pragma once
+
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "anvpch.cpp"
 #include <GLFW/glfw3.h>
 #include "settings.hpp"
 #include "vk_object.cpp" // vulkan
+#include "../include/stb/stb_image.h" // load image icon
+#include "../include/stb/stb_image_write.h"
 
 
 

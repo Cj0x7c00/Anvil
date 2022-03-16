@@ -10,29 +10,47 @@ namespace AnvilEngine
 
         if (!Window){
             glfwTerminate();
-            ENGINE_ERROR("Failed to init glfw");
+            ENGINE_ERROR("Failed to create window");
         }
     }
 
     void WindowManager::CreateVulkanWindow(){
 
-        ENGINE_DEBUG("Creating Vulkan Window");
+        ENGINE_INFO("Creating Vulkan Window");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         Window = glfwCreateWindow(width, height, "Engine 0.0.0", NULL, NULL);
-        vkobj.InitVulkan();
-        vkobj.CreateSurface(Window);
+        vkobj.InitVulkan(Window);
+
+#ifndef PLATFORM_APPLE
+        // load image 
+        int width, height, channels;
+        unsigned char* pixles  = stbi_load("../extras/Icon.png", &width, &height, &channels, 4);
+
+        // change icon
+        GLFWimage image[1];
+        image[0].width = width;
+        image[0].height = height;
+        image[0].pixels = pixles;
+
+        glfwSetWindowIcon(Window, 1, image);
+#endif
+
+#ifdef PLATFORM_APPLE
+        // FIXME: the "glfwSetWindowIcon()" doesnt work on apple. need a work around
+#endif
+
     }
 
     void WindowManager::Init(){
 
         // init glfw
         if(!glfwInit()){
-            ENGINE_ERROR("couldn't init glfw");
+            ENGINE_ERROR("Failed to init glfw");
         }
 
-        // check if we can do better than OpenGL
+        // Graphics API switch
         if (CheckForVulkanSupport()){
             CreateVulkanWindow();
         } else{
