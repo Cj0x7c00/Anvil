@@ -9,5 +9,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <optional>
+#include <set>
 
 #include "simple_logger.hpp"
