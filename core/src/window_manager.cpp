@@ -26,7 +26,7 @@ namespace AnvilEngine
 #ifndef PLATFORM_APPLE
         // load image 
         int width, height, channels;
-        unsigned char* pixles  = stbi_load("../extras/Icon.png", &width, &height, &channels, 4);
+        unsigned char* pixles  = stbi_load("../extras/Icon3.png", &width, &height, &channels, 4);
 
         // change icon
         GLFWimage image[1];
@@ -37,9 +37,7 @@ namespace AnvilEngine
         glfwSetWindowIcon(Window, 1, image);
 #endif
 
-#ifdef PLATFORM_APPLE
-        // FIXME: the "glfwSetWindowIcon()" doesnt work on apple. need a work around
-#endif
+        // if on apple devices, the app icon will be handled by the app bundle system on apple devices
 
     }
 
