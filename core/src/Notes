@@ -37,5 +37,15 @@ namespace np{
 ++++++++++++++++CLASS.CPP++++++++++++++++/
 
 
+SETTING ICON ON MAC:
+
+you first need to create a bundle.
+
+NAMEOFAPP.app       <- this is the root folder
+ L Contents         <- this folder contains platform specific builds
+    L MacOS         <- contains the executabe
+      L app.o       <- the executable
+    L info.plist    <- used to tell finder the app title, version, etc 
+ L Icon             <- the ICNS file to set your app icon
 
 */
