@@ -8,6 +8,7 @@ namespace AnvilEngine
         CreateSwapChain(window);
     }
     
+    
     void anvRenderer::Clean()
     {
         ENGINE_INFO("Cleaning up renderer");
