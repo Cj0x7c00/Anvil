@@ -20,10 +20,11 @@ namespace AnvilEngine
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        Window = glfwCreateWindow(width, height, "Engine 0.0.0", NULL, NULL);
+        Window = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
         vkobj.InitVulkan(Window);
 
-#ifndef PLATFORM_APPLE
+#ifndef PLATFORM_APPLE // if on windows
+
         // load image 
         int width, height, channels;
         unsigned char* pixles  = stbi_load("../extras/Icon3.png", &width, &height, &channels, 4);
@@ -36,8 +37,17 @@ namespace AnvilEngine
 
         glfwSetWindowIcon(Window, 1, image);
 #endif
-
-        // if on apple devices, the app icon will be handled by the app bundle system on apple devices
+#ifdef PLATFORM_APPLE
+        /**
+         * 
+         *  the `glfwSetWindowIcon()` function does nothing on apple devices. 
+         *  so we have to make an application bundle for our engine.
+         *  very simple stuff. I used an app called "Image2Icon" to make the ICNS file.
+         * 
+        **/
+       
+        ENGINE_INFO("Using Apple application bundles");
+#endif
 
     }
 
@@ -49,24 +59,18 @@ namespace AnvilEngine
         }
 
         // Graphics API switch
-        if (CheckForVulkanSupport()){
+        if ((glfwVulkanSupported() == GLFW_TRUE) || PLATFORM_APPLE){
             CreateVulkanWindow();
         } else{
             ENGINE_INFO("Creating simple window");
             ENGINE_WARN("OpenGL is depricated on Apple devices");
-            CreateSimpleWindow();
-        }
-    }
 
-    bool WindowManager::CheckForVulkanSupport(){
-        if (GLFW_TRUE == glfwVulkanSupported())
-        {
-            ENGINE_INFO("VulkanAPI supported");
-            return true;
-        } else {
-
-            return false;
+            if (PLATFORM_APPLE){
+                ENGINE_ERROR("OpenGL is no longer supported on apple devices and Vulkan is not supported.");
+            } else{
+                CreateSimpleWindow();
+            }
         }
+
     }
-    
 }
