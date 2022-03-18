@@ -2,6 +2,8 @@
 #include "settings.hpp"
 #include "anvpch.hpp"
 
+namespace AnvilEngine{
+
 /**
  * 
  * @brief Basically, all this is is just geting the required vulkan stuf
@@ -10,8 +12,6 @@
  * basic triangle. "small" things first, ya know? 
  * 
  */
-
-namespace AnvilEngine{
 
     class VK_OBJ
     {
@@ -56,7 +56,7 @@ namespace AnvilEngine{
             const bool enableValidationLayers = true;
 #endif
 
-            void CreateInstance();
+            
 
             VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, 
                 const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
@@ -79,10 +79,12 @@ namespace AnvilEngine{
             void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debCreateInfo);
 
             void SetupDebugMessenger();
-            
+
+            void CreateInstance();
+
             void PickPhysicalDevice();
 
-            bool isDeviceSuitable(VkPhysicalDevice device);
+            //bool isDeviceSuitable(VkPhysicalDevice device);
 
             QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
@@ -94,15 +96,15 @@ namespace AnvilEngine{
 
             void CreateSurface(GLFWwindow* window);
 
-            VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+            // VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 
-            VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+            // VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 
-            VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
+            // VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
 
-            SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+            // SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
 
-            void CreateSwapChain(GLFWwindow* window);
+            // void CreateSwapChain(GLFWwindow* window);
 
             void Clean();
     };
