@@ -1,15 +1,10 @@
 #include "main.hpp"
-#include "window_manager.hpp"
-
-AnvilEngine::AnvilEngineApplication app;    
+//#include "window_manager.hpp"    
 
 int main(){    
     try {
-        ENGINE_INFO("Starting Engine");
-        ENGINE_INFO(glfwGetVersionString());
-        app.Start();
-        ENGINE_INFO("Stopping Engine");
-        app.ShutDown();
+        AnvilEngine::AnvilEngineApplication app;
+        app.Run();
         
     } 
     catch (std::exception &e){
