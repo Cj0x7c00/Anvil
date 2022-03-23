@@ -4,7 +4,7 @@ namespace AnvilEngine
 
     void WindowManager::CreateSimpleWindow(){
        
-        Window = glfwCreateWindow(width, height, "Engine 0.0.0", NULL, NULL);
+        Window = glfwCreateWindow(width, height, name, NULL, NULL);
 
         glfwMakeContextCurrent(Window);
 
@@ -21,7 +21,6 @@ namespace AnvilEngine
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         Window = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
-        vkobj.InitVulkan(Window);
 
 #ifndef PLATFORM_APPLE // if on windows
 
@@ -51,7 +50,8 @@ namespace AnvilEngine
 
     }
 
-    void WindowManager::Init(){
+    WindowManager::WindowManager(int w, int h, const char* n) : width{static_cast<uint32_t>(w)}, height{static_cast<uint32_t>(h)}, name{n}
+    {
 
         // init glfw
         if(!glfwInit()){
@@ -61,6 +61,7 @@ namespace AnvilEngine
         // Graphics API switch
         if ((glfwVulkanSupported() == GLFW_TRUE) || PLATFORM_APPLE){
             CreateVulkanWindow();
+            anvDevice.InitVulkan(Window);
         } else{
             ENGINE_INFO("Creating simple window");
             ENGINE_WARN("OpenGL is depricated on Apple devices");
@@ -71,6 +72,11 @@ namespace AnvilEngine
                 CreateSimpleWindow();
             }
         }
+
+    }
+
+    WindowManager::~WindowManager()
+    {
 
     }
 }

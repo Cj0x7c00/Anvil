@@ -17,8 +17,12 @@ namespace AnvilEngine
 
             GLFWwindow* Window;
 
-            const uint32_t width		= 800;
-	        const uint32_t height		= 600;
+            const uint32_t width;
+	        const uint32_t height;
+            const char* name;
+
+            WindowManager(int w, int h, const char* n);
+            ~WindowManager();
 
             //creates a basic GLFW window
             void CreateSimpleWindow();
@@ -26,11 +30,8 @@ namespace AnvilEngine
             // creates a vulkan window
             void CreateVulkanWindow();
 
-            // Init glfw and see if vulkan is supported
-            void Init();
 
-            // Check for vk support. If not, we will use a basic window
-            bool CheckForVulkanSupport();
+            VkExtent2D GetExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
 
 
 
