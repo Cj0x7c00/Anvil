@@ -28,6 +28,7 @@ namespace AnvilEngine{
             std::vector<VkImage> swapChainImages;
             VkFormat swapChainImageFormat;
             VkExtent2D swapChainExtent;
+            VkCommandPool commandPool;
             
             const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
             const std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, "VK_KHR_portability_subset"};
@@ -36,11 +37,14 @@ namespace AnvilEngine{
             VkDebugUtilsMessengerCreateInfoEXT debCreateInfo{};
 
             struct QueueFamilyIndices {
-                std::optional<uint32_t> graphicsFamily;
-                std::optional<uint32_t> presentFamily;
+                uint32_t graphicsFamily;
+                uint32_t presentFamily;
+
+                bool graphicsFamilyHasValue = false;
+                bool presentFamilyHasValue = false;
 
                 bool isComplete() {
-                    return graphicsFamily.has_value() && presentFamily.has_value();
+                    return graphicsFamilyHasValue && presentFamilyHasValue;
                 }
             };
 
@@ -55,6 +59,9 @@ namespace AnvilEngine{
 #else
             const bool enableValidationLayers = true;
 #endif
+
+            VkQueue graphicsQueue() { return m_graphicsQueue; }
+            SwapChainSupportDetails GetSwapChainSupport() { return QuerySwapChainSupport(m_physicalDevice); }
 
             
 
@@ -96,21 +103,75 @@ namespace AnvilEngine{
 
             void CreateSurface(GLFWwindow* window);
 
-            // VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+            QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
 
-            // VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+            void CreateCommandPool();
 
-            // VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
+            std::vector<VkImageView> swapChainImageViews;
 
-            // SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device);
+            auto IsDeviceSuitable(VkPhysicalDevice device)
+            {
+                VK_OBJ::QueueFamilyIndices indices = findQueueFamilies(device);
 
-            // void CreateSwapChain(GLFWwindow* window);
+                //bool extensionsSupported = anvDevice.CheckDeviceExtentionSupport(device);
+
+                bool swapChainAdequate = false;
+                
+                VK_OBJ::SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
+                swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+                
+
+                return indices.isComplete() && swapChainAdequate;
+            }
+
+            VkFormat FindSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+
+            uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+            VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+
+            VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+
+            VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities, GLFWwindow* window);
+
+            VK_OBJ::SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device)
+            {
+                VK_OBJ::SwapChainSupportDetails details;
+                vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.capabilities);
+
+                uint32_t formatCount;
+                vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, nullptr);
+
+                if (formatCount != 0) {
+                    details.formats.resize(formatCount);
+                    vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, details.formats.data());
+                }
+
+                uint32_t presentModeCount;
+                vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, nullptr);
+
+                if (presentModeCount != 0) {
+                    details.presentModes.resize(presentModeCount);
+                    vkGetPhysicalDeviceSurfacePresentModesKHR(
+                        device,
+                        m_surface,
+                        &presentModeCount,
+                        details.presentModes.data());
+                }
+                return details;
+            }
+
+            void CreateImageViews();
+
+            void CreateImageWithInfo(
+                const VkImageCreateInfo &imageInfo,
+                VkMemoryPropertyFlags properties,
+                VkImage &image,
+                VkDeviceMemory &imageMemory);
 
             void Clean();
     };
 
-    VK_OBJ vkobj;
-
-
+    VK_OBJ anvDevice;
 
 } //AnvilEngine
