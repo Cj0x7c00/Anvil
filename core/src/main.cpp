@@ -1,9 +1,10 @@
 #include "main.hpp"
 //#include "window_manager.hpp"    
 
+AnvilEngine::AnvilEngineApplication app;
+
 int main(){    
     try {
-        AnvilEngine::AnvilEngineApplication app;
         app.Run();
         
     } 
