@@ -18,5 +18,13 @@
  #error "UNKNOWN PLATFORM"
 #endif
 
+struct Anvil_Settings
+{
+    struct Graphics_Settings
+    {
+        bool VSYNC = true;
+    } Graphics_Settings;
+} Anvil_Settings;
+
 //#define PATH_TO_VULKAN "../include/Vulkan/vulkan.h"
 //#define PATH_TO_GLFW "../include/GLFW/glfw3.h"
