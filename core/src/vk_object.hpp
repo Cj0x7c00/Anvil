@@ -37,8 +37,8 @@ namespace AnvilEngine{
             VkDebugUtilsMessengerCreateInfoEXT debCreateInfo{};
 
             struct QueueFamilyIndices {
-                uint32_t graphicsFamily;
-                uint32_t presentFamily;
+                uint32_t graphicsFamily = 0;
+                uint32_t presentFamily = 0;
 
                 bool graphicsFamilyHasValue = false;
                 bool presentFamilyHasValue = false;

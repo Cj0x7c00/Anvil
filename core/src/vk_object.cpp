@@ -181,7 +181,7 @@ namespace AnvilEngine{
 
 
     VK_OBJ::QueueFamilyIndices VK_OBJ::findQueueFamilies(VkPhysicalDevice device) {
-        QueueFamilyIndices indices;
+        VK_OBJ::QueueFamilyIndices indices;
 
         uint32_t queueFamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -190,18 +190,17 @@ namespace AnvilEngine{
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
         int i = 0;
-        for (const auto& queueFamily : queueFamilies) {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+        for (const auto &queueFamily : queueFamilies) {
+            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphicsFamily = i;
+                indices.graphicsFamilyHasValue = true;
             }
-
             VkBool32 presentSupport = false;
             vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
-
-            if (presentSupport) {
+            if (queueFamily.queueCount > 0 && presentSupport) {
                 indices.presentFamily = i;
+                indices.presentFamilyHasValue = true;
             }
-
             if (indices.isComplete()) {
                 break;
             }
@@ -220,7 +219,8 @@ namespace AnvilEngine{
 
         float queuePriority = 1.0f;
         for (uint32_t queueFamily : uniqueQueueFamilies) {
-            VkDeviceQueueCreateInfo queueCreateInfo = {};
+            ENGINE_DEBUG("Queue Family: " + std::to_string(queueFamily));
+            VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
             queueCreateInfo.queueFamilyIndex = queueFamily;
             queueCreateInfo.queueCount = 1;
@@ -311,6 +311,7 @@ namespace AnvilEngine{
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
         poolInfo.flags =
             VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        ENGINE_DEBUG("Graphics Family: " + std::to_string(queueFamilyIndices.graphicsFamily));
 
         if (vkCreateCommandPool(m_device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             ENGINE_ERROR("failed to create command pool!");
