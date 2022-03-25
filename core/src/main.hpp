@@ -84,6 +84,7 @@ namespace AnvilEngine{
                 for (int i = 0; i < CommandBuffers.size(); i++)
                 {
                     VkCommandBufferBeginInfo beginInfo{};
+                    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
                     if (vkBeginCommandBuffer(CommandBuffers[i], &beginInfo) != VK_SUCCESS)
                     {
                         ENGINE_ERROR("Failed to begin recording command buffer");
