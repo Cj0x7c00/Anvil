@@ -150,10 +150,12 @@ void anvSwapChain::createSwapChain() {
     createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
     createInfo.queueFamilyIndexCount = 2;
     createInfo.pQueueFamilyIndices = queueFamilyIndices;
+    ENGINE_INFO("Vk Sharing mode concurrent");
   } else {
     createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
     createInfo.queueFamilyIndexCount = 0;      // Optional
     createInfo.pQueueFamilyIndices = nullptr;  // Optional
+    ENGINE_INFO("Vk Sharing mode exclusive");
   }
 
   createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
