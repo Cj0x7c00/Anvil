@@ -61,7 +61,6 @@ namespace AnvilEngine
         // Graphics API switch
         if ((glfwVulkanSupported() == GLFW_TRUE) || PLATFORM_APPLE){
             CreateVulkanWindow();
-            anvDevice.InitVulkan(Window);
         } else{
             ENGINE_INFO("Creating simple window");
             ENGINE_WARN("OpenGL is depricated on Apple devices");

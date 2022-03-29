@@ -4,7 +4,7 @@
 #include "anvpch.cpp"
 #include <GLFW/glfw3.h>
 #include "settings.hpp"
-#include "vk_object.cpp" // vulkan
+#include "anvDevice.cpp" // vulkan
 #include "../include/stb/stb_image.h" // load image ico
 
 namespace AnvilEngine
