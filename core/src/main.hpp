@@ -3,6 +3,7 @@
 #include "anvRenderer.cpp"
 #include "anvPipeline.cpp"
 #include "anvSwapChain.cpp"
+#include "anvModel.cpp"
 #include <array>
 #include <GLFW/glfw3.h>
 #include <memory>
@@ -14,11 +15,13 @@ namespace AnvilEngine{
         public:
             
             WindowManager WindowManager{800, 600, "Anvil Engine ver 0.0.0"};
+            AnvDevice anvDevice{WindowManager.Window};
             anvRenderer Renderer;
             VkPipelineLayout pipelineLayout;
             std::unique_ptr<anvPipeline> AnvilPipeline;
             std::vector<VkCommandBuffer> CommandBuffers;
             anvSwapChain AnvilSwapChain{anvDevice, WindowManager.GetExtent()};
+            std::unique_ptr<anvModel> model;
 
             
 
@@ -26,6 +29,7 @@ namespace AnvilEngine{
             {
                 ENGINE_INFO("Starting Engine");
                 ENGINE_INFO(glfwGetVersionString());
+                LoadModels();
                 CreatePipelineLayout();
                 CreatePipeline(AnvilSwapChain);
                 CreateCommandBuffers();
@@ -59,8 +63,8 @@ namespace AnvilEngine{
                 pipelineConfig.pipelineLayout = pipelineLayout;
                 AnvilPipeline = std::make_unique<anvPipeline>(
                     anvDevice, 
-                    "/Users/cj/Desktop/C++ projects/11-12-21/core/src/shaders/sprv.vert", 
-                    "/Users/cj/Desktop/C++ projects/11-12-21/core/src/shaders/sprv.frag", 
+                    "shaders/sprv.vert", 
+                    "shaders/sprv.frag", 
                     pipelineConfig);
             }
 
@@ -107,7 +111,8 @@ namespace AnvilEngine{
                     vkCmdBeginRenderPass(CommandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
                     AnvilPipeline->Bind(CommandBuffers[i]);
-                    vkCmdDraw(CommandBuffers[i], 3, 1, 0, 0);
+                    model->Bind(CommandBuffers[i]);
+                    model->Draw(CommandBuffers[i]);
 
                     vkCmdEndRenderPass(CommandBuffers[i]);
                     if (vkEndCommandBuffer(CommandBuffers[i]) != VK_SUCCESS)
@@ -159,6 +164,21 @@ namespace AnvilEngine{
                 vkDestroyInstance(anvDevice.m_instance, nullptr);
                 glfwDestroyWindow(WindowManager.Window);
                 glfwTerminate();
+            }
+
+            void LoadModels()
+            {
+                std::vector<anvModel::Vertex> vertices{
+                    {{0.0f, -0.5f}},
+                    {{0.5f, 0.5f}},
+                    {{-0.5f, 0.5f}},
+                    /* TRIANGLE 2 */
+                    {{0.7f, -0.4f}},
+                    {{1.0f, 0.5f}},
+                    {{0.5f, 0.0f}}
+                };
+
+                model = std::make_unique<anvModel>(anvDevice, vertices);
             }
 
     };
