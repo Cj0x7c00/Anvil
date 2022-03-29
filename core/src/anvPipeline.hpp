@@ -1,6 +1,6 @@
 #pragma once
 #include "anvpch.hpp"
-#include "vk_object.hpp"
+#include "anvDevice.hpp"
 
 namespace AnvilEngine
 {
@@ -23,7 +23,7 @@ namespace AnvilEngine
 
     public:
         anvPipeline(
-            VK_OBJ& anv_device, 
+            AnvilEngine::AnvDevice& anv_device, 
             const std::string& vertFilepath, 
             const std::string& fragFilepath,
             const PipelineCfgInfo& cfginfo);
@@ -47,6 +47,7 @@ namespace AnvilEngine
         void CreateShaderModule(const std::vector<char> code, VkShaderModule* shader_mod);
 
     private:
+        AnvDevice& device;
         VkPipeline graphicsPipeline;
         VkShaderModule vert_mod;
         VkShaderModule frag_mod;

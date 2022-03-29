@@ -1,22 +1,23 @@
 #include "anvPipeline.hpp"
+#include "anvModel.hpp"
 #include <fstream>
 
 namespace AnvilEngine
 {
 
-    anvPipeline::anvPipeline(VK_OBJ& anv_device, 
+    anvPipeline::anvPipeline(AnvDevice& anv_device, 
             const std::string& vertFilepath, 
             const std::string& fragFilepath,
-            const PipelineCfgInfo& cfginfo){
+            const PipelineCfgInfo& cfginfo) : device{anv_device}{
         CreateGraphicsPipeline(vertFilepath, fragFilepath, cfginfo);
     }
 
 
     anvPipeline::~anvPipeline()
     {
-        vkDestroyShaderModule(anvDevice.m_device, vert_mod, nullptr);
-        vkDestroyShaderModule(anvDevice.m_device, frag_mod, nullptr);
-        vkDestroyPipeline(anvDevice.m_device, graphicsPipeline, nullptr);
+        vkDestroyShaderModule(device.m_device, vert_mod, nullptr);
+        vkDestroyShaderModule(device.m_device, frag_mod, nullptr);
+        vkDestroyPipeline(device.m_device, graphicsPipeline, nullptr);
     }
 
 
@@ -54,7 +55,7 @@ namespace AnvilEngine
         createInfo.codeSize = code.size();
         createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
-        if (vkCreateShaderModule(anvDevice.m_device, &createInfo, nullptr, shader_mod) != VK_SUCCESS)
+        if (vkCreateShaderModule(device.m_device, &createInfo, nullptr, shader_mod) != VK_SUCCESS)
         {
             ENGINE_ERROR("Failed to create shader module");
         }
@@ -171,12 +172,14 @@ namespace AnvilEngine
         shaderStages[1].pNext = nullptr;
         shaderStages[1].pSpecializationInfo = nullptr;
 
+        auto bindingDescriptions = anvModel::Vertex::GetBindingDescriptions();
+        auto attributeDescriptions = anvModel::Vertex::GetAttributeDescriptions();
         VkPipelineVertexInputStateCreateInfo vert_inputInfo{};
         vert_inputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vert_inputInfo.vertexAttributeDescriptionCount = 0;
-        vert_inputInfo.vertexBindingDescriptionCount = 0;
-        vert_inputInfo.pVertexAttributeDescriptions = nullptr;
-        vert_inputInfo.pVertexBindingDescriptions = nullptr;
+        vert_inputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+        vert_inputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
+        vert_inputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+        vert_inputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 
         VkPipelineViewportStateCreateInfo viewportInfo{};
         viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -205,7 +208,7 @@ namespace AnvilEngine
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-        if (vkCreateGraphicsPipelines(anvDevice.m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
+        if (vkCreateGraphicsPipelines(device.m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
         {
             ENGINE_ERROR("Failed to create graphics pipeline");
         }
