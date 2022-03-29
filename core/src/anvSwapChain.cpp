@@ -11,7 +11,7 @@
 
 namespace AnvilEngine {
 
-anvSwapChain::anvSwapChain(AnvilEngine::VK_OBJ &deviceRef, VkExtent2D extent)
+anvSwapChain::anvSwapChain(AnvDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {
     createSwapChain();
     createImageViews();
@@ -120,7 +120,7 @@ VkResult anvSwapChain::submitCommandBuffers(
 }
 
 void anvSwapChain::createSwapChain() {
-  VK_OBJ::SwapChainSupportDetails swapChainSupport = device.GetSwapChainSupport();
+  AnvDevice::SwapChainSupportDetails swapChainSupport = device.GetSwapChainSupport();
 
   VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
   VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -143,7 +143,7 @@ void anvSwapChain::createSwapChain() {
   createInfo.imageArrayLayers = 1;
   createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-  VK_OBJ::QueueFamilyIndices indices = device.FindQueueFamilies(device.m_physicalDevice);
+  AnvDevice::QueueFamilyIndices indices = device.FindQueueFamilies(device.m_physicalDevice);
   uint32_t queueFamilyIndices[] = {indices.graphicsFamily, indices.presentFamily};
 
   if (indices.graphicsFamily != indices.presentFamily) {

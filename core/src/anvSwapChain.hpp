@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vk_object.hpp"
+#include "anvDevice.hpp"
 #include "anvLog.hpp"
 
 // std lib headers
@@ -13,7 +13,7 @@ class anvSwapChain {
  public:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-  anvSwapChain(VK_OBJ &deviceRef, VkExtent2D windowExtent);
+  anvSwapChain(AnvDevice &deviceRef, VkExtent2D windowExtent);
   ~anvSwapChain();
 
   anvSwapChain(const anvSwapChain &) = delete;
@@ -63,7 +63,7 @@ class anvSwapChain {
   std::vector<VkImage> swapChainImages;
   std::vector<VkImageView> swapChainImageViews;
 
-  VK_OBJ &device;
+  AnvDevice &device;
   VkExtent2D windowExtent;
 
   VkSwapchainKHR swapChain;
