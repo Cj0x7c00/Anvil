@@ -1,11 +1,12 @@
 #pragma once
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "anvpch.cpp"
+#include "anvLog.hpp"
+#include "anvpch.hpp"
+#define GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include "settings.hpp"
-#include "anvDevice.cpp" // vulkan
-#include "../include/stb/stb_image.h" // load image ico
+#include "anvDevice.hpp" // vulkan
+#include "include/stb/stb_image.h" // load image icon
 
 namespace AnvilEngine
 {
@@ -22,8 +23,7 @@ namespace AnvilEngine
             const char* name;
 
             WindowManager(int w, int h, const char* n);
-            ~WindowManager();
-
+            
             //creates a basic GLFW window
             void CreateSimpleWindow();
 

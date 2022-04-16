@@ -22,7 +22,7 @@ namespace AnvilEngine
 
         Window = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
 
-#ifndef PLATFORM_APPLE // if on windows
+#ifdef _WIN32 // if on windows
 
         // load image 
         int width, height, channels;
@@ -44,7 +44,7 @@ namespace AnvilEngine
          *  very simple stuff. I used an app called "Image2Icon" to make the ICNS file.
          * 
         **/
-       
+        ENGINE_INFO("Apple Platform Detected");
         ENGINE_INFO("Using Apple application bundles");
 #endif
 
@@ -74,8 +74,4 @@ namespace AnvilEngine
 
     }
 
-    WindowManager::~WindowManager()
-    {
-
-    }
 }
