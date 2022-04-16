@@ -19,7 +19,7 @@ anvSwapChain::anvSwapChain(AnvDevice &deviceRef, VkExtent2D extent)
     createDepthResources();
     createFramebuffers();
     createSyncObjects();
-    }
+}
 
 anvSwapChain::~anvSwapChain() {
   for (auto imageView : swapChainImageViews) {
@@ -375,8 +375,10 @@ VkSurfaceFormatKHR anvSwapChain::chooseSwapSurfaceFormat(
 
 VkPresentModeKHR anvSwapChain::chooseSwapPresentMode(
     const std::vector<VkPresentModeKHR> &availablePresentModes) {
+
+    bool VSYNC = true;
     
-    if (Anvil_Settings.Graphics_Settings.VSYNC == false){
+    if (VSYNC == false){
         for (const auto &availablePresentMode : availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
                 std::cout << "Present mode: Mailbox" << std::endl;
@@ -421,4 +423,4 @@ VkFormat anvSwapChain::findDepthFormat() {
       VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 }
 
-}  // namespace lve
+}  // namespace AnvilEngine
