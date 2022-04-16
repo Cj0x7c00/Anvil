@@ -32,7 +32,7 @@ namespace AnvilEngine
         ~anvPipeline();
 
         anvPipeline(const anvPipeline&) = delete;
-        void operator=(const anvPipeline&) = delete;
+        anvPipeline &operator=(const anvPipeline&) = delete;
 
         void Bind(VkCommandBuffer commandBuffer);
  
