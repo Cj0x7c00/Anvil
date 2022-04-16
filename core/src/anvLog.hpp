@@ -1,9 +1,8 @@
 #pragma once
-
+#include "settings.hpp"
 #include <iostream>
 #include <string>
-#include <cassert>
-#include "settings.hpp"
+
 
 class logger{
 
@@ -17,7 +16,7 @@ class logger{
             2-warning
             3-error 
         */
-        void LOG(std::string log_msg, int log_code){
+        static void LOG(std::string log_msg, int log_code){
 
             if (log_code == 0){ // 0 is code for info
                 std::cout << "\033[1;30m[INFO]: \033[0m" << log_msg << '\n';
@@ -40,19 +39,19 @@ class logger{
 
 };
 
-logger LOGGER; // logger object
+//logger loging; // logger object
 
 #if defined(DEBUG)
-#define ENGINE_INFO(...)  LOGGER.LOG(__VA_ARGS__, 0)
-#define ENGINE_DEBUG(...) LOGGER.LOG(__VA_ARGS__, 1)
-#define ENGINE_WARN(...)  LOGGER.LOG(__VA_ARGS__, 2)
-#define ENGINE_ERROR(...) LOGGER.LOG(__VA_ARGS__, 3)
+#define ENGINE_INFO(...)  logger::LOG(__VA_ARGS__, 0)
+#define ENGINE_DEBUG(...) logger::LOG(__VA_ARGS__, 1)
+#define ENGINE_WARN(...)  logger::LOG(__VA_ARGS__, 2)
+#define ENGINE_ERROR(...) logger::LOG(__VA_ARGS__, 3)
 
 
 
-#elif defined(NDEBUG) // ill fix this later...
-#define ENGINE_INFO(...)  0
-#define ENGINE_DEBUG(...) 0
-#define ENGINE_WARN(...)  0
+//#elif defined(NDEBUG) // ill fix this later...
+//#define ENGINE_INFO(...)  0
+//#define ENGINE_DEBUG(...) 0
+//#define ENGINE_WARN(...)  0
 
 #endif
