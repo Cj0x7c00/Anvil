@@ -18,9 +18,11 @@ namespace AnvilEngine
 
         ENGINE_INFO("Creating Vulkan Window");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         Window = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
+        glfwSetWindowUserPointer(Window, this);
+        glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
 
 #ifdef _WIN32 // if on windows
 
@@ -72,6 +74,14 @@ namespace AnvilEngine
             }
         }
 
+    }
+
+    void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
+    {
+        auto anvWindow = reinterpret_cast<WindowManager *>(glfwGetWindowUserPointer(window));
+        anvWindow->framebufferResized = true;
+        anvWindow->width = width;
+        anvWindow->height = height;
     }
 
 }

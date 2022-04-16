@@ -18,8 +18,10 @@ namespace AnvilEngine
 
             GLFWwindow* Window;
 
-            const uint32_t width;
-	        const uint32_t height;
+            uint32_t width;
+	        uint32_t height;
+            bool framebufferResized = false;
+
             const char* name;
 
             WindowManager(int w, int h, const char* n);
@@ -29,6 +31,12 @@ namespace AnvilEngine
 
             // creates a vulkan window
             void CreateVulkanWindow();
+
+            void ResetWindowResizedFlag() { framebufferResized = false; }
+
+            bool WasWindowResized() { return framebufferResized; }
+
+            static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);
 
 
             VkExtent2D GetExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
