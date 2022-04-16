@@ -1,6 +1,11 @@
 #pragma once
-#include "settings.hpp"
+//#include "settings.hpp"
+#include "anvLog.hpp"
 #include "anvpch.hpp"
+
+#define GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 
 namespace AnvilEngine{
 
