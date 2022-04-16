@@ -1,0 +1,69 @@
+/* ALWAYS INIT THE GLFW LIBRARY BEFORE YOU CALL glfwVulkanSupported().
+^^^ OR ELSE IT WILL ALWAYS RETURN FALSE! ^^^ 
+
+
+to compile:
+    make sure you have the Vulkan SDK and the GLFW library ready to go.
+
+    run: g++ main.cpp -o main -lglfw -lvulkan -std=c++17
+   then: ./main 
+
+
+HOW TO: HEADER FILES
+
+declare your class and class members/functions in the header like so:
+
+/=================CLASS.H=================
+namespace ns{
+    class A{
+        int a = 2;
+        int b = 2;
+
+        public:
+            int RETURN_SUM();
+    }
+}
++++++++++++++++++CLASS.H+++++++++++++++++/
+
+then, in your cpp file, "fill in" the functions...
+
+/================CLASS.CPP================
+#include "CLASS.H"
+namespace np{
+    int A::RETURN_SUM(){
+        return a+b
+    }
+}
+++++++++++++++++CLASS.CPP++++++++++++++++/
+
+
+SETTING ICON ON MAC:
+
+you first need to create a bundle.
+
+NAMEOFAPP.app       <- this is the root folder
+ L Contents         <- this folder contains platform specific builds
+    L MacOS         <- contains the executabe
+      L app.o       <- the executable
+    L info.plist    <- used to tell finder the app title, version, etc 
+ L Icon             <- the ICNS file to set your app icon
+
+
+HOW TO: CALL A FUNCTION WITH THE :: OPERATOR
+ 
+the function must be static!
+
+for example:
+
+class foo
+{
+    public:
+        static void SayHi() <- Function is static
+        {
+            std::cout << "Hi!";
+        }
+}
+
+foo::SayHi(); <- able to call SayHi because it is static
+
+*/
