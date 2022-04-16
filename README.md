@@ -6,3 +6,9 @@
 
 - my life long software project
 - a Vulkan, cross-platform game engine
+- under heavy developement
+
+# Can Do
+- render multiple triangles
+- render each triangle vertex with its own color
+- resize window
