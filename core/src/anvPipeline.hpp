@@ -1,4 +1,5 @@
 #pragma once
+#include "anvLog.hpp"
 #include "anvpch.hpp"
 #include "anvDevice.hpp"
 
@@ -47,7 +48,7 @@ namespace AnvilEngine
         void CreateShaderModule(const std::vector<char> code, VkShaderModule* shader_mod);
 
     private:
-        AnvDevice& device;
+        AnvilEngine::AnvDevice& device;
         VkPipeline graphicsPipeline;
         VkShaderModule vert_mod;
         VkShaderModule frag_mod;
