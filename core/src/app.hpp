@@ -4,11 +4,22 @@
 #include "anvSwapChain.hpp"
 #include "anvModel.hpp"
 //#include "anvImLayer.hpp"
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+
 #include <array>
 #include <GLFW/glfw3.h>
 #include <memory>
 
 namespace AnvilEngine{
+
+    struct PushConstantData
+    {
+        glm::vec2 offset;
+        alignas(16) glm::vec3 color;
+    };
 
     class AnvilEngineApplication{
 
@@ -53,13 +64,26 @@ namespace AnvilEngine{
                 }
 
                 vkDeviceWaitIdle(anvDevice.m_device);
-                AnvilSwapChain = std::make_unique<anvSwapChain>(anvDevice, Extent);
+
+                if (AnvilSwapChain == nullptr){
+                    AnvilSwapChain = std::make_unique<anvSwapChain>(anvDevice, Extent);
+                } else {
+                    AnvilSwapChain = std::make_unique<anvSwapChain>(anvDevice, Extent, std::move(AnvilSwapChain));
+                    if (AnvilSwapChain->imageCount() != CommandBuffers.size())
+                    {
+                        FreeCommandBuffers();
+                        CreateCommandBuffers();
+                    }
+                }
                 CreatePipeline();
             }
 
 
             void RecordCommandBuffer(int ImageIndex)
             {
+                static int frame = 0;
+                frame = (frame + 1) % 1000;
+
                 VkCommandBufferBeginInfo beginInfo{};
                 beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
                 if (vkBeginCommandBuffer(CommandBuffers[ImageIndex], &beginInfo) != VK_SUCCESS)
@@ -76,16 +100,41 @@ namespace AnvilEngine{
                 renderPassInfo.renderArea.extent = AnvilSwapChain->getSwapChainExtent();
 
                 std::array<VkClearValue, 2> clearValues{};
-                clearValues[0].color = {0.1f, 0.1f, 0.1f, 1.0f};
+                clearValues[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
                 clearValues[1].depthStencil = {1.0f, 0};
                 renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
                 renderPassInfo.pClearValues = clearValues.data();
 
                 vkCmdBeginRenderPass(CommandBuffers[ImageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+                VkViewport viewport{};
+                viewport.x = 0.0f;
+                viewport.y = 0.0f;
+                viewport.width = static_cast<uint32_t>(AnvilSwapChain->getSwapChainExtent().width);
+                viewport.height = static_cast<uint32_t>(AnvilSwapChain->getSwapChainExtent().height);
+                viewport.minDepth = 0.0f;
+                viewport.maxDepth = 1.0f;
+                VkRect2D scissor{{0, 0}, AnvilSwapChain->getSwapChainExtent()};
+                vkCmdSetViewport(CommandBuffers[ImageIndex], 0, 1, &viewport);
+                vkCmdSetScissor(CommandBuffers[ImageIndex], 0, 1, &scissor);
+
                 AnvilPipeline->Bind(CommandBuffers[ImageIndex]);
                 model->Bind(CommandBuffers[ImageIndex]);
-                model->Draw(CommandBuffers[ImageIndex]);
+
+                for (int j = 0; j < 4; j++)
+                {
+                    PushConstantData push{};
+                    push.offset = {-0.5f + frame * 0.002f, -0.4f + j * 0.25f};
+                    push.color = {0.0f, 0.0f, 0.2f + 0.2f * j};
+
+                    vkCmdPushConstants(
+                        CommandBuffers[ImageIndex], 
+                        pipelineLayout, 
+                        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 
+                        0, 
+                        sizeof(PushConstantData), &push);
+                    model->Draw(CommandBuffers[ImageIndex]);
+                }
 
                 vkCmdEndRenderPass(CommandBuffers[ImageIndex]);
                 if (vkEndCommandBuffer(CommandBuffers[ImageIndex]) != VK_SUCCESS)
@@ -97,12 +146,17 @@ namespace AnvilEngine{
 
             void CreatePipelineLayout()
             {
+                VkPushConstantRange pushConstantRange{};
+                pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+                pushConstantRange.offset = 0;
+                pushConstantRange.size = sizeof(PushConstantData);
+
                 VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
                 pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
                 pipelineLayoutInfo.setLayoutCount = 0;
                 pipelineLayoutInfo.pSetLayouts = nullptr;
-                pipelineLayoutInfo.pushConstantRangeCount = 0;
-                pipelineLayoutInfo.pPushConstantRanges = nullptr;
+                pipelineLayoutInfo.pushConstantRangeCount = 1;
+                pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
                 if (vkCreatePipelineLayout(anvDevice.m_device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS){
                     ENGINE_ERROR("Failed to create pipeline layout");
                 }
@@ -112,7 +166,9 @@ namespace AnvilEngine{
 
             void CreatePipeline()
             {
-                auto pipelineConfig = anvPipeline::DefaultPipelinecfgInfo(AnvilSwapChain->width(), AnvilSwapChain->height());
+
+                PipelineCfgInfo pipelineInfo{};
+                auto pipelineConfig = anvPipeline::DefaultPipelinecfgInfo(pipelineInfo);
                 pipelineConfig.renderPass = AnvilSwapChain->getRenderPass();
                 pipelineConfig.pipelineLayout = pipelineLayout;
                 AnvilPipeline = std::make_unique<anvPipeline>(
@@ -139,6 +195,16 @@ namespace AnvilEngine{
                     ENGINE_ERROR("Failed to allocate command buffers");
                 }
             }
+
+
+
+            void FreeCommandBuffers()
+            {
+                vkFreeCommandBuffers(anvDevice.m_device, anvDevice.commandPool, static_cast<float>(CommandBuffers.size()), CommandBuffers.data());
+                CommandBuffers.clear();
+            }
+
+
             void DrawFrame()
             {
                 uint32_t imgIndex;
@@ -194,19 +260,8 @@ namespace AnvilEngine{
                     /*TRIANGLE 1*/
                     {{0.0f, -0.5f},{1.0f, 0.0f, 0.0f}},
                     {{0.5f, 0.5f},{0.0f, 1.0f, 0.0f}},
-                    {{-0.5f, 0.5f},{0.0f, 0.0f, 1.0f}},
-                    /* TRIANGLE 2 */
-                    {{0.7f, -0.4f},{1.0f, 0.0f, 0.8f}},
-                    {{1.0f, 0.5f},{0.2f, 0.8f, 0.7f}},
-                    {{0.5f, 0.0f},{0.0f, 0.7f, 1.0f}},
-                    /* TRIANGLE 3 */
-                    {{0.2f, -0.1f},{1.0f, 0.4f, 1.0f}},
-                    {{-1.0f, -0.2f},{1.0f, 1.0f, 0.4f}},
-                    {{-0.5f, -0.0f},{0.5f, 1.0f, 1.0f}},
-                    /*TRIANGLE 4*/
-                    {{0.0f, -0.8f},{0.03f, 0.15f, 0.48f}},
-                    {{0.9f, 0.9f},{0.79f, 0.0f, 0.74f}},
-                    {{-0.9f, 0.9f},{0.0f, 0.79f, 0.39f}},
+                    {{-0.5f, 0.5f},{0.0f, 0.0f, 1.0f}}
+                    
                 };
 
                 model = std::make_unique<anvModel>(anvDevice, vertices);

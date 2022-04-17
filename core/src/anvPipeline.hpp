@@ -6,14 +6,15 @@
 namespace AnvilEngine
 {
     struct PipelineCfgInfo{
-        VkViewport viewport;
-        VkRect2D scissor;
+        VkPipelineViewportStateCreateInfo viewportInfo;
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
         VkPipelineRasterizationStateCreateInfo rasterizationInfo;
         VkPipelineMultisampleStateCreateInfo multisampleInfo;
         VkPipelineColorBlendAttachmentState colorBlendAttachment;
         VkPipelineColorBlendStateCreateInfo colorBlendInfo;
         VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+        std::vector<VkDynamicState> dynamicStateEnables;
+        VkPipelineDynamicStateCreateInfo dynamicStateinfo; 
         VkPipelineLayout pipelineLayout = nullptr;
         VkRenderPass renderPass = nullptr;
         uint32_t subpass = 0;
@@ -36,7 +37,7 @@ namespace AnvilEngine
 
         void Bind(VkCommandBuffer commandBuffer);
  
-        static PipelineCfgInfo DefaultPipelinecfgInfo(uint32_t width, uint32_t height);
+        static PipelineCfgInfo DefaultPipelinecfgInfo(PipelineCfgInfo& configInfo);
 
         static std::vector<char> ReadFile(const std::string& filepath);
 
@@ -52,6 +53,9 @@ namespace AnvilEngine
         VkPipeline graphicsPipeline;
         VkShaderModule vert_mod;
         VkShaderModule frag_mod;
+
+        bool pipelineCeated = false;
+
     };
     
 } // namespace AnvilEngine

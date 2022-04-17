@@ -13,6 +13,19 @@ namespace AnvilEngine {
 
 anvSwapChain::anvSwapChain(AnvDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {
+  init();
+}
+
+anvSwapChain::anvSwapChain(AnvDevice &deviceRef, VkExtent2D extent, std::shared_ptr<anvSwapChain> previous)
+    : device{deviceRef}, windowExtent{extent}, oldSwapChain{previous} {
+  init();
+
+  oldSwapChain = nullptr;
+
+}
+
+void anvSwapChain::init()
+{
     createSwapChain();
     createImageViews();
     createRenderPass();
@@ -150,12 +163,12 @@ void anvSwapChain::createSwapChain() {
     createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
     createInfo.queueFamilyIndexCount = 2;
     createInfo.pQueueFamilyIndices = queueFamilyIndices;
-    ENGINE_INFO("Vk Sharing mode concurrent");
+    // ENGINE_INFO("Vk Sharing mode concurrent");
   } else {
     createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
     createInfo.queueFamilyIndexCount = 0;      // Optional
     createInfo.pQueueFamilyIndices = nullptr;  // Optional
-    ENGINE_INFO("Vk Sharing mode exclusive");
+    // ENGINE_INFO("Vk Sharing mode exclusive");
   }
 
   createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
@@ -164,7 +177,7 @@ void anvSwapChain::createSwapChain() {
   createInfo.presentMode = presentMode;
   createInfo.clipped = VK_TRUE;
 
-  createInfo.oldSwapchain = VK_NULL_HANDLE;
+  createInfo.oldSwapchain = oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
   if (vkCreateSwapchainKHR(device.m_device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
     ENGINE_ERROR("failed to create swap chain!");
@@ -381,7 +394,7 @@ VkPresentModeKHR anvSwapChain::chooseSwapPresentMode(
     if (VSYNC == false){
         for (const auto &availablePresentMode : availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-                std::cout << "Present mode: Mailbox" << std::endl;
+                //std::cout << "Present mode: Mailbox" << std::endl;
                 return availablePresentMode;
             }
         }
@@ -390,12 +403,12 @@ VkPresentModeKHR anvSwapChain::chooseSwapPresentMode(
 
         for (const auto &availablePresentMode : availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
-                ENGINE_INFO("Present mode: Immediate");
+                //ENGINE_INFO("Present mode: Immediate");
                 return availablePresentMode;
             }
         }
 
-        ENGINE_INFO("Present mode: V-Sync");
+        //ENGINE_INFO("Present mode: V-Sync");
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 }

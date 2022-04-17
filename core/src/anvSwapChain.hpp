@@ -4,6 +4,7 @@
 #include "anvLog.hpp"
 
 // std lib headers
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -14,6 +15,10 @@ class anvSwapChain {
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
   anvSwapChain(AnvDevice &deviceRef, VkExtent2D windowExtent);
+  anvSwapChain(
+    AnvDevice &deviceRef, 
+    VkExtent2D windowExtent, 
+    std::shared_ptr<anvSwapChain> previous);
   ~anvSwapChain();
 
   anvSwapChain(const anvSwapChain &) = delete;
@@ -37,6 +42,7 @@ class anvSwapChain {
   VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
  private:
+  void init();
   void createSwapChain();
   void createImageViews();
   void createDepthResources();
@@ -67,6 +73,7 @@ class anvSwapChain {
   VkExtent2D windowExtent;
 
   VkSwapchainKHR swapChain;
+  std::shared_ptr<anvSwapChain> oldSwapChain;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;
