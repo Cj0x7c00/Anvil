@@ -5,7 +5,7 @@ namespace AnvilEngine{
 
     void AnvDevice::CreateInstance(){
         if (enableValidationLayers && !checkValidationLayerSupport()) {
-            ENGINE_ERROR("Failed to enable validation layers");
+            ENGINE_ERROR("Failed to enable validation layers", "");
         }
 
         VkApplicationInfo appInfo{};
@@ -39,9 +39,9 @@ namespace AnvilEngine{
         }
 
         if (vkCreateInstance(&instCreateInfo, nullptr, &m_instance) != VK_SUCCESS) {
-            ENGINE_ERROR("Failed to create a vulkan instance");
+            ENGINE_ERROR("Failed to create a vulkan instance", "");
         }
-        ENGINE_INFO("Created Vulkan Instance");
+        ENGINE_INFO("Created Vulkan Instance", "");
     }
 
 
@@ -109,8 +109,8 @@ namespace AnvilEngine{
 
         if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
             // Message is important enough to show
-            ENGINE_WARN("== VALIDATION LAYER ==");
-            ENGINE_ERROR(pCallbackData->pMessage);
+            ENGINE_WARN("== VALIDATION LAYER ==", "");
+            ENGINE_ERROR(pCallbackData->pMessage, "");
         }
 
         return VK_FALSE;
@@ -133,19 +133,19 @@ namespace AnvilEngine{
         populateDebugMessengerCreateInfo(debCreateInfo);
 
         if (CreateDebugUtilsMessengerEXT(m_instance, &debCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-            ENGINE_ERROR("failed to set up debug messenger!");
+            ENGINE_ERROR("failed to set up debug messenger!", "");
         }
     }
     
 
     void AnvDevice::PickPhysicalDevice(){
-        ENGINE_INFO("Picking physical device");
+        ENGINE_INFO("Picking physical device", "");
 
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
         if (deviceCount == 0) {
-            ENGINE_ERROR("failed to find a suitable GPU!");
+            ENGINE_ERROR("failed to find a suitable GPU!", "");
         }
 
         std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -159,7 +159,7 @@ namespace AnvilEngine{
         }
 
         if (m_physicalDevice == VK_NULL_HANDLE) {
-            ENGINE_ERROR("failed to find a suitable GPU!");
+            ENGINE_ERROR("failed to find a suitable GPU!", "");
         } 
 
     }
@@ -220,7 +220,7 @@ namespace AnvilEngine{
 
         float queuePriority = 1.0f;
         for (uint32_t queueFamily : uniqueQueueFamilies) {
-            ENGINE_DEBUG("Queue Family: " + std::to_string(queueFamily));
+            ENGINE_DEBUG("Queue Family: " + std::to_string(queueFamily), "");
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
             queueCreateInfo.queueFamilyIndex = queueFamily;
@@ -257,7 +257,7 @@ namespace AnvilEngine{
 
         vkGetDeviceQueue(m_device, indices.graphicsFamily, 0, &m_graphicsQueue);
         vkGetDeviceQueue(m_device, indices.presentFamily, 0, &m_presentQueue);
-        ENGINE_INFO("Created logical device");
+        ENGINE_INFO("Created logical device", "");
     }
 
 
@@ -266,9 +266,9 @@ namespace AnvilEngine{
     {
             // FUCK THIS STUPID FUNCTION KEEPT GIVING ME A EXC_BAD_ACCESS MAN FUCK //
             if (glfwCreateWindowSurface(m_instance, window, NULL, &m_surface) != VK_SUCCESS){
-                ENGINE_ERROR("Failed to create a vulkan suface");
+                ENGINE_ERROR("Failed to create a vulkan suface", "");
             }
-            ENGINE_INFO("Created Window Surface");
+            ENGINE_INFO("Created Window Surface", "");
     }
 
 
@@ -312,10 +312,10 @@ namespace AnvilEngine{
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
         poolInfo.flags =
             VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        ENGINE_DEBUG("Graphics Family: " + std::to_string(queueFamilyIndices.graphicsFamily));
+        ENGINE_DEBUG("Graphics Family: " + std::to_string(queueFamilyIndices.graphicsFamily), "");
 
         if (vkCreateCommandPool(m_device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-            ENGINE_ERROR("failed to create command pool!");
+            ENGINE_ERROR("failed to create command pool!", "");
         }
     }
 
@@ -332,7 +332,7 @@ namespace AnvilEngine{
                 return format;
             }
         }
-            ENGINE_ERROR("failed to find supported format!");
+            ENGINE_ERROR("failed to find supported format!", "");
     }
 
     uint32_t AnvDevice::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
@@ -345,7 +345,7 @@ namespace AnvilEngine{
         }
     }
 
-        ENGINE_ERROR("failed to find suitable memory type!");
+        ENGINE_ERROR("failed to find suitable memory type!", "");
     }
 
 
@@ -394,8 +394,12 @@ VkCommandBuffer AnvDevice::BeginSingleTimeCommands() {
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
   beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-  vkBeginCommandBuffer(commandBuffer, &beginInfo);
-  return commandBuffer;
+  if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
+  {
+    ENGINE_ERROR("Could not begin recording command buffer", "`BeginSingleTimeCommands()`");
+  } else {
+    return commandBuffer;
+  }
 }
 
 void AnvDevice::EndSingleTimeCommands(VkCommandBuffer commandBuffer) {
@@ -501,7 +505,7 @@ void AnvDevice::CreateImageWithInfo(
             createInfo.subresourceRange.layerCount = 1;
 
             if (vkCreateImageView(m_device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
-                ENGINE_ERROR("failed to create image views");
+                ENGINE_ERROR("failed to create image views", "");
             }
         }
     }
@@ -511,7 +515,7 @@ void AnvDevice::CreateImageWithInfo(
 
 
     void AnvDevice::InitVulkan(GLFWwindow* window){
-        ENGINE_INFO("Initializing Vulkan");
+        ENGINE_INFO("Initializing Vulkan", "");
         CreateInstance();
         SetupDebugMessenger();
         CreateSurface(window);
