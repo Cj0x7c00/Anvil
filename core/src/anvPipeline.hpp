@@ -25,7 +25,7 @@ namespace AnvilEngine
 
     public:
         anvPipeline(
-            AnvilEngine::AnvDevice& anv_device, 
+            AnvDevice& anv_device, 
             const std::string& vertFilepath, 
             const std::string& fragFilepath,
             const PipelineCfgInfo& cfginfo);
@@ -49,7 +49,7 @@ namespace AnvilEngine
         void CreateShaderModule(const std::vector<char> code, VkShaderModule* shader_mod);
 
     private:
-        AnvilEngine::AnvDevice& device;
+        AnvDevice& device;
         VkPipeline graphicsPipeline;
         VkShaderModule vert_mod;
         VkShaderModule frag_mod;
