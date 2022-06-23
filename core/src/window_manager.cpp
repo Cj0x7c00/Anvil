@@ -10,13 +10,13 @@ namespace AnvilEngine
 
         if (!Window){
             glfwTerminate();
-            ENGINE_ERROR("Failed to create window");
+            ENGINE_ERROR("Failed to create window", " ");
         }
     }
 
     void WindowManager::CreateVulkanWindow(){
 
-        ENGINE_INFO("Creating Vulkan Window");
+        ENGINE_INFO("Creating Vulkan Window", " ");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
@@ -46,8 +46,8 @@ namespace AnvilEngine
          *  very simple stuff. I used an app called "Image2Icon" to make the ICNS file.
          * 
         **/
-        ENGINE_INFO("Apple Platform Detected");
-        ENGINE_INFO("Using Apple application bundles");
+        ENGINE_INFO("Apple Platform Detected", " ");
+        ENGINE_INFO("Using Apple application bundles", " ");
 #endif
 
     }
@@ -57,18 +57,18 @@ namespace AnvilEngine
 
         // init glfw
         if(!glfwInit()){
-            ENGINE_ERROR("Failed to init glfw");
+            ENGINE_ERROR("Failed to init glfw", " ");
         }
 
         // Graphics API switch
         if ((glfwVulkanSupported() == GLFW_TRUE) || PLATFORM_APPLE){
             CreateVulkanWindow();
         } else{
-            ENGINE_INFO("Creating simple window");
-            ENGINE_WARN("OpenGL is depricated on Apple devices");
+            ENGINE_INFO("Creating simple window", " ");
+            ENGINE_WARN("OpenGL is depricated on Apple devices", " ");
 
             if (PLATFORM_APPLE){
-                ENGINE_ERROR("OpenGL is no longer supported on apple devices and Vulkan is not supported.");
+                ENGINE_ERROR("OpenGL is no longer supported on apple devices and Vulkan is not supported.", " ");
             } else{
                 CreateSimpleWindow();
             }
@@ -82,6 +82,7 @@ namespace AnvilEngine
         anvWindow->framebufferResized = true;
         anvWindow->width = width;
         anvWindow->height = height;
+        anvWindow->ResetWindowResizedFlag();
     }
 
 }

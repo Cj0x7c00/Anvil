@@ -38,10 +38,9 @@ namespace AnvilEngine
 
             static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);
 
-
             VkExtent2D GetExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
 
-
+         
 
             
     }; //class
