@@ -10,3 +10,4 @@
 - render multiple triangles
 - render each triangle vertex with its own color
 - resize window
+- phisics simulations (2d)
