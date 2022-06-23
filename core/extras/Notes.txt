@@ -29,9 +29,9 @@ then, in your cpp file, "fill in" the functions...
 
 /================CLASS.CPP================
 #include "CLASS.H"
-namespace np{
+namespace ns{
     int A::RETURN_SUM(){
-        return a+b
+        return a+b;
     }
 }
 ++++++++++++++++CLASS.CPP++++++++++++++++/
