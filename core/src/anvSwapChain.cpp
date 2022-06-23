@@ -35,6 +35,7 @@ void anvSwapChain::init()
 }
 
 anvSwapChain::~anvSwapChain() {
+  ENGINE_INFO("Destroying Swap Chain", "'~anvSwapChain()'");
   for (auto imageView : swapChainImageViews) {
     vkDestroyImageView(device.m_device, imageView, nullptr);
   }
@@ -63,6 +64,8 @@ anvSwapChain::~anvSwapChain() {
     vkDestroySemaphore(device.m_device, imageAvailableSemaphores[i], nullptr);
     vkDestroyFence(device.m_device, inFlightFences[i], nullptr);
   }
+
+
 }
 
 VkResult anvSwapChain::acquireNextImage(uint32_t *imageIndex) {
@@ -110,7 +113,7 @@ VkResult anvSwapChain::submitCommandBuffers(
   vkResetFences(device.m_device, 1, &inFlightFences[currentFrame]);
   if (vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
       VK_SUCCESS) {
-    ENGINE_ERROR("failed to submit draw command buffer!");
+    ENGINE_ERROR("failed to submit draw command buffer!", "'submitCommandBuffers()'");
   }
 
   VkPresentInfoKHR presentInfo = {};
@@ -128,7 +131,7 @@ VkResult anvSwapChain::submitCommandBuffers(
   auto result = vkQueuePresentKHR(device.m_presentQueue, &presentInfo);
 
   currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-
+  
   return result;
 }
 
@@ -180,7 +183,7 @@ void anvSwapChain::createSwapChain() {
   createInfo.oldSwapchain = oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
   if (vkCreateSwapchainKHR(device.m_device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
-    ENGINE_ERROR("failed to create swap chain!");
+    ENGINE_ERROR("failed to create swap chain!", " ");
   }
 
   // we only specified a minimum number of images in the swap chain, so the implementation is
@@ -211,7 +214,7 @@ void anvSwapChain::createImageViews() {
 
     if (vkCreateImageView(device.m_device, &viewInfo, nullptr, &swapChainImageViews[i]) !=
         VK_SUCCESS) {
-      ENGINE_ERROR("failed to create texture image view!");
+      ENGINE_ERROR("failed to create texture image view!", " ");
     }
   }
 }
@@ -273,7 +276,7 @@ void anvSwapChain::createRenderPass() {
   renderPassInfo.pDependencies = &dependency;
 
   if (vkCreateRenderPass(device.m_device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-    ENGINE_ERROR("failed to create render pass!");
+    ENGINE_ERROR("failed to create render pass!", " ");
   }
 }
 
@@ -297,13 +300,14 @@ void anvSwapChain::createFramebuffers() {
             &framebufferInfo,
             nullptr,
             &swapChainFramebuffers[i]) != VK_SUCCESS) {
-      ENGINE_ERROR("failed to create framebuffer!");
+      ENGINE_ERROR("failed to create framebuffer!", " ");
     }
   }
 }
 
 void anvSwapChain::createDepthResources() {
   VkFormat depthFormat = findDepthFormat();
+  swapChainDepthFormat = depthFormat;
   VkExtent2D swapChainExtent = getSwapChainExtent();
 
   depthImages.resize(imageCount());
@@ -345,7 +349,7 @@ void anvSwapChain::createDepthResources() {
     viewInfo.subresourceRange.layerCount = 1;
 
     if (vkCreateImageView(device.m_device, &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS) {
-      ENGINE_ERROR("failed to create texture image view!");
+      ENGINE_ERROR("failed to create texture image view!", " ");
     }
   }
 }
@@ -369,7 +373,7 @@ void anvSwapChain::createSyncObjects() {
         vkCreateSemaphore(device.m_device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
             VK_SUCCESS ||
         vkCreateFence(device.m_device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
-      ENGINE_ERROR("failed to create synchronization objects for a frame!");
+      ENGINE_ERROR("failed to create synchronization objects for a frame!", " ");
     }
   }
 }

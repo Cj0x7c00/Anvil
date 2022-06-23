@@ -33,6 +33,10 @@ class anvSwapChain {
   uint32_t width() { return swapChainExtent.width; }
   uint32_t height() { return swapChainExtent.height; }
 
+  bool CompareSwapFormats(const anvSwapChain &sc) const {
+    return sc.swapChainImageFormat == swapChainImageFormat && 
+    sc.swapChainDepthFormat == swapChainDepthFormat; }
+
   float extentAspectRatio() {
     return static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
   }
@@ -58,6 +62,7 @@ class anvSwapChain {
   VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
   VkFormat swapChainImageFormat;
+  VkFormat swapChainDepthFormat;
   VkExtent2D swapChainExtent;
 
   std::vector<VkFramebuffer> swapChainFramebuffers;
