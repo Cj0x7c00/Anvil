@@ -114,8 +114,18 @@ namespace AnvilEngine{
 
         AnvilEngineApplication::AnvilEngineApplication()
         {
+
+            BasicApp = new basic_anvApp();
+            PushLayer(BasicApp);
+
             LoadGameObjects();
             vkDeviceWaitIdle(anvDevice.m_device);
+        }
+
+        void AnvilEngineApplication::PushLayer(AnvilLayer* layer)
+        {
+            LayerStack.PushLayer(layer);
+            layer->Attach();
         }
 
         void AnvilEngineApplication::Run(){
@@ -168,6 +178,12 @@ namespace AnvilEngine{
 
             SimpleRenderSystem sRenderSystem{anvDevice, AnvRenderer.getSwapChainRenderPass()};
 
+            for (AnvilLayer* layer : LayerStack.Layers)
+            {
+                auto name = layer->GetName();
+                ENGINE_INFO("Loaded Layer: " + name, "`Run()`");
+            }
+
             while (!glfwWindowShouldClose(WindowManager.Window)){
 
                 glfwPollEvents();
@@ -175,6 +191,8 @@ namespace AnvilEngine{
                 if (auto commandBuffer = AnvRenderer.BeginFrame())
                 {
                     // update systems
+
+
                     gravitySystem.update(physicsObjects, 1.f / 60, 5);
                     vecFieldSystem.update(gravitySystem, physicsObjects, vectorField);
 
@@ -183,6 +201,11 @@ namespace AnvilEngine{
                     sRenderSystem.RenderGameObjects(commandBuffer, vectorField);
                     AnvRenderer.EndSwapChainRenderPass(commandBuffer);
                     AnvRenderer.EndFrame();
+
+                    for (AnvilLayer* layer : LayerStack.Layers)
+                    {
+                        layer->Update();
+                    }
                 }
                 
             }

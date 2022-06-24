@@ -2,6 +2,8 @@
 #include "window_manager.hpp"
 #include "anvGameObject.hpp"
 #include "anvRenderer.hpp"
+#include "anvLayerStack.hpp"
+#include "basic_app.hpp"
 //#include "anvImLayer.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -17,12 +19,6 @@ namespace AnvilEngine{
 
 
 
-
-
-
-    
-
-
     class AnvilEngineApplication{
 
         public:
@@ -31,10 +27,13 @@ namespace AnvilEngine{
             AnvDevice anvDevice{WindowManager.Window};
             anvRenderer AnvRenderer{WindowManager, anvDevice};
             std::vector<anvGameObject> GameObjects;
+            AnvilLayerStack LayerStack;
+
+            basic_anvApp* BasicApp;
 
             AnvilEngineApplication();   
-
-
+            void PushLayer(AnvilLayer* layer);
+            void PopLayer(AnvilLayer* layer);
             void Run();
             void LoadGameObjects();
 
