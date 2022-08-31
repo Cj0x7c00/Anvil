@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace AnvilEngine {
+namespace Anvil {
 
 class anvSwapChain {
  public:

@@ -6,12 +6,12 @@
 #include <glm/gtc/constants.hpp>
 
 
-namespace AnvilEngine{
+
+namespace Anvil{
 
     struct PushConstantData
     {
-        glm::mat2 transform{1.f};
-        glm::vec2 offset;
+        glm::mat4 transform{1.f};
         alignas(16) glm::vec3 color;
     };
 
@@ -23,26 +23,17 @@ namespace AnvilEngine{
         vkDeviceWaitIdle(anvDevice.m_device);
     }
 
-    void SimpleRenderSystem::RenderGameObjects(VkCommandBuffer cmdbuffer, std::vector<anvGameObject> &GameObjects)
+    void SimpleRenderSystem::RenderGameObjects(VkCommandBuffer cmdbuffer, std::vector<anvGameObject> &GameObjects, Timestep ts)
     {
-
-        int i = 0;
-        for (auto& obj : GameObjects) {
-            i += 1;
-            obj.transform2d.rotation =
-                glm::mod<float>(obj.transform2d.rotation + 0.0001f * i, 2.f * glm::pi<float>());
-        }
-
-
         AnvilPipeline->Bind(cmdbuffer);
 
         for (auto& obj: GameObjects){
-            //obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.001f, glm::two_pi<float>()); // constant rotation
+            obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 1.0f * ts.GetSeconds(), glm::two_pi<float>()); // constant rotation
+            obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.5f * ts.GetSeconds(), glm::two_pi<float>()); // constant rotation
 
             PushConstantData push{};
-            push.offset = obj.transform2d.translation;
             push.color = obj.color;
-            push.transform = obj.transform2d.mat2();
+            push.transform = obj.transform.mat4();
 
             vkCmdPushConstants(
                 cmdbuffer, 

@@ -1,5 +1,5 @@
 #include "window_manager.hpp"
-namespace AnvilEngine
+namespace Anvil
 {
 
     void WindowManager::CreateSimpleWindow(){

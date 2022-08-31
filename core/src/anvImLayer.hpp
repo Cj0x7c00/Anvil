@@ -9,7 +9,7 @@
 #include "anvDevice.hpp"
 #include "anvSwapChain.hpp"
 
-namespace AnvilEngine{
+namespace Anvil{
 
     class anvImLayer
     {   

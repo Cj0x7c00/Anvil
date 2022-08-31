@@ -5,8 +5,9 @@
 
 #include <array>
 #include <memory>
+#include "anvTimeStep.hpp"
 
-namespace AnvilEngine{
+namespace Anvil{
 
 
 
@@ -30,7 +31,7 @@ namespace AnvilEngine{
 
             void CreatePipelineLayout();
             void CreatePipeline(VkRenderPass renderPass);
-            void RenderGameObjects(VkCommandBuffer cmdbuffer, std::vector<anvGameObject> &GameObjects);
+            void RenderGameObjects(VkCommandBuffer cmdbuffer, std::vector<anvGameObject> &GameObjects, Timestep ts);
     };
 
 }

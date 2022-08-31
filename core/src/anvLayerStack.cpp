@@ -1,6 +1,6 @@
 #include "anvLayerStack.hpp"
 
-namespace AnvilEngine
+namespace Anvil
 {
     AnvilLayerStack::~AnvilLayerStack()
     {

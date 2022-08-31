@@ -51,9 +51,11 @@ class logger{
 #define ENGINE_ASSERT(e) (__builtin_expect(!(e), 0) ? __assert_rtn(__func__, __FILE__, __LINE__, #e) : (void)0)
 
 
-//#elif defined(NDEBUG) // ill fix this later...
-//#define ENGINE_INFO(...)  0
-//#define ENGINE_DEBUG(...) 0
-//#define ENGINE_WARN(...)  0
+#elif defined(NDEBUG) // ill fix this later...
+#define ENGINE_INFO(...)  
+#define ENGINE_DEBUG(...) 
+#define ENGINE_WARN(...)  
+#define ENGINE_ERROR(...)
+#define ENGINE_ASSERT(e)
 
 #endif

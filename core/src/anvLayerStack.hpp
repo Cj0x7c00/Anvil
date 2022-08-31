@@ -2,7 +2,7 @@
 #include "anvLayer.hpp"
 #include <vector>
 
-namespace AnvilEngine
+namespace Anvil
 {
     class AnvilLayerStack
     {

@@ -6,7 +6,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
-namespace AnvilEngine
+namespace Anvil
 {
     class anvModel
     {
@@ -14,7 +14,7 @@ namespace AnvilEngine
 
             struct Vertex
             {
-                glm::vec2 position{1.f};
+                glm::vec3 position{1.f};
                 glm::vec3 color;
                 
                 static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();

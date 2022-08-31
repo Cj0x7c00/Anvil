@@ -1,12 +1,12 @@
 #include "anvRenderer.hpp"
 
-namespace AnvilEngine{
+namespace Anvil{
 
     anvRenderer::anvRenderer(WindowManager &Window, AnvDevice& device) : Window{Window}, anvDevice{device}
     {
+        ENGINE_INFO("Initializing Renderer", "`anvRenderer()`");
         RecreateSwapChain();
         CreateCommandBuffers();
-        ENGINE_INFO("Initializing Renderer", "`anvRenderer()`");
     }
 
 
@@ -45,8 +45,7 @@ namespace AnvilEngine{
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.
-        commandPool = anvDevice.commandPool;
+        allocInfo.commandPool = anvDevice.commandPool;
         allocInfo.commandBufferCount = static_cast<uint32_t>(CommandBuffers.size());
 
         if (vkAllocateCommandBuffers(anvDevice.m_device, &allocInfo, CommandBuffers.data()) != VK_SUCCESS)

@@ -9,7 +9,7 @@
 #include <set>
 #include <stdexcept>
 
-namespace AnvilEngine {
+namespace Anvil {
 
 anvSwapChain::anvSwapChain(AnvDevice &deviceRef, VkExtent2D extent)
     : device{deviceRef}, windowExtent{extent} {
@@ -440,4 +440,4 @@ VkFormat anvSwapChain::findDepthFormat() {
       VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 }
 
-}  // namespace AnvilEngine
+}  // namespace Anvil

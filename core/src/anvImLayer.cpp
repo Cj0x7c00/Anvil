@@ -2,7 +2,7 @@
 /*
 #include "anvImLayer.hpp"
 
-namespace AnvilEngine
+namespace Anvil
 {
     anvImLayer::anvImLayer(AnvDevice &m_device, GLFWwindow* m_window, anvSwapChain &sc) : device{m_device}, window{m_window}, swapChain{sc}
     {

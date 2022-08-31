@@ -3,7 +3,6 @@
 #include "anvGameObject.hpp"
 #include "anvRenderer.hpp"
 #include "anvLayerStack.hpp"
-#include "basic_app.hpp"
 //#include "anvImLayer.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -14,12 +13,11 @@
 #include <array>
 #include <GLFW/glfw3.h>
 #include <memory>
+#include "anvTimeStep.hpp"
 
-namespace AnvilEngine{
+namespace Anvil{
 
-
-
-    class AnvilEngineApplication{
+    class AnvilApplication{
 
         public:
             
@@ -28,15 +26,15 @@ namespace AnvilEngine{
             anvRenderer AnvRenderer{WindowManager, anvDevice};
             std::vector<anvGameObject> GameObjects;
             AnvilLayerStack LayerStack;
+            float LastFrame = 0.0f;
 
-            basic_anvApp* BasicApp;
-
-            AnvilEngineApplication();   
+            AnvilApplication();   
             void PushLayer(AnvilLayer* layer);
             void PopLayer(AnvilLayer* layer);
-            void Run();
+            virtual void Run();
             void LoadGameObjects();
 
     };
-
+    
+    AnvilApplication* CreateApplication();
 }

@@ -2,7 +2,7 @@
 #include "anvModel.hpp"
 #include <fstream>
 
-namespace AnvilEngine
+namespace Anvil
 {
 
     anvPipeline::anvPipeline(AnvDevice& anv_device, 
@@ -204,10 +204,10 @@ namespace AnvilEngine
 
         if (vkCreateGraphicsPipelines(device.m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
         {
-            ENGINE_ERROR("Failed to create graphics pipeline", " ");
+            ENGINE_ERROR("Failed to create graphics pipeline", "`CreateGraphicsPipeline()`");
         }
         // ENGINE_INFO("Created Graphics pipeline", " ");
         pipelineCeated = true;
     }
     
-} // namespace AnvilEngine
+} // namespace Anvil

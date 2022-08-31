@@ -8,7 +8,7 @@
 #include "anvDevice.hpp" // vulkan
 #include "include/stb/stb_image.h" // load image icon
 
-namespace AnvilEngine
+namespace Anvil
 {
 
     // Window Management class
@@ -46,5 +46,5 @@ namespace AnvilEngine
     }; //class
 
 
-} //AnvilEngine
+} //Anvil
 

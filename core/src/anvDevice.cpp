@@ -1,6 +1,6 @@
 #include "anvDevice.hpp"
 
-namespace AnvilEngine{
+namespace Anvil{
 
 
     void AnvDevice::CreateInstance(){

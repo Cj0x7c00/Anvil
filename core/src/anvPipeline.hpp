@@ -3,7 +3,7 @@
 #include "anvpch.hpp"
 #include "anvDevice.hpp"
 
-namespace AnvilEngine
+namespace Anvil
 {
     struct PipelineCfgInfo{
         VkPipelineViewportStateCreateInfo viewportInfo;
@@ -58,4 +58,4 @@ namespace AnvilEngine
 
     };
     
-} // namespace AnvilEngine
+} // namespace Anvil

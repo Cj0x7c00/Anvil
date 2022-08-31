@@ -12,7 +12,7 @@
 #include <memory>
 #include <cassert>
 
-namespace AnvilEngine{
+namespace Anvil{
 
 
     class anvRenderer{
