@@ -4,3 +4,7 @@
 [submodule "core/src/include/entt"]
 	path = core/src/include/entt
 	url = https://github.com/seawardspy1531/entt
+[submodule "core/src/include/imgui"]
+	path = core/src/include/imgui
+	url = https://github.com/seawardspy1531/imgui.git
+	branch = docking
