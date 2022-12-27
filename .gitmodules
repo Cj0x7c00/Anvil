@@ -8,3 +8,6 @@
 	path = core/src/include/imgui
 	url = https://github.com/seawardspy1531/imgui.git
 	branch = docking
+[submodule "core/src/include/stb"]
+	path = core/src/include/stb
+	url = https://github.com/seawardspy1531/stb
