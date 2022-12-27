@@ -11,3 +11,6 @@
 [submodule "core/src/include/stb"]
 	path = core/src/include/stb
 	url = https://github.com/seawardspy1531/stb
+[submodule "core/src/include/glfw"]
+	path = core/src/include/glfw
+	url = https://github.com/seawardspy1531/glfw
