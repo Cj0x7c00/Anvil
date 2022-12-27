@@ -1,3 +1,6 @@
 [submodule "core/src/include/--force"]
 	path = core/src/include/--force
 	url = https://github.com/seawardspy1531/entt
+[submodule "core/src/include/entt"]
+	path = core/src/include/entt
+	url = https://github.com/seawardspy1531/entt
