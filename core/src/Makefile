@@ -7,7 +7,7 @@ BUILD_PATH = ../AppleBundle/Anvil.app/Contents/MacOS/
 
 run: *.cpp *.hpp 											
 	$(info ========= Build Started =========)
-	clang++ $(CFLAGS) -o main *.cpp $(LDFLAGS) $(LIMGUI) $(LIMGUIBACKENDS) 
+	clang++ $(CFLAGS) -o main *.cpp $(LDFLAGS)  
 	make shaders 
 	make test 
 	make clean
