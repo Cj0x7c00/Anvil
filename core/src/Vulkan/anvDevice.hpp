@@ -1,7 +1,7 @@
 #pragma once
 //#include "settings.hpp"
-#include "anvLog.hpp"
-#include "anvpch.hpp"
+#include "../Util/anvLog.hpp"
+#include "../anvpch.hpp"
 
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN

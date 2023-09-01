@@ -1,12 +1,12 @@
 #pragma once
-#include "anvLog.hpp"
-#include "anvpch.hpp"
+#include "../Util/anvLog.hpp"
+#include "../anvpch.hpp"
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-#include "settings.hpp"
-#include "anvDevice.hpp" // vulkan
-#include "include/stb/stb_image.h" // load image icon
+#include "../settings.hpp"
+#include "../Vulkan/anvDevice.hpp" // vulkan
+#include "../include/stb/stb_image.h" // load image icon
 
 namespace Anvil
 {

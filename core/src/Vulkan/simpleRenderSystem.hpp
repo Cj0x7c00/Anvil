@@ -1,11 +1,11 @@
 #pragma once
 #include "anvPipeline.hpp"
-#include "anvGameObject.hpp"
+#include "../anvGameObject.hpp"
 #include "anvDevice.hpp"
 
 #include <array>
 #include <memory>
-#include "anvTimeStep.hpp"
+#include "../Util/Time/anvTimeStep.hpp"
 
 namespace Anvil{
 
