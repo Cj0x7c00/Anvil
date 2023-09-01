@@ -1,4 +1,4 @@
-![moving triangles](core/extras/imgs/4-moving-triangles.gif "4/17/2022")
+![rotating cube](core/extras/imgs/cube.gif "9/1/2023")
 
 ![gravity simulation 2d](core/extras/imgs/ezgif.com-gif-maker.gif "6/22/2022")
 
@@ -10,8 +10,8 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 ***Working On:***
  these changes will help with the porting process and compatibility with  Visual Studio
  - [x] properly added submodules
- - [ ] ~[current]~ refactoring 
+ - [ ] [current] refactoring/rewriting some files
  - [ ] updated include paths 
- - [ ] **migrate to CMake**
+ - [ ] port to windows
 
-***Next Plan: Port to Windows!***
+***Next Plan: Abstract into library***
