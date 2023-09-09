@@ -14,3 +14,6 @@
 [submodule "core/src/include/glfw"]
 	path = core/src/include/glfw
 	url = https://github.com/seawardspy1531/glfw
+[submodule "Anvil/core/src/include/glm"]
+	path = Anvil/core/src/include/glm
+	url = https://github.com/g-truc/glm.git
