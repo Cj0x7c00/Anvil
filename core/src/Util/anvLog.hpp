@@ -48,7 +48,17 @@ class logger{
 #define ENGINE_WARN(...)  logger::LOG(__VA_ARGS__, 2)
 #define ENGINE_ERROR(...) logger::LOG(__VA_ARGS__, 3)
 
-#define ENGINE_ASSERT(e) (__builtin_expect(!(e), 0) ? __assert_rtn(__func__, __FILE__, __LINE__, #e) : (void)0)
+#ifdef NDEBUG
+#define ENGINE_ASSERT(condition_and_message) ((void)0)
+#else
+#define ENGINE_ASSERT(condition_and_message) \
+    do { \
+        if (!(condition_and_message)) { \
+            std::cerr << "Assertion failed: " << #condition_and_message << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
+            std::abort(); \
+        } \
+    } while (false)
+#endif
 
 
 #elif defined(NDEBUG) // ill fix this later...

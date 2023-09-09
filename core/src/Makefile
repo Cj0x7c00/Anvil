@@ -1,5 +1,5 @@
 CFLAGS = -std=c++17 -w -O2  							  # compiler flags
-LDFLAGS = -lglfw -lvulkan                                 # libraries
+LDFLAGS = -lglfw -lvulkan                              # libraries
 
 SRC_FILES = \
 ./anvApplication.cpp \
