@@ -24,20 +24,7 @@ namespace Anvil
         glfwSetWindowUserPointer(Window, this);
         glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
 
-#ifdef _WIN32 // if on windows
 
-        // load image 
-        int width, height, channels;
-        unsigned char* pixles  = stbi_load("../extras/Icon3.png", &width, &height, &channels, 4);
-
-        // change icon
-        GLFWimage image[1];
-        image[0].width = width;
-        image[0].height = height;
-        image[0].pixels = pixles;
-
-        glfwSetWindowIcon(Window, 1, image);
-#endif
 #ifdef PLATFORM_APPLE
         /**
          * 

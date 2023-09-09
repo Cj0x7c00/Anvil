@@ -1,5 +1,4 @@
 #include "anvApplication.hpp"
-
 #include "./Vulkan/simpleRenderSystem.hpp"
 
 namespace Anvil{

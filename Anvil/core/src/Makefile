@@ -1,7 +1,7 @@
-CFLAGS = -std=c++17 -w -O2  							  # compiler flags
-LDFLAGS = -lglfw -lvulkan                              # libraries
+#CFLAGS = -std=c++17 -w -O2  							  # compiler flags
+#LDFLAGS = -lglfw -lvulkan                              # libraries
 
-SRC_FILES = \
+#SRC_FILES = \
 ./anvApplication.cpp \
 ./Layer/anvLayer.cpp \
 ./Layer/anvLayerStack.cpp \
@@ -17,28 +17,28 @@ SRC_FILES = \
 ./sandbox.cpp \
 ./sandboxApp.cpp \
 
-PATH_TO_SHADERS = shaders/
-BUILD_PATH = ../../AppleBundle/AnvilEngine.app/Contents/MacOS/
+#PATH_TO_SHADERS = shaders/
+#BUILD_PATH = ../../AppleBundle/AnvilEngine.app/Contents/MacOS/
 
-run: *.cpp *.hpp 											
-	$(info ========= Build Started =========)
-	clang++ $(CFLAGS) $(SRC_FILES) -o main.bin $(LDFLAGS) -O2
-	make shaders 
-	make test 
-	make clean
+#run: *.cpp *.hpp 											
+#$(info ========= Build Started =========)
+#clang++ $(CFLAGS) $(SRC_FILES) -o main.bin $(LDFLAGS) -O2
+#make shaders 
+#make test 
+#make clean
 
-.PHONY: test clean
+#.PHONY: test clean
 
-shaders: main.bin
-	$(info ======= Compiling shaders =======)
-	-$(PATH_TO_SHADERS)glslc $(PATH_TO_SHADERS)shader.frag -o $(PATH_TO_SHADERS)fshader.spv
-	-$(PATH_TO_SHADERS)glslc $(PATH_TO_SHADERS)shader.vert -o $(PATH_TO_SHADERS)vshader.spv
+#shaders: main.bin
+#$(info ======= Compiling shaders =======)
+#-$(PATH_TO_SHADERS)glslc $(PATH_TO_SHADERS)shader.frag -o $(PATH_TO_SHADERS)fshader.spv
+#-$(PATH_TO_SHADERS)glslc $(PATH_TO_SHADERS)shader.vert -o $(PATH_TO_SHADERS)vshader.spv
 	
-test: 
-	$(info =========    Running    =========)   
-	-./main.bin
+#test: 
+#$(info =========    Running    =========)   
+#-./main.bin
 
-clean: 
-	rm main.bin
-	rm shaders/*.spv
+#clean: 
+#rm main.bin
+#rm shaders/*.spv
 	
