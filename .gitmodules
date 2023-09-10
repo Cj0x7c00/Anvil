@@ -1,19 +1,19 @@
-[submodule "core/src/include/--force"]
-	path = core/src/include/--force
+[submodule "Anvil/core/include/--force"]
+	path = Anvil/core/include/--force
 	url = https://github.com/seawardspy1531/entt
-[submodule "core/src/include/entt"]
-	path = core/src/include/entt
+[submodule "Anvil/core/include/entt"]
+	path = Anvil/core/include/entt
 	url = https://github.com/seawardspy1531/entt
-[submodule "core/src/include/imgui"]
-	path = core/src/include/imgui
+[submodule "Anvil/core/include/imgui"]
+	path = Anvil/core/include/imgui
 	url = https://github.com/seawardspy1531/imgui.git
 	branch = docking
-[submodule "core/src/include/stb"]
-	path = core/src/include/stb
+[submodule "Anvil/core/include/stb"]
+	path = Anvil/core/include//stb
 	url = https://github.com/seawardspy1531/stb
-[submodule "core/src/include/glfw"]
-	path = core/src/include/glfw
+[submodule "Anvil/core/include/glfw"]
+	path = Anvil/core/include/glfw
 	url = https://github.com/seawardspy1531/glfw
-[submodule "Anvil/core/src/include/glm"]
-	path = Anvil/core/src/include/glm
+[submodule "Anvil/core/include/glm"]
+	path = Anvil/core/include/glm
 	url = https://github.com/g-truc/glm.git

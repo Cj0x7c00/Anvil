@@ -1,5 +1,4 @@
 #pragma once
-#include "../settings.hpp"
 #include <iostream>
 #include <string>
 
@@ -61,7 +60,7 @@ class logger{
 #endif
 
 
-#elif defined(NDEBUG) // ill fix this later...
+#elif defined(RELEASE) 
 #define ENGINE_INFO(...)  
 #define ENGINE_DEBUG(...) 
 #define ENGINE_WARN(...)  
