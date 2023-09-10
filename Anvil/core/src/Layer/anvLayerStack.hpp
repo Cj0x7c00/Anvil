@@ -10,6 +10,7 @@ namespace Anvil
          std::vector<AnvilLayer*> Layers;
          unsigned int insertIndex;
          
+         AnvilLayerStack(){};
          ~AnvilLayerStack();
          void PushLayer(AnvilLayer* layer);
          void PopLayer(AnvilLayer* layer);

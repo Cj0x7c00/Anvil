@@ -332,7 +332,9 @@ namespace Anvil{
                 return format;
             }
         }
+
         ENGINE_ERROR("failed to find supported format!", "");
+
     }
 
     uint32_t AnvDevice::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {

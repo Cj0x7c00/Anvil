@@ -8,11 +8,13 @@
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include "glm/glm.hpp"
 #include "glm/gtc/constants.hpp"
 
 #include <array>
 #include "GLFW/glfw3.h"
+
 #include <memory>
 
 namespace Anvil{
@@ -22,17 +24,24 @@ namespace Anvil{
         public:
             
             WindowManager WindowManager{800, 600, "Anvil Engine ver 0.0.0"};
-            AnvDevice anvDevice{WindowManager.Window};
+
+            AnvDevice anvDevice{WindowManager.windows[0]};
             anvRenderer AnvRenderer{WindowManager, anvDevice};
-            std::vector<anvGameObject> GameObjects;
+            static std::vector<anvGameObject> GameObjects;
+
             AnvilLayerStack LayerStack;
             float LastFrame = 0.0f;
 
             AnvilApplication();   
             void PushLayer(AnvilLayer* layer);
             void PopLayer(AnvilLayer* layer);
-            virtual void Run();
-            void LoadGameObjects();
+      
+            void Run();
+            void LoadGameObject(anvGameObject obj)
+            {
+                GameObjects.push_back(std::move(obj));
+            }
+
 
     };
     

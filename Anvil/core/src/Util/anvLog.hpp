@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <string>
 
@@ -47,6 +48,7 @@ class logger{
 #define ENGINE_WARN(...)  logger::LOG(__VA_ARGS__, 2)
 #define ENGINE_ERROR(...) logger::LOG(__VA_ARGS__, 3)
 
+
 #ifdef NDEBUG
 #define ENGINE_ASSERT(condition_and_message) ((void)0)
 #else
@@ -61,6 +63,7 @@ class logger{
 
 
 #elif defined(RELEASE) 
+
 #define ENGINE_INFO(...)  
 #define ENGINE_DEBUG(...) 
 #define ENGINE_WARN(...)  

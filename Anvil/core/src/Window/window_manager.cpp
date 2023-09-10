@@ -2,40 +2,17 @@
 namespace Anvil
 {
 
-    void WindowManager::CreateSimpleWindow(){
-       
-        Window = glfwCreateWindow(width, height, name, NULL, NULL);
-
-        glfwMakeContextCurrent(Window);
-
-        if (!Window){
-            glfwTerminate();
-            ENGINE_ERROR("Failed to create window", " ");
-        }
-    }
-
     void WindowManager::CreateVulkanWindow(){
 
         ENGINE_INFO("Creating Vulkan Window", " ");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        Window = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
-        glfwSetWindowUserPointer(Window, this);
-        glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
 
-
-#ifdef PLATFORM_APPLE
-        /**
-         * 
-         *  the `glfwSetWindowIcon()` function does nothing on apple devices. 
-         *  so we have to make an application bundle for our engine.
-         *  very simple stuff. I used an app called "Image2Icon" to make the ICNS file.
-         * 
-        **/
-        ENGINE_INFO("Apple Platform Detected", " ");
-        ENGINE_INFO("Using Apple application bundles", " ");
-#endif
+        GLFWwindow* nWin = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
+        windows.push_back(nWin);
+        glfwSetWindowUserPointer(nWin, this);
+        glfwSetFramebufferSizeCallback(nWin, FramebufferResizeCallback);
 
     }
 
@@ -47,19 +24,19 @@ namespace Anvil
             ENGINE_ERROR("Failed to init glfw", " ");
         }
 
-        // Graphics API switch
-        if ((glfwVulkanSupported() == GLFW_TRUE) || PLATFORM_APPLE){
+    }
+
+    void WindowManager::CreateWindow()
+    {
+        #ifdef PLATFORM_APPLE
+        if (glfwVulkanSupported() == GLFW_TRUE){
             CreateVulkanWindow();
         } else{
-            ENGINE_INFO("Creating simple window", " ");
-            ENGINE_WARN("OpenGL is depricated on Apple devices", " ");
-
-            if (PLATFORM_APPLE){
-                ENGINE_ERROR("OpenGL is no longer supported on apple devices and Vulkan is not supported.", " ");
-            } else{
-                CreateSimpleWindow();
-            }
+            ENGINE_ERROR("Vulkan is not supported on this device! make sure you have the SDK installed!", "CreateWindow()");
         }
+        #else
+        std::cerr << "Unknown Platform!\n";
+        #endif
 
     }
 
