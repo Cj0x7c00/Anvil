@@ -33,7 +33,7 @@ namespace Anvil
 
         if (!file.is_open())
         {
-            ENGINE_WARN(("Failed to open file: " + filepath), "`ReadFile()`");
+            ENGINE_WARN(("Failed to open file: " + filepath));
         }
 
         size_t fileSize = static_cast<size_t>(file.tellg());
@@ -57,7 +57,7 @@ namespace Anvil
 
         if (vkCreateShaderModule(device.m_device, &createInfo, nullptr, shader_mod) != VK_SUCCESS)
         {
-            ENGINE_ERROR("Failed to create shader module", " ");
+            ENGINE_ERROR("Failed to create shader module");
         }
     }
 
@@ -142,11 +142,11 @@ namespace Anvil
     {
         if (cfginfo.pipelineLayout == VK_NULL_HANDLE)
         {
-            ENGINE_ERROR("Failed to create graphics pipeline: No pipelineLayout provided in config info", "`CreateGraphicsPipeline()`");
+            ENGINE_ERROR("Failed to create graphics pipeline: No pipelineLayout provided in config info");
         }
         if (cfginfo.renderPass == VK_NULL_HANDLE)
         {
-            ENGINE_ERROR("Failed to create graphics pipeline: No renderPass provided in config info", "`CreateGraphicsPipeline()");
+            ENGINE_ERROR("Failed to create graphics pipeline: No renderPass provided in config info");
         }
 
         auto vertcode = ReadFile(vertFilepath);
@@ -204,9 +204,9 @@ namespace Anvil
 
         if (vkCreateGraphicsPipelines(device.m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
         {
-            ENGINE_ERROR("Failed to create graphics pipeline", "`CreateGraphicsPipeline()`");
+            ENGINE_ERROR("Failed to create graphics pipeline");
         }
-        // ENGINE_INFO("Created Graphics pipeline", " ");
+        ENGINE_INFO("Created Graphics pipeline");
         pipelineCeated = true;
     }
     

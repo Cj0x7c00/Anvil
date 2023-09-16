@@ -62,7 +62,7 @@ namespace Anvil{
         pipelineLayoutInfo.pushConstantRangeCount = 1;
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
         if (vkCreatePipelineLayout(anvDevice.m_device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS){
-            ENGINE_ERROR("Failed to create pipeline layout", "");
+            ENGINE_ERROR("Failed to create pipeline layout");
         }
     }
 

@@ -4,7 +4,7 @@ namespace Anvil{
 
     anvRenderer::anvRenderer(WindowManager &Window, AnvDevice& device) : Window{Window}, anvDevice{device}
     {
-        ENGINE_INFO("Initializing Renderer", "`anvRenderer()`");
+        ENGINE_INFO("Initializing Renderer");
         RecreateSwapChain();
         CreateCommandBuffers();
     }
@@ -32,7 +32,7 @@ namespace Anvil{
 
             if (!oldSwpChn->CompareSwapFormats(*AnvilSwapChain.get()))
             {
-              ENGINE_WARN("Swapchain image(or depth formats) have changed", "`RecreateSwapChain()`");
+              ENGINE_WARN("Swapchain image(or depth formats) have changed");
             }
 
         }
@@ -50,7 +50,7 @@ namespace Anvil{
 
         if (vkAllocateCommandBuffers(anvDevice.m_device, &allocInfo, CommandBuffers.data()) != VK_SUCCESS)
         {
-            ENGINE_ERROR("Failed to allocate command buffers", "`CreateCommandBuffers()`");
+            ENGINE_ERROR("Failed to allocate command buffers");
         }
     }
 
@@ -84,7 +84,7 @@ VkCommandBuffer anvRenderer::BeginFrame() {
   vkDeviceWaitIdle(anvDevice.m_device);
 
   if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-    ENGINE_ERROR("failed to begin recording command buffer!", "`BeginFrame()`");
+    ENGINE_ERROR("failed to begin recording command buffer!");
   }
   return commandBuffer;
 }

@@ -1,15 +1,9 @@
-/**
- * 
- * This file will be used later on...
- * 
- */
-
 
 #pragma once
 
 #define VERSION 0
 #define ENGINE_NAME "Anvil Engine ver. 0.0.0"
-#define DEBUG      // Mode ~NDEBUG
+//#define DEBUG      // Mode ~NDEBUG
 
 #ifdef __APPLE__
  #define PLATFORM_APPLE 1

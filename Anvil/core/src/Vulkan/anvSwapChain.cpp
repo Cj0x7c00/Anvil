@@ -35,7 +35,7 @@ void anvSwapChain::init()
 }
 
 anvSwapChain::~anvSwapChain() {
-  ENGINE_INFO("Destroying Swap Chain", "'~anvSwapChain()'");
+  ENGINE_INFO("Destroying Swap Chain");
   for (auto imageView : swapChainImageViews) {
     vkDestroyImageView(device.m_device, imageView, nullptr);
   }
@@ -113,7 +113,7 @@ VkResult anvSwapChain::submitCommandBuffers(
   vkResetFences(device.m_device, 1, &inFlightFences[currentFrame]);
   if (vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) !=
       VK_SUCCESS) {
-    ENGINE_ERROR("failed to submit draw command buffer!", "'submitCommandBuffers()'");
+    ENGINE_ERROR("failed to submit draw command buffer!");
   }
 
   VkPresentInfoKHR presentInfo = {};
@@ -166,12 +166,12 @@ void anvSwapChain::createSwapChain() {
     createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
     createInfo.queueFamilyIndexCount = 2;
     createInfo.pQueueFamilyIndices = queueFamilyIndices;
-    // ENGINE_INFO("Vk Sharing mode concurrent");
+    ENGINE_INFO("Vk Sharing mode concurrent");
   } else {
     createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
     createInfo.queueFamilyIndexCount = 0;      // Optional
     createInfo.pQueueFamilyIndices = nullptr;  // Optional
-    // ENGINE_INFO("Vk Sharing mode exclusive");
+    ENGINE_INFO("Vk Sharing mode exclusive");
   }
 
   createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
@@ -183,7 +183,7 @@ void anvSwapChain::createSwapChain() {
   createInfo.oldSwapchain = oldSwapChain == nullptr ? VK_NULL_HANDLE : oldSwapChain->swapChain;
 
   if (vkCreateSwapchainKHR(device.m_device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
-    ENGINE_ERROR("failed to create swap chain!", " ");
+    ENGINE_ERROR("failed to create swap chain!");
   }
 
   // we only specified a minimum number of images in the swap chain, so the implementation is
@@ -214,7 +214,7 @@ void anvSwapChain::createImageViews() {
 
     if (vkCreateImageView(device.m_device, &viewInfo, nullptr, &swapChainImageViews[i]) !=
         VK_SUCCESS) {
-      ENGINE_ERROR("failed to create texture image view!", " ");
+      ENGINE_ERROR("failed to create texture image view!");
     }
   }
 }
@@ -276,7 +276,7 @@ void anvSwapChain::createRenderPass() {
   renderPassInfo.pDependencies = &dependency;
 
   if (vkCreateRenderPass(device.m_device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
-    ENGINE_ERROR("failed to create render pass!", " ");
+    ENGINE_ERROR("failed to create render pass!");
   }
 }
 
@@ -300,7 +300,7 @@ void anvSwapChain::createFramebuffers() {
             &framebufferInfo,
             nullptr,
             &swapChainFramebuffers[i]) != VK_SUCCESS) {
-      ENGINE_ERROR("failed to create framebuffer!", " ");
+      ENGINE_ERROR("failed to create framebuffer!");
     }
   }
 }
@@ -349,7 +349,7 @@ void anvSwapChain::createDepthResources() {
     viewInfo.subresourceRange.layerCount = 1;
 
     if (vkCreateImageView(device.m_device, &viewInfo, nullptr, &depthImageViews[i]) != VK_SUCCESS) {
-      ENGINE_ERROR("failed to create texture image view!", " ");
+      ENGINE_ERROR("failed to create texture image view!");
     }
   }
 }
@@ -373,7 +373,7 @@ void anvSwapChain::createSyncObjects() {
         vkCreateSemaphore(device.m_device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
             VK_SUCCESS ||
         vkCreateFence(device.m_device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
-      ENGINE_ERROR("failed to create synchronization objects for a frame!", " ");
+      ENGINE_ERROR("failed to create synchronization objects for a frame!");
     }
   }
 }
@@ -407,12 +407,12 @@ VkPresentModeKHR anvSwapChain::chooseSwapPresentMode(
 
         for (const auto &availablePresentMode : availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
-                //ENGINE_INFO("Present mode: Immediate");
+                ENGINE_INFO("Present mode: Immediate");
                 return availablePresentMode;
             }
         }
 
-        //ENGINE_INFO("Present mode: V-Sync");
+        ENGINE_INFO("Present mode: V-Sync");
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 }

@@ -15,7 +15,7 @@ namespace Anvil{
         void AnvilApplication::PushLayer(AnvilLayer* layer)
         {
             ENGINE_ASSERT((layer != nullptr) && "No Layer to push onto layer stack");
-            ENGINE_DEBUG("Pushing Layer: " + layer->GetName(), "`PushLayer()`");
+            ENGINE_DEBUG("Pushing Layer: " + layer->GetName());
             LayerStack.PushLayer(layer);
             layer->Attach();
         }
@@ -27,7 +27,7 @@ namespace Anvil{
             for (AnvilLayer* layer : LayerStack.Layers)
             {
                 auto name = layer->GetName();
-                ENGINE_INFO("Loaded Layer: " + name, "`Run()`");
+                ENGINE_INFO("Loaded Layer: " + name);
             }
 
             while (!glfwWindowShouldClose(WindowManager.Window)){

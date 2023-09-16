@@ -47,7 +47,7 @@ namespace Anvil
 		template<typename T>
 		void RemoveComponent()
 		{
-			ENGINE_ASSERT(HasComponent<T>() && "Entity does not have component!");
+			ASSERT(HasComponent<T>() && "Entity does not have component!");
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 

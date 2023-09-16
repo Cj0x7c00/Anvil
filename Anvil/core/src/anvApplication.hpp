@@ -3,7 +3,6 @@
 #include "./Vulkan/anvRenderer.hpp"
 #include "./Layer/anvLayerStack.hpp"
 #include "./Util/Time/anvTimeStep.hpp"
-#include "./Util/anvLog.hpp"
 #include "anvGameObject.hpp"
 
 #define GLM_FORCE_RADIANS

@@ -12,7 +12,7 @@
 
 namespace Anvil
 {
-    	struct IDComponent
+    struct IDComponent
 	{
 		AlphaNum ID;
 

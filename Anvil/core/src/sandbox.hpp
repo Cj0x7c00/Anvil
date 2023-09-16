@@ -1,3 +1,4 @@
+#pragma once
 #include "Anvil.hpp"
 
 namespace Anvil{

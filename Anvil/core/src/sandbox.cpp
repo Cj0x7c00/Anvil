@@ -4,17 +4,20 @@ SandboxAppLayer::SandboxAppLayer() : AnvilLayer("Sandbox App") {};
 
 void SandboxAppLayer::Attach() 
 {
-    ENGINE_INFO("Sandbox Layer: ", "Attach");
+    UUID uuid; // test UUID
+
+    ENGINE_INFO("Sandbox Layer: " + uuid.GetUUID());
+
 }
 void SandboxAppLayer::Update(Timestep ts) 
 {
     counter++;
-    if (counter % 500 == 0){
-        ENGINE_INFO("Time: " + std::to_string(ts.GetMilliseconds()) + "ms", "Update");
+    if (counter % 1000 == 0){
+        ENGINE_INFO("Time: " + std::to_string(ts.GetMilliseconds()) + "ms");
     }
 }
 void SandboxAppLayer::Detach() 
 {
-    ENGINE_INFO("Sandbox Layer: ", "Detach");
+    ENGINE_INFO("Sandbox Layer: ");
 }
 }
