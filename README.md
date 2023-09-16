@@ -12,7 +12,7 @@ Anvil Engine is my life long software project that i use to **study and learn** 
  - [x] properly added submodules
  - [x] added premake5 (dev branch)
  - [ ] [current] refactoring/rewriting some files
+ - [ ] abstract into library 
  - [ ] updated include paths 
  - [ ] port to windows
 
-***Next Plan: Abstract into library***
