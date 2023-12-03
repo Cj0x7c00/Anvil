@@ -10,9 +10,6 @@ namespace Anvil{
         public:
         AnvilLayer(const std::string name = "new layer");
 
-        ~AnvilLayer();
-
-
         virtual void Attach(); // Called when loaded
         virtual void Update(Timestep ts); // Called once per frame
         virtual void Detach(); // Called before destructor
