@@ -4,3 +4,9 @@
 /builds
 core/extras/Notes
 
+/build
+*.sln
+*.user
+*.filters
+*.vcxproj
+/.vs/Anvil-2D
