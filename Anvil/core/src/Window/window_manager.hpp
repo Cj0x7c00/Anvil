@@ -7,8 +7,6 @@
 #include "../settings.hpp"
 #include "../Vulkan/anvDevice.hpp" // vulkan
 
-#include "../include/stb/stb_image.h" // load image icon
-
 
 namespace Anvil
 {
@@ -18,9 +16,7 @@ namespace Anvil
 
         public:
 
-
-            std::vector<GLFWwindow*> windows;
-
+            GLFWwindow* Window;
 
             uint32_t width;
 	        uint32_t height;
@@ -29,9 +25,9 @@ namespace Anvil
             const char* name;
 
             WindowManager(int w, int h, const char* n);
-
-            void CreateWindow();
-
+            
+            //creates a basic GLFW window
+            void CreateSimpleWindow();
 
             // creates a vulkan window
             void CreateVulkanWindow();

@@ -2,17 +2,40 @@
 namespace Anvil
 {
 
+    void WindowManager::CreateSimpleWindow(){
+       
+        Window = glfwCreateWindow(width, height, name, NULL, NULL);
+
+        glfwMakeContextCurrent(Window);
+
+        if (!Window){
+            glfwTerminate();
+            ENGINE_ERROR("Failed to create window", " ");
+        }
+    }
+
     void WindowManager::CreateVulkanWindow(){
 
         ENGINE_INFO("Creating Vulkan Window", " ");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+        Window = glfwCreateWindow(width, height, "Anvil", NULL, NULL);
+        glfwSetWindowUserPointer(Window, this);
+        glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
 
-        GLFWwindow* nWin = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
-        windows.push_back(nWin);
-        glfwSetWindowUserPointer(nWin, this);
-        glfwSetFramebufferSizeCallback(nWin, FramebufferResizeCallback);
+
+#ifdef PLATFORM_APPLE
+        /**
+         * 
+         *  the `glfwSetWindowIcon()` function does nothing on apple devices. 
+         *  so we have to make an application bundle for our engine.
+         *  very simple stuff. I used an app called "Image2Icon" to make the ICNS file.
+         * 
+        **/
+        ENGINE_INFO("Apple Platform Detected", " ");
+        ENGINE_INFO("Using Apple application bundles", " ");
+#endif
 
     }
 
@@ -24,21 +47,19 @@ namespace Anvil
             ENGINE_ERROR("Failed to init glfw", " ");
         }
 
-    }
-
-    void WindowManager::CreateWindow()
-    {
-        #ifdef PLATFORM_APPLE
-        if (glfwVulkanSupported() == GLFW_TRUE){
+        // Graphics API switch
+        if ((glfwVulkanSupported() == GLFW_TRUE)){
             CreateVulkanWindow();
         } else{
-            ENGINE_ERROR("Vulkan is not supported on this device! make sure you have the SDK installed!", "CreateWindow()");
-        }
-        #else
-        std::cerr << "Unknown Platform!\n";
-        #endif
+            ENGINE_INFO("Creating simple window", " ");
 
+#ifdef PLATFORM_APPLE            
+                ENGINE_ERROR("OpenGL is no longer supported on apple devices and Vulkan is not supported.", " ");
+                CreateSimpleWindow();
+#endif
+            }
     }
+
 
     void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
     {

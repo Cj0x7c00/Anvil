@@ -1,22 +1,15 @@
-/**
- * 
- * This file will be used later on...
- * 
- */
-
-
 #pragma once
 
-#define VERSION 0
-#define ENGINE_NAME "Anvil Engine ver. 0.0.0"
-
-
+/* TODO: add support for shared lib exports/imports on mac */
 #ifdef __APPLE__
- #define PLATFORM_APPLE 1
-#endif
-#ifndef __APPLE__
- #error "UNKNOWN PLATFORM"
+# define PLATFORM_APPLE 
 #endif
 
-//#define PATH_TO_VULKAN "../include/Vulkan/vulkan.h"
-//#define PATH_TO_GLFW "../include/GLFW/glfw3.h"
+#ifdef _WIN32
+# define PLATFORM_WIN32
+# ifdef ANV_BUILD_SHARED
+#  define ANV_API _declspec(dllexport)
+# else
+#  define ANV_API _declspec(dllimport)
+# endif
+#endif

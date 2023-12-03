@@ -8,10 +8,7 @@ void SandboxAppLayer::Attach()
 }
 void SandboxAppLayer::Update(Timestep ts) 
 {
-    counter++;
-    if (counter % 500 == 0){
-        ENGINE_INFO("Time: " + std::to_string(ts.GetMilliseconds()) + "ms", "Update");
-    }
+
 }
 void SandboxAppLayer::Detach() 
 {

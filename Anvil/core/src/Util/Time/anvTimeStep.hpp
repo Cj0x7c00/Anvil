@@ -16,8 +16,6 @@ namespace Anvil
           float GetSeconds() {return mTime;}
           float GetMilliseconds() {return mTime * 1000.0;}
         private:
-
           float mTime;
-
     };
 }
