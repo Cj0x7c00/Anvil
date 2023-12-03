@@ -10,3 +10,4 @@ core/extras/Notes
 *.filters
 *.vcxproj
 /.vs/Anvil-2D
+/AppleBundle
