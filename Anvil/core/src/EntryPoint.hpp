@@ -9,6 +9,6 @@ int main(){
         app->Run();
     } 
     catch (std::exception &e){
-        ENGINE_ERROR(e.what());
+
     }
 }

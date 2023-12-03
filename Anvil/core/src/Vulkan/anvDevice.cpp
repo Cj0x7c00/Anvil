@@ -1,4 +1,5 @@
 #include "anvDevice.hpp"
+#include <map>
 
 namespace Anvil{
 
@@ -30,8 +31,8 @@ namespace Anvil{
             instCreateInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
             instCreateInfo.ppEnabledLayerNames = validationLayers.data();
 
-            populateDebugMessengerCreateInfo(debugCreateInfo);
-            instCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
+            //populateDebugMessengerCreateInfo(debugCreateInfo);
+            //instCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
         } else {
             instCreateInfo.enabledLayerCount = 0;
 
@@ -45,21 +46,21 @@ namespace Anvil{
     }
 
 
-    VkResult AnvDevice::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
-        auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-        if (func != nullptr) {
-            return func(m_instance, pCreateInfo, pAllocator, pDebugMessenger);
-        } else {
-            return VK_ERROR_EXTENSION_NOT_PRESENT;
-        }
-    }
+    //VkResult AnvDevice::CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+    //    auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    //    if (func != nullptr) {
+    //        return func(m_instance, pCreateInfo, pAllocator, pDebugMessenger);
+    //    } else {
+    //        return VK_ERROR_EXTENSION_NOT_PRESENT;
+    //    }
+    //}
 
-    void AnvDevice::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
-        auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-        if (func != nullptr) {
-            func(m_instance, debugMessenger, pAllocator);
-        }
-    }
+    //void AnvDevice::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+    //    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    //    if (func != nullptr) {
+    //        func(m_instance, debugMessenger, pAllocator);
+    //    }
+    //}
 
     bool AnvDevice::checkValidationLayerSupport() {
         uint32_t layerCount;
@@ -109,59 +110,87 @@ namespace Anvil{
 
         if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
             // Message is important enough to show
-            ENGINE_WARN("== VALIDATION LAYER ==");
-            ENGINE_ERROR(pCallbackData->pMessage);
+            ENGINE_WARN("== VALIDATION LAYER ==\n", pCallbackData->pMessage);
         }
 
         return VK_FALSE;
     }
 
-    void AnvDevice::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debCreateInfo) {
-        debCreateInfo = {};
-        debCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-        debCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-        debCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-        debCreateInfo.pfnUserCallback = debugCallback;
-    }
+    //void AnvDevice::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debCreateInfo) {
+    //    debCreateInfo = {};
+    //    debCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    //    debCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    //    debCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    //    debCreateInfo.pfnUserCallback = debugCallback;
+    //}
 
 
+    //
+    //void AnvDevice::SetupDebugMessenger(){
+    //    if (!enableValidationLayers) return;
+
+    //    VkDebugUtilsMessengerCreateInfoEXT debCreateInfo;
+    //    populateDebugMessengerCreateInfo(debCreateInfo);
+
+    //    if (CreateDebugUtilsMessengerEXT(m_instance, &debCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
+    //        ENGINE_ERROR("failed to set up debug messenger!", "");
+    //    }
+    //}
     
-    void AnvDevice::SetupDebugMessenger(){
-        if (!enableValidationLayers) return;
 
-        VkDebugUtilsMessengerCreateInfoEXT debCreateInfo;
-        populateDebugMessengerCreateInfo(debCreateInfo);
-
-        if (CreateDebugUtilsMessengerEXT(m_instance, &debCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-            ENGINE_ERROR("failed to set up debug messenger!");
-        }
-    }
-    
-
-    void AnvDevice::PickPhysicalDevice(){
-        ENGINE_INFO("Picking physical device");
-
+    void AnvDevice::PickPhysicalDevice() {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
-        if (deviceCount == 0) {
-            ENGINE_ERROR("failed to find a suitable GPU!");
-        }
+        ENGINE_ASSERT((deviceCount != 0) && "Failed to find a GPU!");
 
         std::vector<VkPhysicalDevice> devices(deviceCount);
         vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
 
-        for (const auto& device : devices) {
-            if (CheckDeviceExtentionSupport(device)) {
-                m_physicalDevice = device;
-                break;
+        // select a GPU. finds the best out of the options, defaults on an IGPU
+        {
+            for (const auto& device : devices) {
+                VkPhysicalDeviceProperties deviceProperties;
+                vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+                VkPhysicalDeviceFeatures deviceFeatures;
+                vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+                // Use an ordered map to automatically sort candidates by increasing score
+                std::multimap<int, VkPhysicalDevice> candidates;
+
+                for (const auto& device : devices) {
+                    int score = 0;
+                    if (!IsDeviceSuitable(device))
+                        continue;
+                    if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+                        score += 1000;
+                    }
+
+                    // Maximum possible size of textures affects graphics quality
+                    score += deviceProperties.limits.maxImageDimension2D;
+
+                    // Application can't function without geometry shaders
+                    if (!deviceFeatures.geometryShader) {
+                        continue;
+                    }
+                    candidates.insert(std::make_pair(score, device));
+                }
+
+                // Check if the best candidate is suitable at all
+                if (candidates.rbegin()->first > 0) {
+                    m_physicalDevice = candidates.rbegin()->second;
+                    if (!FindQueueFamilies(m_physicalDevice).isComplete())
+                    {
+                        ENGINE_ERROR("Failed to find a suitable GPU!");
+                    }
+                }
+                else {
+                    ENGINE_ERROR("failed to find a suitable GPU!");
+                }
             }
+
         }
-
-        if (m_physicalDevice == VK_NULL_HANDLE) {
-            ENGINE_ERROR("failed to find a suitable GPU!");
-        } 
-
     }
 
     bool AnvDevice::CheckDeviceExtentionSupport(VkPhysicalDevice device){
@@ -181,46 +210,14 @@ namespace Anvil{
     }
 
 
-    AnvDevice::QueueFamilyIndices AnvDevice::findQueueFamilies(VkPhysicalDevice device) {
-        AnvDevice::QueueFamilyIndices indices;
-
-        uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-        vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
-        int i = 0;
-        for (const auto &queueFamily : queueFamilies) {
-            if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-                indices.graphicsFamily = i;
-                indices.graphicsFamilyHasValue = true;
-            }
-            VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
-            if (queueFamily.queueCount > 0 && presentSupport) {
-                indices.presentFamily = i;
-                indices.presentFamilyHasValue = true;
-            }
-            if (indices.isComplete()) {
-                break;
-            }
-
-            i++;
-        }
-
-        return indices;
-    }
-
     void AnvDevice::CreateLogicalDevice() {
-        QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice);
+        QueueFamilyIndices indices = FindQueueFamilies(m_physicalDevice);
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-        std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily, indices.presentFamily};
+        std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily, indices.presentFamily};
 
         float queuePriority = 1.0f;
         for (uint32_t queueFamily : uniqueQueueFamilies) {
-            ENGINE_DEBUG("Queue Family: " + std::to_string(queueFamily));
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
             queueCreateInfo.queueFamilyIndex = queueFamily;
@@ -229,42 +226,49 @@ namespace Anvil{
             queueCreateInfos.push_back(queueCreateInfo);
         }
 
-        VkPhysicalDeviceFeatures deviceFeatures = {};
-        deviceFeatures.samplerAnisotropy = VK_TRUE;
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily;
+        queueCreateInfo.queueCount = 1;
 
-        VkDeviceCreateInfo createInfo = {};
+        //float queuePriority = 1.0f;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+
+        VkPhysicalDeviceFeatures deviceFeatures{};
+
+        VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
         createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
         createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
         createInfo.pEnabledFeatures = &deviceFeatures;
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+
+        createInfo.enabledExtensionCount = deviceExtensions.size();
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-        // might not really be necessary anymore because device specific validation layers
-        // have been deprecated
-        if (enableValidationLayers) {
+        if (true) {
             createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
             createInfo.ppEnabledLayerNames = validationLayers.data();
-        } else {
+        }
+        else {
             createInfo.enabledLayerCount = 0;
         }
 
         if (vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create logical device!");
+            ENGINE_ERROR("[VK INFO]: Failed to create logical device!", "");
+            return;
         }
+        ENGINE_INFO("[VK INFO]: Crated logical device", "");
 
         vkGetDeviceQueue(m_device, indices.graphicsFamily, 0, &m_graphicsQueue);
         vkGetDeviceQueue(m_device, indices.presentFamily, 0, &m_presentQueue);
-        ENGINE_INFO("Created logical device");
     }
 
 
     // create a vulkan rendering surface on the window
     void AnvDevice::CreateSurface(GLFWwindow* window)
     {
-            // FUCK THIS STUPID FUNCTION KEEPT GIVING ME A EXC_BAD_ACCESS MAN FUCK //
             if (glfwCreateWindowSurface(m_instance, window, NULL, &m_surface) != VK_SUCCESS){
                 ENGINE_ERROR("Failed to create a vulkan suface");
             }
@@ -272,7 +276,7 @@ namespace Anvil{
     }
 
 
-    AnvDevice::QueueFamilyIndices AnvDevice::FindQueueFamilies(VkPhysicalDevice device) {
+    AnvDevice::QueueFamilyIndices AnvDevice::FindQueueFamilies(VkPhysicalDevice& device) {
         QueueFamilyIndices indices;
 
         uint32_t queueFamilyCount = 0;
@@ -312,7 +316,7 @@ namespace Anvil{
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
         poolInfo.flags =
             VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        ENGINE_DEBUG("Graphics Family: " + std::to_string(queueFamilyIndices.graphicsFamily));
+        ENGINE_DEBUG("Graphics Family: ", queueFamilyIndices.graphicsFamily);
 
         if (vkCreateCommandPool(m_device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             ENGINE_ERROR("failed to create command pool!");
@@ -332,7 +336,7 @@ namespace Anvil{
                 return format;
             }
         }
-            ENGINE_ERROR("failed to find supported format!");
+        ENGINE_ERROR("failed to find supported format!");
     }
 
     uint32_t AnvDevice::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
@@ -517,7 +521,7 @@ void AnvDevice::CreateImageWithInfo(
     void AnvDevice::InitVulkan(GLFWwindow* window){
         ENGINE_INFO("Initializing Vulkan");
         CreateInstance();
-        SetupDebugMessenger();
+        //SetupDebugMessenger();
         CreateSurface(window);
         PickPhysicalDevice();
         CreateLogicalDevice();

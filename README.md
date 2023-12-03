@@ -7,12 +7,12 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 
 # Updates
 
+**Anvil now supports both Mac and Windows!**
+
 ***Working On:***
- these changes will help with the porting process and compatibility with  Visual Studio
  - [x] properly added submodules
- - [x] added premake5 (dev branch)
- - [ ] [current] refactoring/rewriting some files
- - [ ] abstract into library 
- - [ ] updated include paths 
- - [ ] port to windows
+ - [x] port to windows
+ - [x] updated include paths 
+ - [ ] [current] refactoring/rewriting renderer
+ - [ ] abstract into a DLL for a core/app architecture 
 

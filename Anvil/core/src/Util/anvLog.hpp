@@ -7,110 +7,90 @@
 #include <mutex>
 #include <filesystem> // Include the filesystem library for file operations
 
+namespace Anvil
+{
+
 // Define the RELEASE macro
 #define DEBUG
 
-class logger {
-public:
-    static void InitLogFile(const std::string& fileName) {
-        // Create the directory if it doesn't exist
-        //std::filesystem::create_directories(std::filesystem::path(fileName).parent_path());
-        static std::ofstream logFile;
-        logFile.open(fileName, std::ios::out | std::ios::app);
-    }
-
-    static void Cleanup() {
-        static std::ofstream logFile;
-        if (logFile.is_open()) {
-            logFile.close();
+    class Log {
+    public:
+        // Static log function to format and print log messages
+        template <typename... Args>
+        static void log(std::string func, const std::string& format, Args... args) {
+            std::string message = formatString(format, args...);
+            std::cout << "\033[1;30m[INFO : " << func << "()]: \033[0m" << message << std::endl;
         }
-    }
 
-    static void LOG(std::string log_msg, std::string log_location, int log_code) {
-        static std::ofstream logFile;
-        static std::mutex mtx; // Mutex for thread safety
+        template <typename... Args>
+        static void debug(std::string func, const std::string& format, Args... args) {
+            std::string message = formatString(format, args...);
+            std::cout << "\033[1;32m[DBUG : " << func << "()]: \033[0m" << message << std::endl;
+        }
 
-        if (log_code == 0) { // 0 is code for info
-            std::ostringstream oss;
-            oss << "[INFO] [" << "Location: " << log_location << "]: " << log_msg << '\n';
+        template <typename... Args>
+        static void warn(std::string func, const std::string& format, Args... args) {
+            std::string message = formatString(format, args...);
+            std::cout << "\033[1;33m[WARN : " << func << "()]: \033[0m" << message << std::endl;
+        }
 
-            std::string logString = oss.str();
+        template <typename... Args>
+        static void error(std::string func, const std::string& format, Args... args) {
+            std::string message = formatString(format, args...);
+            std::cout << "\033[1;31m[EROR : " << func << "()]: \033[0m" << message << std::endl;
+            std::abort();
+        }
 
-            // Use a mutex for thread safety
-            std::lock_guard<std::mutex> lock(mtx);
+    private:
+        // Helper function to format the message
+        template <typename... Args>
+        static std::string formatString(const std::string& format, Args... args) {
+            std::stringstream ss;
+            formatStringInternal(ss, format, args...);
+            return ss.str();
+        }
 
-            if (logFile.is_open()) {
-                logFile << logString;
-                logFile.flush(); // Ensure the log is written immediately
+        static std::string formatString(const std::string& format) {
+            return format;
+        }
+
+        template <typename T>
+        static void formatStringInternal(std::stringstream& ss, const std::string& format) {
+            ss << format;
+        }
+
+        // Helper function to recursively format the message
+        template <typename T>
+        static void formatStringInternal(std::stringstream& ss, const std::string& format, T value) {
+            size_t pos = format.find("{}");
+            if (pos != std::string::npos) {
+                ss << format.substr(0, pos) << value;
+                formatStringInternal(ss, format.substr(pos + 2), value);
             }
             else {
-                std::cout << "\033[1;30m[INFO] \033[0m" << "\033[1;30m[" << "Location: " << log_location << "]: \033[0m"<< log_msg << '\n'; // Print to console in debug mode
+                ss << format;
             }
         }
 
-        if (log_code == 1) { 
-            std::ostringstream oss;
-            oss << "[DBUG] [" << "Location: " << log_location << "]: " << log_msg << '\n';
 
-            std::string logString = oss.str();
-
-            // Use a mutex for thread safety
-            std::lock_guard<std::mutex> lock(mtx);
-
-            if (logFile.is_open()) {
-                logFile << logString;
-                logFile.flush(); // Ensure the log is written immediately
+        template <typename T, typename... Args>
+        static void formatStringInternal(std::stringstream& ss, const std::string& format, T value, Args... args) {
+            size_t pos = format.find("{}");
+            if (pos != std::string::npos) {
+                ss << format.substr(0, pos) << value;
+                formatStringInternal(ss, format.substr(pos + 2), args...);
             }
             else {
-                std::cout << "\033[1;32m[DBUG] \033[0m" << "\033[1;30m[" << "Location: " << log_location << "]: \033[0m" << log_msg << '\n'; // Print to console in debug mode
+                ss << format;
             }
         }
+    };
 
-        if (log_code == 2) { 
-            std::ostringstream oss;
-            oss << "[WARN] [" << "Location: " << log_location << "]: " << log_msg << '\n';
+#define ENGINE_INFO(...)  Log::log  ( __FUNCTION__, __VA_ARGS__ )
+#define ENGINE_DEBUG(...) Log::debug( __FUNCTION__, __VA_ARGS__ )
+#define ENGINE_WARN(...)  Log::warn ( __FUNCTION__, __VA_ARGS__ )  
+#define ENGINE_ERROR(...) Log::error( __FUNCTION__, __VA_ARGS__ )
 
-            std::string logString = oss.str();
-
-            // Use a mutex for thread safety
-            std::lock_guard<std::mutex> lock(mtx);
-
-            if (logFile.is_open()) {
-                logFile << logString;
-                logFile.flush(); // Ensure the log is written immediately
-            }
-            else {
-                std::cout << "\033[1;33m[WARNING] \033[0m" << "\033[1;30m[" << "Location: " << log_location << "]: \033[0m" << log_msg << '\n'; // Print to console in debug mode
-            }
-        }
-
-        if (log_code == 3) { 
-            std::ostringstream oss;
-            oss << "[ERROR] [" << "Location: " << log_location << "]: " << log_msg << '\n';
-
-            std::string logString = oss.str();
-
-            // Use a mutex for thread safety
-            std::lock_guard<std::mutex> lock(mtx);
-
-            if (logFile.is_open()) {
-                logFile << logString;
-                logFile.flush(); // Ensure the log is written immediately
-            }
-            std::cerr <<"\033[1;31m[ERROR] \033[0m" << "\033[1;30m[" << "Location: " << log_location << "]: \033[0m" << log_msg << "\n";
-
-        }
-
-        // Handle other log_code cases similarly
-    }
-};
-
-
-#if defined(DEBUG)
-#define ENGINE_INFO(message)  logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 0)
-#define ENGINE_DEBUG(message) logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 1)
-#define ENGINE_WARN(message)  logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 2)
-#define ENGINE_ERROR(message) logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 3)
 
 #define ENGINE_ASSERT(condition_and_message) \
     do { \
@@ -118,21 +98,8 @@ public:
             std::cerr << "Assertion failed: " << #condition_and_message << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
             std::abort(); \
         } \
-    } while (false)
+    } while (false);
 
-//#define ENGINE_INIT_LOG_FILE(fileName) (void(0))
-//#define ENGINE_CLEANUP_LOG() (void(0))
-// ...
+#define ENGINE_OUT(message) logger::LOG(message, " ", 4)
 
-#elif defined(RELEASE)
-// Initialize the log file in release mode
-#define ENGINE_INIT_LOG_FILE(fileName) logger::InitLogFile(fileName)
-#define ENGINE_INFO(message)  logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 0)
-#define ENGINE_DEBUG(message) logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 1)
-#define ENGINE_WARN(message)  logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 2)
-ENGINE_ASSERT(condition_and_message) (void(0))
-#define ENGINE_ERROR(message) logger::LOG(message, std::string(__FILE__) + " | func : " + std::string(__FUNCTION__) + "() | line : " + std::to_string(__LINE__), 3)
-#define ENGINE_CLEANUP_LOG() logger::Cleanup()
-// ...
-
-#endif
+}

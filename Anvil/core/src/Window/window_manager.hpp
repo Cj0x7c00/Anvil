@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 #include "../settings.hpp"
 #include "../Vulkan/anvDevice.hpp" // vulkan
-#include "../include/stb/stb_image.h" // load image icon
+
 
 namespace Anvil
 {

@@ -1,6 +1,7 @@
 #pragma once
 //#include "settings.hpp"
 #include "../Util/anvLog.hpp"
+#include "../settings.hpp"
 #include "../anvpch.hpp"
 
 #define GLFW_INCLUDE_NONE
@@ -37,8 +38,11 @@ namespace Anvil{
             VkCommandPool commandPool;
             
             const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
+#ifdef PLATFORM_APPLE
             const std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME, "VK_KHR_portability_subset"};
-
+#elif defined(PLATFORM_WIN32)
+            const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+#endif
             VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
             VkDebugUtilsMessengerCreateInfoEXT debCreateInfo{};
 
@@ -71,14 +75,14 @@ namespace Anvil{
 
             
 
-            VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, 
+            /*VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, 
                 const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
                 const VkAllocationCallbacks* pAllocator, 
-                VkDebugUtilsMessengerEXT* pDebugMessenger);
+                VkDebugUtilsMessengerEXT* pDebugMessenger);*/
 
-            void DestroyDebugUtilsMessengerEXT(VkInstance instance, 
-                VkDebugUtilsMessengerEXT debugMessenger, 
-                const VkAllocationCallbacks* pAllocator);
+            //void DestroyDebugUtilsMessengerEXT(VkInstance instance, 
+            //    VkDebugUtilsMessengerEXT debugMessenger, 
+            //    const VkAllocationCallbacks* pAllocator);
 
             bool checkValidationLayerSupport();
 
@@ -89,9 +93,9 @@ namespace Anvil{
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                 void* pUserData);
 
-            void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debCreateInfo);
+            //void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debCreateInfo);
 
-            void SetupDebugMessenger();
+            //void SetupDebugMessenger();
 
             void CreateInstance();
 
@@ -99,7 +103,7 @@ namespace Anvil{
 
             //bool isDeviceSuitable(VkPhysicalDevice device);
 
-            QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+            //QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
             bool CheckDeviceExtentionSupport(VkPhysicalDevice device);
 
@@ -112,7 +116,7 @@ namespace Anvil{
 
             void CreateSurface(GLFWwindow* window);
 
-            QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device);
+            QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice& device);
 
             void CreateCommandPool();
 
@@ -120,7 +124,7 @@ namespace Anvil{
 
             auto IsDeviceSuitable(VkPhysicalDevice device)
             {
-                QueueFamilyIndices indices = findQueueFamilies(device);
+                QueueFamilyIndices indices = FindQueueFamilies(device);
 
                 //bool extensionsSupported = AnvDevice.CheckDeviceExtentionSupport(device);
 

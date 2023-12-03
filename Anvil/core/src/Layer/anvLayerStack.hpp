@@ -8,7 +8,7 @@ namespace Anvil
     {
         public:
          std::vector<AnvilLayer*> Layers;
-         unsigned int insertIndex;
+         unsigned int insertIndex = 0;
          
          ~AnvilLayerStack();
          void PushLayer(AnvilLayer* layer);

@@ -20,24 +20,11 @@ namespace Anvil
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        Window = glfwCreateWindow(width, height, ENGINE_NAME, NULL, NULL);
+        Window = glfwCreateWindow(width, height, "Anvil", NULL, NULL);
         glfwSetWindowUserPointer(Window, this);
         glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
 
-#ifdef _WIN32 // if on windows
 
-        // load image 
-        int width, height, channels;
-        unsigned char* pixles  = stbi_load("../extras/Icon3.png", &width, &height, &channels, 4);
-
-        // change icon
-        GLFWimage image[1];
-        image[0].width = width;
-        image[0].height = height;
-        image[0].pixels = pixles;
-
-        glfwSetWindowIcon(Window, 1, image);
-#endif
 #ifdef PLATFORM_APPLE
         /**
          * 
@@ -60,20 +47,18 @@ namespace Anvil
         }
 
         // Graphics API switch
-        if ((glfwVulkanSupported() == GLFW_TRUE) || PLATFORM_APPLE){
+        if ((glfwVulkanSupported() == GLFW_TRUE)){
             CreateVulkanWindow();
         } else{
-            ENGINE_INFO("Creating simple window");
-            ENGINE_WARN("OpenGL is depricated on Apple devices");
+            ENGINE_INFO("Creating simple window", " ");
 
-            if (PLATFORM_APPLE){
-                ENGINE_ERROR("OpenGL is no longer supported on apple devices and Vulkan is not supported.");
-            } else{
+#ifdef PLATFORM_APPLE            
+                ENGINE_ERROR("OpenGL is no longer supported on apple devices and Vulkan is not supported.", " ");
                 CreateSimpleWindow();
+#endif
             }
-        }
-
     }
+
 
     void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
     {
