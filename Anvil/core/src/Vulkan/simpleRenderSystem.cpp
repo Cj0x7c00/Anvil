@@ -28,9 +28,8 @@ namespace Anvil{
         AnvilPipeline->Bind(cmdbuffer);
 
         for (auto& obj: GameObjects){
-            //obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 1.0f * ts.GetSeconds(), glm::two_pi<float>()); // constant rotation
-            //obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.5f * ts.GetSeconds(), glm::two_pi<float>()); // constant rotation
-
+            obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 1.0f * ts.GetSeconds(), glm::two_pi<float>()); // constant rotation
+            obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.5f * ts.GetSeconds(), glm::two_pi<float>()); // constant rotation
 
             PushConstantData push{};
             push.color = obj.color;
@@ -76,8 +75,8 @@ namespace Anvil{
         pipelineConfig.pipelineLayout = pipelineLayout;
         AnvilPipeline = std::make_unique<anvPipeline>(
             anvDevice, 
-            "shaders/vshader.spv", 
-            "shaders/fshader.spv", 
+            "C:/Dev/AnvEngine-org/Anvil-2D/Anvil/core/src/Vulkan/vert.glsl.spv",
+            "C:/Dev/AnvEngine-org/Anvil-2D/Anvil/core/src/Vulkan/frag.glsl.spv",
             pipelineConfig);
     }
 }

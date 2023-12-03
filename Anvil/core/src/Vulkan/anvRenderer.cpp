@@ -4,7 +4,7 @@ namespace Anvil{
 
     anvRenderer::anvRenderer(WindowManager &Window, AnvDevice& device) : Window{Window}, anvDevice{device}
     {
-        ENGINE_INFO("Initializing Renderer", "`anvRenderer()`");
+        ENGINE_INFO("Initializing Renderer");
         RecreateSwapChain();
         CreateCommandBuffers();
     }

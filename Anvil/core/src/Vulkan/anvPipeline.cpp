@@ -1,5 +1,6 @@
 #include "anvPipeline.hpp"
 #include "./Model/anvModel.hpp"
+#include "../Util/TaskRunner/TaskRunner.h"
 #include <fstream>
 
 namespace Anvil
@@ -33,7 +34,7 @@ namespace Anvil
 
         if (!file.is_open())
         {
-            ENGINE_WARN(("Failed to open file: " + filepath), "`ReadFile()`");
+            ENGINE_WARN("Failed to open file: {}", filepath);
         }
 
         size_t fileSize = static_cast<size_t>(file.tellg());
@@ -142,11 +143,11 @@ namespace Anvil
     {
         if (cfginfo.pipelineLayout == VK_NULL_HANDLE)
         {
-            ENGINE_ERROR("Failed to create graphics pipeline: No pipelineLayout provided in config info", "`CreateGraphicsPipeline()`");
+            ENGINE_ERROR("Failed to create graphics pipeline: No pipelineLayout provided in config info");
         }
         if (cfginfo.renderPass == VK_NULL_HANDLE)
         {
-            ENGINE_ERROR("Failed to create graphics pipeline: No renderPass provided in config info", "`CreateGraphicsPipeline()");
+            ENGINE_ERROR("Failed to create graphics pipeline: No renderPass provided in config info");
         }
 
         auto vertcode = ReadFile(vertFilepath);
