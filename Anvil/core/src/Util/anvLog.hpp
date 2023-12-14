@@ -10,9 +10,6 @@
 namespace Anvil
 {
 
-// Define the RELEASE macro
-#define DEBUG
-
     class Log {
     public:
         // Static log function to format and print log messages

@@ -75,8 +75,8 @@ namespace Anvil{
         pipelineConfig.pipelineLayout = pipelineLayout;
         AnvilPipeline = std::make_unique<anvPipeline>(
             anvDevice, 
-            "C:/Dev/AnvEngine-org/Anvil-2D/Anvil/core/src/Vulkan/vert.glsl.spv",
-            "C:/Dev/AnvEngine-org/Anvil-2D/Anvil/core/src/Vulkan/frag.glsl.spv",
+            "core\\src\\Vulkan\\vert.glsl.spv",
+            "core\\src\\Vulkan\\frag.glsl.spv",
             pipelineConfig);
     }
 }

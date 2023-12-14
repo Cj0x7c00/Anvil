@@ -1,7 +1,7 @@
 #include "anvPipeline.hpp"
 #include "./Model/anvModel.hpp"
 #include "../Util/TaskRunner/TaskRunner.h"
-#include <fstream>
+#include <filesystem>
 
 namespace Anvil
 {
@@ -44,6 +44,9 @@ namespace Anvil
         file.read(buffer.data(), fileSize);
 
         file.close();
+
+        ENGINE_INFO("{}", std::filesystem::current_path());
+
         return buffer;
 
     }

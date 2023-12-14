@@ -8,6 +8,9 @@ workspace "Anvil-2D"
     }
 
 outdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+VULKAN_SDK = os.getenv("VULKAN_SDK")
+
 project "Anvil"
     location "Anvil"
     kind "ConsoleApp"
@@ -27,14 +30,21 @@ project "Anvil"
 
     includedirs
     {
-        "./Anvil/core/include/",
-        "./Anvil/core/include/glfw/include"
+        "./Anvil/include",
+        "./Anvil/include/glm",
+        "./Anvil/include/glfw/include",
+        "%{VULKAN_SDK}/include"
+    }
+
+    libdirs 
+    {
+        "%{VULKAN_SDK}/Lib"
     }
 
     links
     {
-        "glfw",
-        "vulkan"
+        "glfw3",   -- just glfw for mac
+        "vulkan-1" -- just vulkan for mac
     }
 
 filter "configurations:Debug"
