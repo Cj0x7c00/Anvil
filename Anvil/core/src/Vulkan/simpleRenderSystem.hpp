@@ -14,16 +14,16 @@ namespace Anvil{
     class SimpleRenderSystem{
 
         public:
-            AnvDevice& anvDevice;
+            Ref<AnvDevice> anvDevice;
 
             VkPipelineLayout pipelineLayout;
             std::unique_ptr<anvPipeline> AnvilPipeline;
 
 
-            SimpleRenderSystem(AnvDevice& device, VkRenderPass renderPass);  
+            SimpleRenderSystem(Ref<AnvDevice> device, VkRenderPass renderPass);  
             ~SimpleRenderSystem(){ 
-                vkDeviceWaitIdle(anvDevice.m_device); //
-                vkDestroyPipelineLayout(anvDevice.m_device, pipelineLayout, nullptr); 
+                vkDeviceWaitIdle(anvDevice->m_device); //
+                vkDestroyPipelineLayout(anvDevice->m_device, pipelineLayout, nullptr); 
                 }
 
             SimpleRenderSystem(const SimpleRenderSystem &) = delete;

@@ -1,5 +1,5 @@
 #pragma once
-#include "../Window/window_manager.hpp"
+#include "../Window/Window.hpp"
 #include "anvSwapChain.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -19,11 +19,11 @@ namespace Anvil{
 
         public:
 
-            anvRenderer(WindowManager &Window, AnvDevice& device);
+            anvRenderer(Ref<Window> Window, Ref<AnvDevice> device);
             ~anvRenderer();
 
             anvRenderer(const anvRenderer &) = delete;
-            anvRenderer &operator=(const anvRenderer &) = delete; 
+            //anvRenderer &operator=(const anvRenderer &) = delete; 
 
             VkRenderPass getSwapChainRenderPass() const {return AnvilSwapChain->getRenderPass();}
             bool isFrameInProgress() const {return isFrameStarted;}
@@ -43,12 +43,12 @@ namespace Anvil{
 
             int getFrameIndex() const
             {
-                ENGINE_ASSERT(isFrameStarted && "Cannot get frame index when frame is in progress ");
+                ENGINE_ASSERT(isFrameStarted && "Cannot get frame index when frame is in progress");
                 return currentFrameIndex; 
             }
 
-            WindowManager& Window;
-            AnvDevice& anvDevice;
+            Ref<Window> m_Window;
+            Ref<AnvDevice> anvDevice;
             std::vector<VkCommandBuffer> CommandBuffers;
             std::unique_ptr<anvSwapChain> AnvilSwapChain;
 

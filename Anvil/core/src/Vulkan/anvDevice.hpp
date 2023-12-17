@@ -4,6 +4,8 @@
 #include "../settings.hpp"
 #include "../anvpch.hpp"
 
+#include "../Pointer.hpp"
+
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -24,18 +26,20 @@ namespace Anvil{
     {
 
         public:
-            VkInstance m_instance;
-            VkDevice m_device;
-            VkPhysicalDevice m_physicalDevice;
-            VkQueue m_graphicsQueue;
-            VkQueue m_presentQueue;
-            VkSurfaceKHR m_surface;
+            static Ref<AnvDevice> s_instance;
 
-            VkSwapchainKHR swapChain;
+            VkInstance       m_instance;
+            VkDevice         m_device;
+            VkPhysicalDevice m_physicalDevice;
+            VkQueue          m_graphicsQueue;
+            VkQueue          m_presentQueue;
+            VkSurfaceKHR     m_surface;
+
+            VkSwapchainKHR       swapChain;
             std::vector<VkImage> swapChainImages;
-            VkFormat swapChainImageFormat;
-            VkExtent2D swapChainExtent;
-            VkCommandPool commandPool;
+            VkFormat             swapChainImageFormat;
+            VkExtent2D           swapChainExtent;
+            VkCommandPool        commandPool;
             
             const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 #ifdef PLATFORM_APPLE
@@ -73,16 +77,6 @@ namespace Anvil{
             VkQueue graphicsQueue() { return m_graphicsQueue; }
             SwapChainSupportDetails GetSwapChainSupport() { return QuerySwapChainSupport(m_physicalDevice); }
 
-            
-
-            /*VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, 
-                const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, 
-                const VkAllocationCallbacks* pAllocator, 
-                VkDebugUtilsMessengerEXT* pDebugMessenger);*/
-
-            //void DestroyDebugUtilsMessengerEXT(VkInstance instance, 
-            //    VkDebugUtilsMessengerEXT debugMessenger, 
-            //    const VkAllocationCallbacks* pAllocator);
 
             bool checkValidationLayerSupport();
 
@@ -93,23 +87,30 @@ namespace Anvil{
                 const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
                 void* pUserData);
 
-            //void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& debCreateInfo);
+            static void DeviceInit(GLFWwindow* win)
+            {
+                s_instance = CreateRef<AnvDevice>(win);
+            }
 
-            //void SetupDebugMessenger();
+            static Ref<AnvDevice> GetInstance()
+            {
+                return s_instance;
+            }
 
             void CreateInstance();
 
             void PickPhysicalDevice();
 
-            //bool isDeviceSuitable(VkPhysicalDevice device);
-
-            //QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
             bool CheckDeviceExtentionSupport(VkPhysicalDevice device);
 
             void CreateLogicalDevice();
 
-            AnvDevice(GLFWwindow* window) { InitVulkan(window); };
+            AnvDevice(GLFWwindow* window) 
+            {
+                ENGINE_INFO("Init vulkan");
+                InitVulkan(window); 
+            }
             
 
             void InitVulkan(GLFWwindow* window);
@@ -125,8 +126,6 @@ namespace Anvil{
             auto IsDeviceSuitable(VkPhysicalDevice device)
             {
                 QueueFamilyIndices indices = FindQueueFamilies(device);
-
-                //bool extensionsSupported = AnvDevice.CheckDeviceExtentionSupport(device);
 
                 bool swapChainAdequate = false;
                 

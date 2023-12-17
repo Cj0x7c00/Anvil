@@ -4,14 +4,14 @@
 
 namespace Anvil
 {
-    anvModel::anvModel(AnvDevice &device, const std::vector<Vertex> &vertices) : anvDevice{device}{
+    anvModel::anvModel(Ref<AnvDevice> device, const std::vector<Vertex> &vertices) : anvDevice{device}{
         CreateVertexBuffer(vertices);
     }
 
     anvModel::~anvModel()
     {
-        vkDestroyBuffer(anvDevice.m_device, vertexBuffer, nullptr);
-        vkFreeMemory(anvDevice.m_device, vertexBufferMemory, nullptr);
+        vkDestroyBuffer(anvDevice->m_device, vertexBuffer, nullptr);
+        vkFreeMemory(anvDevice->m_device, vertexBufferMemory, nullptr);
     }
 
     void anvModel::CreateVertexBuffer(const std::vector<Vertex> &vertices)
@@ -20,7 +20,7 @@ namespace Anvil
         assert(vertCount >=3 && "Vertex count must be at least 3");
         VkDeviceSize bufferSize = sizeof(vertices[0]) * vertCount;
 
-        anvDevice.CreateBuffer(
+        anvDevice->CreateBuffer(
             bufferSize, 
             VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -28,9 +28,9 @@ namespace Anvil
             vertexBufferMemory);
 
         void *data;
-        vkMapMemory(anvDevice.m_device, vertexBufferMemory, 0, bufferSize, 0, &data);
+        vkMapMemory(anvDevice->m_device, vertexBufferMemory, 0, bufferSize, 0, &data);
         memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
-        vkUnmapMemory(anvDevice.m_device, vertexBufferMemory);
+        vkUnmapMemory(anvDevice->m_device, vertexBufferMemory);
     }
 
     void anvModel::Bind(VkCommandBuffer cmdBuffer)

@@ -14,9 +14,9 @@ class anvSwapChain {
  public:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-  anvSwapChain(AnvDevice &deviceRef, VkExtent2D windowExtent);
+  anvSwapChain(Ref<AnvDevice> deviceRef, VkExtent2D windowExtent);
   anvSwapChain(
-    AnvDevice &deviceRef, 
+    Ref<AnvDevice> deviceRef,
     VkExtent2D windowExtent, 
     std::shared_ptr<anvSwapChain> previous);
   ~anvSwapChain();
@@ -74,7 +74,7 @@ class anvSwapChain {
   std::vector<VkImage> swapChainImages;
   std::vector<VkImageView> swapChainImageViews;
 
-  AnvDevice &device;
+  Ref<AnvDevice> device;
   VkExtent2D windowExtent;
 
   VkSwapchainKHR swapChain;

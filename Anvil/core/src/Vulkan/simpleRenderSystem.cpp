@@ -15,12 +15,12 @@ namespace Anvil{
         alignas(16) glm::vec3 color;
     };
 
-    SimpleRenderSystem::SimpleRenderSystem(AnvDevice& device, VkRenderPass renderPass) : anvDevice{device}
+    SimpleRenderSystem::SimpleRenderSystem(Ref<AnvDevice> device, VkRenderPass renderPass) : anvDevice{device}
     {
         
         CreatePipelineLayout();
         CreatePipeline(renderPass);
-        vkDeviceWaitIdle(anvDevice.m_device);
+        vkDeviceWaitIdle(device->m_device);
     }
 
     void SimpleRenderSystem::RenderGameObjects(VkCommandBuffer cmdbuffer, std::vector<anvGameObject> &GameObjects, Timestep ts)
@@ -61,7 +61,7 @@ namespace Anvil{
         pipelineLayoutInfo.pSetLayouts = nullptr;
         pipelineLayoutInfo.pushConstantRangeCount = 1;
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
-        if (vkCreatePipelineLayout(anvDevice.m_device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS){
+        if (vkCreatePipelineLayout(anvDevice->m_device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS){
             ENGINE_ERROR("Failed to create pipeline layout");
         }
     }
@@ -75,8 +75,8 @@ namespace Anvil{
         pipelineConfig.pipelineLayout = pipelineLayout;
         AnvilPipeline = std::make_unique<anvPipeline>(
             anvDevice, 
-            "core\\src\\Vulkan\\vert.glsl.spv",
-            "core\\src\\Vulkan\\frag.glsl.spv",
+            "core\\src\\Vulkan\\vert.glsl",
+            "core\\src\\Vulkan\\frag.glsl",
             pipelineConfig);
     }
 }

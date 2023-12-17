@@ -2,7 +2,7 @@
 
 namespace Anvil{
 
-    anvRenderer::anvRenderer(WindowManager &Window, AnvDevice& device) : Window{Window}, anvDevice{device}
+    anvRenderer::anvRenderer(Ref<Window> Window, Ref<AnvDevice> device) : m_Window{ Window }, anvDevice{ device }
     {
         ENGINE_INFO("Initializing Renderer");
         RecreateSwapChain();
@@ -10,19 +10,19 @@ namespace Anvil{
     }
 
 
-    anvRenderer::~anvRenderer(){ FreeCommandBuffers(); vkDeviceWaitIdle(anvDevice.m_device); }
+    anvRenderer::~anvRenderer(){ FreeCommandBuffers(); vkDeviceWaitIdle(anvDevice->m_device); }
 
     void anvRenderer::RecreateSwapChain()
     {
-        auto Extent = Window.GetExtent();
+        auto Extent = m_Window->GetExtent();
 
         while (Extent.width == 0 || Extent.height == 0)
         {
-            Extent = Window.GetExtent();
+            Extent = m_Window->GetExtent();
             glfwWaitEvents();
         }
 
-        vkDeviceWaitIdle(anvDevice.m_device); //
+        //vkDeviceWaitIdle(anvDevice->GetInstance()->m_device);
 
         if (AnvilSwapChain == nullptr){
             AnvilSwapChain = std::make_unique<anvSwapChain>(anvDevice, Extent);
@@ -45,10 +45,10 @@ namespace Anvil{
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = anvDevice.commandPool;
+        allocInfo.commandPool = anvDevice->commandPool;
         allocInfo.commandBufferCount = static_cast<uint32_t>(CommandBuffers.size());
 
-        if (vkAllocateCommandBuffers(anvDevice.m_device, &allocInfo, CommandBuffers.data()) != VK_SUCCESS)
+        if (vkAllocateCommandBuffers(anvDevice->m_device, &allocInfo, CommandBuffers.data()) != VK_SUCCESS)
         {
             ENGINE_ERROR("Failed to allocate command buffers");
         }
@@ -58,7 +58,7 @@ namespace Anvil{
 
     void anvRenderer::FreeCommandBuffers()
     {
-        vkFreeCommandBuffers(anvDevice.m_device, anvDevice.commandPool, static_cast<float>(CommandBuffers.size()), CommandBuffers.data());
+        vkFreeCommandBuffers(anvDevice->m_device, anvDevice->commandPool, static_cast<float>(CommandBuffers.size()), CommandBuffers.data());
         CommandBuffers.clear();
     }
 
@@ -81,7 +81,7 @@ VkCommandBuffer anvRenderer::BeginFrame() {
   VkCommandBufferBeginInfo beginInfo{};
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-  vkDeviceWaitIdle(anvDevice.m_device);
+  vkDeviceWaitIdle(anvDevice->m_device);
 
   if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
     ENGINE_ERROR("failed to begin recording command buffer!");
@@ -98,8 +98,8 @@ void anvRenderer::EndFrame() {
 
   auto result = AnvilSwapChain->submitCommandBuffers(&commandBuffer, &currentImageIndex);
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||
-      Window.WasWindowResized()) {
-    Window.ResetWindowResizedFlag();
+      m_Window->WasWindowResized()) {
+    m_Window->ResetWindowResizedFlag();
     RecreateSwapChain();
   } else if (result != VK_SUCCESS) {
     throw std::runtime_error("failed to present swap chain image!");

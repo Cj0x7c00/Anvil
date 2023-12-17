@@ -3,6 +3,7 @@
 
 namespace Anvil{
 
+    Ref<AnvDevice> AnvDevice::s_instance = nullptr;
 
     void AnvDevice::CreateInstance(){
         if (enableValidationLayers && !checkValidationLayerSupport()) {

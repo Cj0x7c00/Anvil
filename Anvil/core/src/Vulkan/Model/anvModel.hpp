@@ -21,7 +21,7 @@ namespace Anvil
                 static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
             };
 
-            anvModel(AnvDevice &device, const std::vector<Vertex> &vertices);
+            anvModel(Ref<AnvDevice> device, const std::vector<Vertex> &vertices);
             ~anvModel();
 
             anvModel(const anvModel &) = delete;
@@ -33,7 +33,7 @@ namespace Anvil
             private:
                 void CreateVertexBuffer(const std::vector<Vertex> &vertices);
 
-                AnvDevice &anvDevice;
+                Ref<AnvDevice> anvDevice;
                 VkBuffer vertexBuffer;
                 VkDeviceMemory vertexBufferMemory;
                 uint32_t vertCount;
