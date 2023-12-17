@@ -7,50 +7,60 @@ workspace "Anvil-2D"
         "Release"
     }
 
-outdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+    outdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-VULKAN_SDK = os.getenv("VULKAN_SDK")
+    VULKAN_SDK = os.getenv("VULKAN_SDK")
 
-project "Anvil"
-    location "Anvil"
-    kind "ConsoleApp"
-    language "C++"
-    cppdialect "C++17"
+    project "Anvil"
+        location "Anvil"
+        kind "ConsoleApp"
+        language "C++"
+        cppdialect "C++17"
 
-    targetdir("build/bin/" .. outdir .. "/%{prj.name}")
-    objdir( "build/bin-int/" .. outdir .. "/%{prj.name}")
+        targetdir("build/bin/" .. outdir .. "/%{prj.name}")
+        objdir( "build/bin-int/" .. outdir .. "/%{prj.name}")
 
-    files
-    {
+        files
+        {
 
-        "./Anvil/core/src/**.hpp",
-        "./Anvil/core/src/**.cpp"
+            "Anvil/core/src/**.hpp",
+            "Anvil/core/src/**.cpp"
 
-    }
+        }
 
-    includedirs
-    {
-        "./Anvil/include",
-        "./Anvil/include/glm",
-        "./Anvil/include/glfw/include",
-        "%{VULKAN_SDK}/include"
-    }
+        includedirs
+        {
+            "Anvil/include",
+            "Anvil/include/glm",
+            "Anvil/include/glfw/include",
+            "%{VULKAN_SDK}/include"
+        }
 
-    libdirs 
-    {
-        "%{VULKAN_SDK}/Lib"
-    }
+        libdirs 
+        {
+            "%{VULKAN_SDK}/Lib"
+        }
 
-    links
-    {
-        "glfw3",   -- just glfw for mac
-        "vulkan-1" -- just vulkan for mac
-    }
+        if os.target() == "windows" then
+            links
+            {
+                "glfw3",   -- just glfw for mac
+                "vulkan-1" -- just vulkan for mac
+            }
+        end
+        
+        if os.target() == "macosx" then
+            links
+            {
+                "glfw",   -- just glfw for mac
+                "vulkan" -- just vulkan for mac
+            }
+        end
 
-filter "configurations:Debug"
-    defines "DEBUG"
-    optimize "on"
+    filter "configurations:Debug"
+        defines "DEBUG"
+        optimize "on"
 
-filter "configurations:Release"
-    defines "RELEASE"
-    optimize "on"
+    filter "configurations:Release"
+        defines "RELEASE"
+        optimize "on"
