@@ -1,28 +1,28 @@
-#include "window_manager.hpp"
+#include "Window.hpp"
 namespace Anvil
 {
 
-    void WindowManager::CreateSimpleWindow(){
+    void Window::CreateSimpleWindow(){
        
-        Window = glfwCreateWindow(width, height, name, NULL, NULL);
+        m_Props.Window = glfwCreateWindow(m_Props.width, m_Props.height, m_Props.name, NULL, NULL);
 
-        glfwMakeContextCurrent(Window);
+        glfwMakeContextCurrent(m_Props.Window);
 
-        if (!Window){
+        if (!m_Props.Window){
             glfwTerminate();
             ENGINE_ERROR("Failed to create window");
         }
     }
 
-    void WindowManager::CreateVulkanWindow(){
+    void Window::CreateVulkanWindow(){
 
         ENGINE_INFO("Creating Vulkan Window");
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        Window = glfwCreateWindow(width, height, "Anvil", NULL, NULL);
-        glfwSetWindowUserPointer(Window, this);
-        glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
+        m_Props.Window = glfwCreateWindow(m_Props.width, m_Props.height, "Anvil", NULL, NULL);
+        glfwSetWindowUserPointer(m_Props.Window, this);
+        glfwSetFramebufferSizeCallback(m_Props.Window, FramebufferResizeCallback);
 
 
 #ifdef PLATFORM_APPLE
@@ -38,7 +38,7 @@ namespace Anvil
 
     }
 
-    WindowManager::WindowManager(int w, int h, const char* n) : width{static_cast<uint32_t>(w)}, height{static_cast<uint32_t>(h)}, name{n}
+    Window::Window(WindowProps _p) : m_Props{_p}
     {
 
         // init glfw
@@ -60,12 +60,12 @@ namespace Anvil
     }
 
 
-    void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
+    void Window::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
     {
-        auto anvWindow = reinterpret_cast<WindowManager *>(glfwGetWindowUserPointer(window));
-        anvWindow->framebufferResized = true;
-        anvWindow->width = width;
-        anvWindow->height = height;
+        auto anvWindow = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
+        anvWindow->m_Props.framebufferResized = true;
+        anvWindow->m_Props.width = width;
+        anvWindow->m_Props.height = height;
         anvWindow->ResetWindowResizedFlag();
     }
 
