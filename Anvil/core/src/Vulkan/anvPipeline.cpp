@@ -1,12 +1,13 @@
 #include "anvPipeline.hpp"
 #include "./Model/anvModel.hpp"
-#include "../Util/TaskRunner/TaskRunner.h"
+//#include "../Util/TaskRunner/TaskRunner.h"
+#include "VkShader.h"
 #include <filesystem>
 
 namespace Anvil
 {
 
-    anvPipeline::anvPipeline(AnvDevice& anv_device, 
+    anvPipeline::anvPipeline(Ref<AnvDevice> anv_device,
             const std::string& vertFilepath, 
             const std::string& fragFilepath,
             const PipelineCfgInfo& cfginfo) : device{anv_device}{
@@ -16,9 +17,9 @@ namespace Anvil
 
     anvPipeline::~anvPipeline()
     {
-        vkDestroyShaderModule(device.m_device, vert_mod, nullptr);
-        vkDestroyShaderModule(device.m_device, frag_mod, nullptr);
-        vkDestroyPipeline(device.m_device, graphicsPipeline, nullptr);
+        vkDestroyShaderModule(device->m_device, vert_mod->GetModule(), nullptr);
+        vkDestroyShaderModule(device->m_device, frag_mod->GetModule(), nullptr);
+        vkDestroyPipeline(device->m_device, graphicsPipeline, nullptr);
     }
 
 
@@ -26,45 +27,6 @@ namespace Anvil
     {
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
     }
-
-
-    std::vector<char> anvPipeline::ReadFile(const std::string& filepath)
-    {
-        std::ifstream file(filepath, std::ios::ate | std::ios::binary);
-
-        if (!file.is_open())
-        {
-            ENGINE_WARN("Failed to open file: {}", filepath);
-        }
-
-        size_t fileSize = static_cast<size_t>(file.tellg());
-        std::vector<char> buffer(fileSize);
-
-        file.seekg(0);
-        file.read(buffer.data(), fileSize);
-
-        file.close();
-
-        ENGINE_INFO("{}", std::filesystem::current_path());
-
-        return buffer;
-
-    }
-
-
-    void anvPipeline::CreateShaderModule(const std::vector<char> code, VkShaderModule* shader_mod)
-    {
-        VkShaderModuleCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-        createInfo.codeSize = code.size();
-        createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-        if (vkCreateShaderModule(device.m_device, &createInfo, nullptr, shader_mod) != VK_SUCCESS)
-        {
-            ENGINE_ERROR("Failed to create shader module");
-        }
-    }
-
 
     PipelineCfgInfo anvPipeline::DefaultPipelinecfgInfo(PipelineCfgInfo& configInfo)
     {
@@ -153,17 +115,20 @@ namespace Anvil
             ENGINE_ERROR("Failed to create graphics pipeline: No renderPass provided in config info");
         }
 
-        auto vertcode = ReadFile(vertFilepath);
-        auto fragcode = ReadFile(fragFilepath);
+        //auto vertcode = ReadFile(vertFilepath);
+        //auto fragcode = ReadFile(fragFilepath);
 
-        CreateShaderModule(vertcode, &vert_mod);
-        CreateShaderModule(fragcode, &frag_mod);
+        //CreateShaderModule(vertcode, &vert_mod);
+        //CreateShaderModule(fragcode, &frag_mod);
+
+        vert_mod = VkShader::Create(vertFilepath, VERTEX);
+        frag_mod = VkShader::Create(fragFilepath, FRAGMENT);
 
         VkPipelineShaderStageCreateInfo shaderStages[2];
         // Vert shader
         shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-        shaderStages[0].module = vert_mod;
+        shaderStages[0].module = vert_mod->GetModule();
         shaderStages[0].pName = "main";
         shaderStages[0].flags = 0;
         shaderStages[0].pNext = nullptr;
@@ -171,7 +136,7 @@ namespace Anvil
         // Frag shader
         shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        shaderStages[1].module = frag_mod;
+        shaderStages[1].module = frag_mod->GetModule();
         shaderStages[1].pName = "main";
         shaderStages[1].flags = 0;
         shaderStages[1].pNext = nullptr;
@@ -206,7 +171,7 @@ namespace Anvil
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-        if (vkCreateGraphicsPipelines(device.m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
+        if (vkCreateGraphicsPipelines(device->m_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS)
         {
             ENGINE_ERROR("Failed to create graphics pipeline");
         }

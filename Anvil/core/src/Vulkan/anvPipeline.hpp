@@ -1,6 +1,7 @@
 #pragma once
 #include "../Util/anvLog.hpp"
 #include "../anvpch.hpp"
+#include "VkShader.h"
 #include "anvDevice.hpp"
 
 namespace Anvil
@@ -25,7 +26,7 @@ namespace Anvil
 
     public:
         anvPipeline(
-            AnvDevice& anv_device, 
+            Ref<AnvDevice> anv_device, 
             const std::string& vertFilepath, 
             const std::string& fragFilepath,
             const PipelineCfgInfo& cfginfo);
@@ -39,20 +40,16 @@ namespace Anvil
  
         static PipelineCfgInfo DefaultPipelinecfgInfo(PipelineCfgInfo& configInfo);
 
-        static std::vector<char> ReadFile(const std::string& filepath);
-
         void CreateGraphicsPipeline(
             const std::string& vertFilepath, 
             const std::string& fragFilepath,  
             const PipelineCfgInfo& cfginfo);
 
-        void CreateShaderModule(const std::vector<char> code, VkShaderModule* shader_mod);
-
     private:
-        AnvDevice& device;
-        VkPipeline graphicsPipeline;
-        VkShaderModule vert_mod;
-        VkShaderModule frag_mod;
+        Ref<AnvDevice>  device;
+        VkPipeline      graphicsPipeline;
+        Ref<VkShader>  vert_mod;
+        Ref<VkShader>  frag_mod;
 
         bool pipelineCeated = false;
 
