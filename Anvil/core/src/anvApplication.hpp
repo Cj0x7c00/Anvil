@@ -1,5 +1,5 @@
 #pragma once
-#include "./Window/window_manager.hpp"
+#include "./Window/Window.hpp"
 #include "./Vulkan/anvRenderer.hpp"
 #include "./Layer/anvLayerStack.hpp"
 #include "./Util/Time/anvTimeStep.hpp"
@@ -20,9 +20,9 @@ namespace Anvil{
 
         public:
             
-            WindowManager WindowManager{800, 600, "Anvil Engine ver 0.0.0"};
-            AnvDevice anvDevice{WindowManager.Window};
-            anvRenderer AnvRenderer{WindowManager, anvDevice};
+            Ref<Window>    m_Window;
+            Ref<AnvDevice> anvDevice;
+            anvRenderer*    AnvRenderer = nullptr;
             std::vector<anvGameObject> GameObjects;
             AnvilLayerStack LayerStack;
             float LastFrame = 0.0f;

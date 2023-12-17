@@ -7,8 +7,17 @@ namespace Anvil{
 
         AnvilApplication::AnvilApplication()
         {
+            WindowProps p;
+            m_Window = Window::Create(p);
+
+            AnvDevice::DeviceInit(m_Window->Get());
+            anvDevice = AnvDevice::GetInstance();
+
+            AnvRenderer = new anvRenderer{ m_Window, anvDevice };
+
             LoadGameObjects();
-            vkDeviceWaitIdle(anvDevice.m_device);
+
+            vkDeviceWaitIdle(anvDevice->m_device);
         }
 
         void AnvilApplication::PushLayer(AnvilLayer* layer)
@@ -21,7 +30,7 @@ namespace Anvil{
 
         void AnvilApplication::Run(){
 
-            SimpleRenderSystem sRenderSystem{anvDevice, AnvRenderer.getSwapChainRenderPass()};
+            SimpleRenderSystem sRenderSystem{anvDevice, AnvRenderer->getSwapChainRenderPass()};
 
             for (AnvilLayer* layer : LayerStack.Layers)
             {
@@ -29,21 +38,21 @@ namespace Anvil{
                 ENGINE_INFO("Loaded Layer: " + name);
             }
 
-            while (!glfwWindowShouldClose(WindowManager.Window)){
+            while (!m_Window->ShouldClose()){
 
                 glfwPollEvents();
 
-                if (auto commandBuffer = AnvRenderer.BeginFrame())
+                if (auto commandBuffer = AnvRenderer->BeginFrame())
                 {
                     // update systems
                     float time = (float)glfwGetTime();
                     Timestep timestep = time - LastFrame;
                     LastFrame = time;
 
-                    AnvRenderer.BeginSwapChainRenderPass(commandBuffer);
+                    AnvRenderer->BeginSwapChainRenderPass(commandBuffer);
                     sRenderSystem.RenderGameObjects(commandBuffer, GameObjects, timestep);
-                    AnvRenderer.EndSwapChainRenderPass(commandBuffer);
-                    AnvRenderer.EndFrame();
+                    AnvRenderer->EndSwapChainRenderPass(commandBuffer);
+                    AnvRenderer->EndFrame();
 
                     for (AnvilLayer* layer : LayerStack.Layers)
                     {
@@ -53,10 +62,10 @@ namespace Anvil{
                 
             }
 
-            vkDeviceWaitIdle(anvDevice.m_device);
+            vkDeviceWaitIdle(anvDevice->m_device);
         }
 
-        std::unique_ptr<anvModel> createCubeModel(AnvDevice& device, glm::vec3 offset) {
+        std::unique_ptr<anvModel> createCubeModel(Ref<AnvDevice> device, glm::vec3 offset) {
             std::vector<anvModel::Vertex> vertices{
             
                 // left face (white)
