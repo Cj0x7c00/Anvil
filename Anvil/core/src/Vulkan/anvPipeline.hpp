@@ -25,6 +25,15 @@ namespace Anvil
     {
 
     public:
+
+        static Scope<anvPipeline> Create(Ref<AnvDevice> anv_device,
+            const std::string& vertFilepath,
+            const std::string& fragFilepath,
+            const PipelineCfgInfo& cfginfo)
+        {
+            return CreateScope<anvPipeline>(anv_device, vertFilepath, fragFilepath, cfginfo);
+        }
+
         anvPipeline(
             Ref<AnvDevice> anv_device, 
             const std::string& vertFilepath, 
@@ -48,8 +57,8 @@ namespace Anvil
     private:
         Ref<AnvDevice>  device;
         VkPipeline      graphicsPipeline;
-        Ref<VkShader>  vert_mod;
-        Ref<VkShader>  frag_mod;
+        SHADER  vert_mod;
+        SHADER  frag_mod;
 
         bool pipelineCeated = false;
 

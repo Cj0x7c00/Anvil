@@ -115,13 +115,8 @@ namespace Anvil
             ENGINE_ERROR("Failed to create graphics pipeline: No renderPass provided in config info");
         }
 
-        //auto vertcode = ReadFile(vertFilepath);
-        //auto fragcode = ReadFile(fragFilepath);
-
-        //CreateShaderModule(vertcode, &vert_mod);
-        //CreateShaderModule(fragcode, &frag_mod);
-
-        vert_mod = VkShader::Create(vertFilepath, VERTEX);
+        // Shader compilation
+        vert_mod = VkShader::Create(vertFilepath,   VERTEX);
         frag_mod = VkShader::Create(fragFilepath, FRAGMENT);
 
         VkPipelineShaderStageCreateInfo shaderStages[2];

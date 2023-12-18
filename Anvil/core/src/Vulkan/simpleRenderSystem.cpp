@@ -71,13 +71,10 @@ namespace Anvil{
 
         PipelineCfgInfo pipelineInfo{};
         auto pipelineConfig = anvPipeline::DefaultPipelinecfgInfo(pipelineInfo);
-        pipelineConfig.renderPass = renderPass;
         pipelineConfig.pipelineLayout = pipelineLayout;
-        AnvilPipeline = std::make_unique<anvPipeline>(
-            anvDevice, 
-            "core\\src\\Vulkan\\vert.glsl",
-            "core\\src\\Vulkan\\frag.glsl",
-            pipelineConfig);
+        pipelineConfig.renderPass = renderPass;
+
+        AnvilPipeline = anvPipeline::Create(anvDevice, "core/src/Vulkan/vert.glsl", "core/src/Vulkan/frag.glsl", pipelineConfig);
     }
 }
 

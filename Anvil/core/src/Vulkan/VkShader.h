@@ -59,4 +59,6 @@ namespace Anvil
 		ShaderType      m_Type;
 		VkShaderModule  m_Module;
 	};
+
+	using SHADER = Ref<VkShader>;
 }

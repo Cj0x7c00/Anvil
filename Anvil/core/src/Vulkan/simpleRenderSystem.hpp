@@ -24,7 +24,7 @@ namespace Anvil{
             ~SimpleRenderSystem(){ 
                 vkDeviceWaitIdle(anvDevice->m_device); //
                 vkDestroyPipelineLayout(anvDevice->m_device, pipelineLayout, nullptr); 
-                }
+            }
 
             SimpleRenderSystem(const SimpleRenderSystem &) = delete;
             SimpleRenderSystem &operator=(const SimpleRenderSystem &) = delete;
