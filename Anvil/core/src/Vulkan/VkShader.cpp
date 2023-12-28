@@ -50,9 +50,9 @@ namespace Anvil
 		auto VK_SDK = TaskRunner::Execute("echo %VULKAN_SDK%");
 		ShaderUtility::remove_white(VK_SDK);
 		auto _ts = ShaderUtility::make_type_string(m_Type);
-		ENGINE_INFO("{}", VK_SDK);
-		ENGINE_INFO("Shader Type: {}", _ts);
-
+		ENGINE_DEBUG("{}", VK_SDK);
+		ENGINE_DEBUG("Shader Type: {}", _ts);
+		ENGINE_DEBUG("{}", std::filesystem::current_path());
 		m_FileName = m_FilePath + ".spv";
 
 		std::stringstream cmd;
