@@ -74,7 +74,7 @@ namespace Anvil{
         pipelineConfig.pipelineLayout = pipelineLayout;
         pipelineConfig.renderPass = renderPass;
 
-        AnvilPipeline = anvPipeline::Create(anvDevice, "..\\core\\src\\Vulkan\\vert.glsl", "..\\core\\src\\Vulkan\\frag.glsl", pipelineConfig);
+        AnvilPipeline = anvPipeline::Create(anvDevice, "core\\src\\Vulkan\\vert.glsl", "core\\src\\Vulkan\\frag.glsl", pipelineConfig);
     }
 }
 

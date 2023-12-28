@@ -125,10 +125,9 @@ namespace Anvil{
 
         void AnvilApplication::LoadGameObjects()
         {
-            std::shared_ptr<anvModel> anv_model = createCubeModel(anvDevice, {.0f, .0f, .0f});
-
+            std::shared_ptr<anvModel> model1 = createCubeModel(anvDevice, {.0f, .0f, .0f});
             auto cube = anvGameObject::CreateGameObject();
-            cube.model = anv_model;
+            cube.model = model1;
             cube.transform.translation = {.0f, .0f, .5f};
             cube.transform.scale = {.5f, .5f, .5f};
             GameObjects.push_back(std::move(cube));
