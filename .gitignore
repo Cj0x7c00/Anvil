@@ -10,8 +10,12 @@ core/extras/Notes
 *.filters
 *.vcxproj
 /.vs/Anvil-2D
-/AppleBundle
 /Anvil/build
 /Anvil/include/glfw/bin/Debug-windows-x86_64/GLFW
 /Anvil/include/glfw/bin-int/Debug-windows-x86_64/GLFW
 /.vs/AnvilEngine
+/Anvil/include/glfw/bin/Debug-windows-x64/GLFW
+/Anvil/include/glfw/bin-int/Debug-windows-x64/GLFW/GLFW.tlog
+/Anvil/include/glfw/bin-int/Debug-windows-x64/GLFW
+/bin/Debug-windows-x86_64
+/bin-int/Debug-windows-x86_64

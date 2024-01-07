@@ -4,11 +4,7 @@
 extern Anvil::AnvilApplication* Anvil::CreateApplication();
 
 int main(){    
-    try {
-        auto app = Anvil::CreateApplication();
-        app->Run();
-    } 
-    catch (std::exception &e){
-
-    }
+    Anvil::ENGINE_INFO("Starting");
+    auto app = Anvil::CreateApplication();
+    app->Run();
 }
