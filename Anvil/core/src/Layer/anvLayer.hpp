@@ -7,16 +7,21 @@ namespace Anvil{
 
     class AnvilLayer
     {
-        public:
+    
+    public:
         AnvilLayer(const std::string name = "new layer");
 
-        virtual void Attach(); // Called when loaded
-        virtual void Update(Timestep ts); // Called once per frame
-        virtual void Detach(); // Called before destructor
+        // Called when loaded
+        virtual void Attach() = 0; 
+        // Called once per frame
+        virtual void Update() = 0; 
+        // Called before destructor
+        virtual void Detach() = 0; 
 
         std::string GetName(){ return layer_name; }
 
-        protected:
+    protected:
         const std::string layer_name;
+    
     };
 }

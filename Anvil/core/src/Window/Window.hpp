@@ -1,23 +1,23 @@
 #pragma once
 #include "../Util/anvLog.hpp"
-#include "../anvpch.hpp"
-#define GLFW_INCLUDE_NONE
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include "../settings.hpp"
-#include "../Vulkan/anvDevice.hpp" // vulkan
-
+#include "../Base/anvpch.hpp"
+#include "../Base/settings.hpp"
+#include "../Base/Pointer.hpp"
 
 namespace Anvil
 {
+    typedef void (*ResizeCallbackFn)();
+
+    struct Extent2D
+    {
+        int width;
+        int height;
+    };
+
     struct WindowProps
     {
-        GLFWwindow* Window;
-
         uint32_t width;
         uint32_t height;
-        bool framebufferResized = false;
-
         const char* name;
 
         WindowProps(uint32_t w=900, uint32_t h = 700, const char* n="Window")
@@ -27,41 +27,33 @@ namespace Anvil
         }
     };
 
-    // Window Management class
-    class Window{
+ 
+    class Window
+    {
 
         public:
 
-            static Ref<Window> Create(WindowProps _p)
-            {
-                return CreateRef<Window>(_p);
-            }
+            static Ref<Window> Create(WindowProps _p);
 
-            Window(WindowProps _p);
-            
-            //creates a basic GLFW window
-            void CreateSimpleWindow();
+            virtual void ResetWindowResizedFlag() = 0;
 
-            // creates a vulkan window
-            void CreateVulkanWindow();
+            virtual void SetRezizeCallback(ResizeCallbackFn fn) = 0;
 
-            void ResetWindowResizedFlag() { m_Props.framebufferResized = false; }
+            virtual void PollEvents() = 0;
 
-            bool WasWindowResized() { return m_Props.framebufferResized; }
+            virtual void* Get() = 0;
 
-            static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);
+            virtual bool WasWindowResized() = 0;
 
-            VkExtent2D GetExtent() { return { m_Props.width, m_Props.height }; }
+            virtual bool ShouldClose() = 0;
 
-            GLFWwindow* Get() { return m_Props.Window; }
-
-            bool ShouldClose() { return glfwWindowShouldClose(m_Props.Window); }
+            virtual Extent2D GetExtent() = 0;
          
     private:
         WindowProps m_Props;
             
-    }; //class
+    }; 
 
 
-} //Anvil
+} 
 
