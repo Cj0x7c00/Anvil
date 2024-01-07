@@ -23,14 +23,15 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 
 
 ## Build
-#### **Install the vulkan SDK and GLFW library**
+#### **Install the vulkan SDK**
 
 run the "Setup.bat" script and link with the GLFW library.
 
 in Vis Studio, add the GLFW lib path to "additional library directories"
-##### OR
-add the GLFW lib directory path to the premake file
+##### --- OR (not tested) ---
 
 run the "Setup.sh" for Mac  
 
+## News
+Rebuilding the renderer. threw the old one out and replacing it
 
