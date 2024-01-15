@@ -8,7 +8,6 @@ class Forge : public Anvil::AnvilApplication
         while (!GetWindow()->ShouldClose()) {
 
             GetWindow()->PollEvents();
-			print();
         }
 	}
 };
