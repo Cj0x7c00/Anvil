@@ -43,7 +43,7 @@ namespace Anvil
         return result;
     }
 
-    int TaskRunner::SilentExecute(const char* cmd, CallbackFunction callback, const char* filename)
+    int TaskRunner::SilentExecute(const char* cmd, const char* filename)
     {
 
         // Execute the command and redirect its output to a file
@@ -60,8 +60,6 @@ namespace Anvil
             {
                 contents += line;
             }
-
-            callback(contents);
 
             file.close();
         }
