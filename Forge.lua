@@ -33,7 +33,7 @@ project "Forge"
         if os.target() == "windows" then
             postbuildcommands
             {
-                '{COPY} "%{wks.location}/bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}/bin/'.. outdir ..'/Forge"'
+                '{COPYFILE} "%{wks.location}/bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}/bin/'.. outdir ..'/Forge"'
             }   
         end
 
