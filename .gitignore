@@ -11,6 +11,7 @@ core/extras/Notes
 *.vcxproj
 /.vs/Anvil-2D
 /Anvil/build
+/Anvil/core/extras/Notes.txt
 /Anvil/include/glfw/bin/Debug-windows-x86_64/GLFW
 /Anvil/include/glfw/bin-int/Debug-windows-x86_64/GLFW
 /.vs/AnvilEngine
