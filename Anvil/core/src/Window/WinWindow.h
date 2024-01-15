@@ -3,6 +3,7 @@
 #include "Window.hpp"
 
 #include <GLFW/glfw3.h>
+#include <vulkan/vulkan.h>
 
 namespace Anvil
 {
@@ -20,17 +21,20 @@ namespace Anvil
 
         virtual void SetRezizeCallback(ResizeCallbackFn fn) override {};
 
-        virtual void* Get() override { return nullptr; };
+        virtual void* Get() override { return m_WinHandle; };
 
         virtual bool WasWindowResized() override { return false; };
 
 
         virtual Extent2D GetExtent() override { return Extent2D(); };
 
+        virtual void* GetSurface() override;
+
     private:
         void Init(const WindowProps& _p);
 
     private:
-        GLFWwindow* m_WinHandle;
+        GLFWwindow*  m_WinHandle;
+        VkSurfaceKHR m_Surface;
     };
 }

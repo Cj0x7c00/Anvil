@@ -1,7 +1,7 @@
 #pragma once
 #include "../Util/anvLog.hpp"
 #include "../Base/anvpch.hpp"
-#include "../Base/settings.hpp"
+#include "../Base/macros.hpp"
 #include "../Base/Pointer.hpp"
 
 namespace Anvil
@@ -48,9 +48,11 @@ namespace Anvil
             virtual bool ShouldClose() = 0;
 
             virtual Extent2D GetExtent() = 0;
+
+            virtual void* GetSurface() = 0;
          
     private:
-        WindowProps m_Props;
+        WindowProps  m_Props;
             
     }; 
 

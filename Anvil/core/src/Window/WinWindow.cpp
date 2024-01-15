@@ -36,4 +36,9 @@ namespace Anvil
 	{
 		return glfwWindowShouldClose(m_WinHandle);
 	}
+
+	void* WinWindow::GetSurface()
+	{
+		return m_Surface;
+	}
 }
