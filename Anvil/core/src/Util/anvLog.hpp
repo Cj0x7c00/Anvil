@@ -92,7 +92,7 @@ namespace Anvil
 #define ENGINE_ASSERT(condition_and_message) \
     do { \
         if (!(condition_and_message)) { \
-            std::cerr << "Assertion failed: " << #condition_and_message << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
+            std::cerr << "\033[31m[Assertion failed " << " (" << __FILE__ << ":" << __LINE__ << ")]\n\033[0m" << #condition_and_message  << std::endl; \
             std::abort(); \
         } \
     } while (false);
