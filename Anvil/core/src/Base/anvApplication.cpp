@@ -1,4 +1,5 @@
 #include "anvApplication.hpp"
+#include "../Renderer/Renderer.h"
 
 namespace Anvil{
 
@@ -6,11 +7,8 @@ namespace Anvil{
     {
         WindowProps p;
         m_Window = Window::Create(p);
-    }
 
-    void AnvilApplication::print()
-    {
-        ENGINE_INFO("print");
+       Renderer::Init(m_Window);
     }
 
     Ref<Window> AnvilApplication::GetWindow()

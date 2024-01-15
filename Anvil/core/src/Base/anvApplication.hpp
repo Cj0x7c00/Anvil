@@ -1,12 +1,15 @@
 #pragma once
+
 #include "../Window/Window.hpp"
-//#include "../Layer/anvLayerStack.hpp"
 #include "../Util/Time/anvTimeStep.hpp"
+
 #include "Pointer.hpp"
-#include "settings.hpp"
+#include "macros.hpp"
 
 namespace Anvil
 {
+
+    class Renderer;
 
     class ANV_API AnvilApplication
     {
@@ -21,10 +24,9 @@ namespace Anvil
 
         Ref<Window> GetWindow();
 
-        void print();
-
     private:
         Ref<Window>    m_Window;
+        Ref<Renderer>  m_Renderer;
     };
     
     AnvilApplication* CreateApplication();
