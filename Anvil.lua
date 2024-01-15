@@ -16,12 +16,14 @@ project "Anvil"
         files
         {
             "Anvil/core/src/**.cpp",
-            "Anvil/core/src/**.hpp"
+            "Anvil/core/src/**.hpp",
+            "Anvil/core/src/**.h"
         }
 
         includedirs
         {
             "Anvil/include",
+            "Anvil/core/src",
             "Anvil/include/glm",
             "Anvil/include/glfw/include",
             "%{VULKAN_SDK}/include"
@@ -40,6 +42,13 @@ project "Anvil"
             "GLFW",
             "vulkan-1"
         }
+
+        if os.target() == "windows" then
+            postbuildcommands
+            {
+                '{COPYFILE} "%{wks.location}/bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}/bin/'.. outdir ..'/Forge"'
+            }   
+        end
 
 
         filter "configurations:Debug"
