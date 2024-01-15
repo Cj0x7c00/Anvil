@@ -1,4 +1,5 @@
 #include "Devices.h"
+#include "Util/Time/Time.h"
 #include <map>
 
 namespace Anvil
@@ -163,6 +164,8 @@ namespace Anvil
 
     void Devices::create_instance()
 	{
+        Time::Profile(" Devices::create_instance");
+
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = "Hello Triangle";
@@ -268,6 +271,8 @@ namespace Anvil
 
     void Devices::select_gpu()
     {
+        Time::Profile("Devices::select_gpu");
+
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
 
@@ -312,6 +317,7 @@ namespace Anvil
     }
     void Devices::logical_setup()
     {
+        Time::Profile("Devices::logical_setup");
         QueueFamilyIndices indices = FindQueueFamilies(m_GPU);
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };

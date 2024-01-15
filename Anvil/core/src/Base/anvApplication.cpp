@@ -1,4 +1,5 @@
 #include "anvApplication.hpp"
+#include "../Util/Time/Time.h"
 #include "../Renderer/Renderer.h"
 
 namespace Anvil{

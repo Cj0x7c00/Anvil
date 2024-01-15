@@ -7,13 +7,13 @@ namespace Anvil
 
 	class Profiler 
 	{
-	private:
+	public:
 
 		Profiler(const char* prof_name);
 		~Profiler();
 
 		const char* m_Name;
-		const std::chrono::steady_clock m_Time;
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_sTime;
 
 		friend class Time;
 	};
@@ -21,7 +21,7 @@ namespace Anvil
 	class Time
 	{
 	public:
-		static void Profile(const char* name);
+		static Profiler Profile(const char* name);
 
 	};
 
