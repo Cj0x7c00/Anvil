@@ -18,8 +18,8 @@ Anvil Engine is my life long software project that i use to **study and learn** 
  - [x] properly added submodules
  - [x] port to windows
  - [x] updated include paths 
+ - [x] abstract into a DLL for a core/app architecture 
  - [ ] [current] refactoring/rewriting renderer 
- - [ ] abstract into a DLL for a core/app architecture 
 
 
 ## Build
