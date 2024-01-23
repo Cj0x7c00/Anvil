@@ -2,7 +2,6 @@
 
 namespace Anvil
 {
-    LayerStack* LayerStack::instance = nullptr;
 
     LayerStack::~LayerStack()
     {
@@ -15,6 +14,7 @@ namespace Anvil
 
     void LayerStack::PushLayer(AnvilLayer* layer)
     {
+        layer->Attach();
         Layers.emplace(Layers.begin() + insertIndex, layer);
         insertIndex++;
     }

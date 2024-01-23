@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
+#include "../Base/macros.hpp"
 #include "../Util/anvLog.hpp"
 #include "../Util/Time/anvTimeStep.hpp"
 
 namespace Anvil{
 
-    class AnvilLayer
+    class ANV_API AnvilLayer
     {
     
     public:
