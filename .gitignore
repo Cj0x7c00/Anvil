@@ -22,3 +22,4 @@ core/extras/Notes
 /bin-int/Debug-windows-x86_64
 /bin/Release-windows-x86_64
 /bin-int/Release-windows-x86_64
+*.spv
