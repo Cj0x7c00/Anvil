@@ -17,6 +17,18 @@ namespace Anvil{
         return m_Window;
     }
 
+    void AnvilApplication::PushLayer(AnvilLayer* _layer)
+    {
+        ENGINE_INFO("Pushing Layer \"{}\"", _layer->GetName());
+        m_LayerStack.PushLayer(_layer);
+    }
+
+    void AnvilApplication::PopLayer(AnvilLayer* _layer)
+    {
+        ENGINE_INFO("Popping Layer {}", _layer->GetName());
+        m_LayerStack.PopLayer(_layer);
+    }
+
 }
 
 
