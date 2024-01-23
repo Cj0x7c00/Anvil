@@ -10,7 +10,8 @@ project "Anvil"
 
         defines
         {
-            "ANV_BUILD_SHARED"
+            "ANV_BUILD_SHARED",
+            "VULKAN_SDK=\"%{VULKAN_SDK}\""
         }
 
         files
