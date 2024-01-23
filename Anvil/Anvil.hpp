@@ -7,4 +7,3 @@
 
 #include "core/src/UUID/uuid.h"
 
-#include "core/src/Base/EntryPoint.hpp"
