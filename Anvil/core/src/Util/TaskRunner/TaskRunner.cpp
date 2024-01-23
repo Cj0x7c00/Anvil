@@ -9,6 +9,11 @@
 
 namespace Anvil
 {
+    void TaskRunner::ChangeDir(const char* _dir)
+    {
+        std::filesystem::current_path(_dir);
+    }
+
     std::string TaskRunner::Execute(const char* cmd, const char* filename)
     {
         std::string result;

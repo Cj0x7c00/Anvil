@@ -11,6 +11,8 @@ namespace Anvil
 	public:
 		typedef void (*CallbackFunction)(std::string);
 
+		static void ChangeDir(const char* _dir);
+
 		/// <summary>
 		/// Execute a console command
 		/// </summary>
