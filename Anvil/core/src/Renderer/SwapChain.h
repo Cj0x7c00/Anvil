@@ -1,5 +1,7 @@
 #pragma once
 #include "Devices.h"
+#include "../core/src/Util/anvLog.hpp"
+
 
 namespace Anvil
 {
@@ -15,6 +17,11 @@ namespace Anvil
 			
 		}
 		~SwapChain() {}
+
+		VkFormat GetFormat()
+		{
+			return m_SwapChainImageFormat;
+		}
 
 	private:
 		void create_swap_chain();
