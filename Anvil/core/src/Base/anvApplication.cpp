@@ -4,12 +4,19 @@
 
 namespace Anvil{
 
-    AnvilApplication::AnvilApplication()
-    {
-        WindowProps p;
-        m_Window = Window::Create(p);
 
-       Renderer::Init(m_Window);
+
+    AnvilApplication::AnvilApplication(AppProperties& _p)
+    {
+
+        m_Window = Window::Create(_p.win_props);
+
+        Renderer::Init(m_Window);
+    }
+
+    AnvilApplication::~AnvilApplication()
+    {
+        m_LayerStack.~LayerStack();
     }
 
     Ref<Window> AnvilApplication::GetWindow()
@@ -19,12 +26,14 @@ namespace Anvil{
 
     void AnvilApplication::PushLayer(AnvilLayer* _layer)
     {
+
         ENGINE_INFO("Pushing Layer \"{}\"", _layer->GetName());
         m_LayerStack.PushLayer(_layer);
     }
 
     void AnvilApplication::PopLayer(AnvilLayer* _layer)
     {
+
         ENGINE_INFO("Popping Layer {}", _layer->GetName());
         m_LayerStack.PopLayer(_layer);
     }
