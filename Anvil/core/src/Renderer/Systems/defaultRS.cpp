@@ -1,4 +1,5 @@
 #include "defaultRS.h"
+#include "Util/Time/Time.h"
 #include "../SwapChain.h"
 #include "../GrComp/Pipeline.h"
 #include <vulkan/vulkan.h>
@@ -14,6 +15,7 @@ namespace Anvil
 
 	void defaultRS::NewFrame(Ref<RenderPass> renderPass, uint32_t imageIndex)
 	{
+		auto time = Time::Profile("defaultRS::NewFrame");
 		m_CommandBuffer->BeginRecording();
 
 
