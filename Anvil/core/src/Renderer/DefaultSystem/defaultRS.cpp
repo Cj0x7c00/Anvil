@@ -1,4 +1,7 @@
 #include "defaultRS.h"
+#include "../SwapChain.h"
+#include "../GrComp/Pipeline.h"
+#include <vulkan/vulkan.h>
 #include <Util/anvLog.hpp>
 
 namespace Anvil
@@ -9,8 +12,35 @@ namespace Anvil
 		create_pipeline();
 	}
 
-	void defaultRS::NewFrame()
+	void defaultRS::NewFrame(Ref<RenderPass> renderPass, uint32_t imageIndex)
 	{
+		m_CommandBuffer->BeginRecording();
+
+
+		renderPass->Begin(m_CommandBuffer, imageIndex);
+		
+
+		m_Pipeline->Bind(m_CommandBuffer);
+
+		VkViewport viewport{};
+		viewport.x = 0.0f;
+		viewport.y = 0.0f;
+		viewport.width = static_cast<float>(m_SwapChain->GetExtent().width);
+		viewport.height = static_cast<float>(m_SwapChain->GetExtent().height);
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		vkCmdSetViewport(m_CommandBuffer->Get(), 0, 1, &viewport);
+
+		VkRect2D scissor{};
+		scissor.offset = { 0, 0 };
+		scissor.extent = m_SwapChain->GetExtent();
+		vkCmdSetScissor(m_CommandBuffer->Get(), 0, 1, &scissor);
+
+		vkCmdDraw(m_CommandBuffer->Get(), 3, 1, 0, 0);
+		
+		renderPass->End(m_CommandBuffer);
+
+		m_CommandBuffer->EndRecording();
 	}
 
 	void defaultRS::load_shaders()
