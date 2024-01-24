@@ -38,6 +38,8 @@ namespace Anvil
         m_SwapChain->CreateFrameBuffers(m_RenderPass->Get());
 
         UseDefaultConfiguration();
+
+        sync();
 	}
 
     void Renderer::UseSystem(Ref<RenderSystem> _system)
@@ -54,7 +56,7 @@ namespace Anvil
 
     void Renderer::NewFrame()
     {
-        sync();
+        auto time = Time::Profile("Renderer::NewFrame");
         vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFence, VK_TRUE, UINT64_MAX);
 
         uint32_t ImageIndex;
