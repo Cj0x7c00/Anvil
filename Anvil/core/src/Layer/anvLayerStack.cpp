@@ -8,6 +8,7 @@ namespace Anvil
         for (AnvilLayer* layer : Layers)
         {
             layer->Detach();
+            ENGINE_INFO("Deleted layer: {}", layer->GetName());
             delete layer;
         }
     }
