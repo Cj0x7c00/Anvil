@@ -14,6 +14,12 @@ namespace Anvil
     public:
         // Static log function to format and print log messages
         template <typename... Args>
+        static void out(const std::string& format, Args... args) {
+            std::string message = formatString(format, args...);
+            std::cout << "[OUT]: " << message << std::endl;
+        }
+        
+        template <typename... Args>
         static void log(std::string func, const std::string& format, Args... args) {
             std::string message = formatString(format, args...);
             std::cout << "\033[1;30m[INFO : " << func << "()]: \033[0m" << message << std::endl;
@@ -83,6 +89,7 @@ namespace Anvil
         }
     };
 
+#ifdef ANV_BUILD_SHARED
 #define ENGINE_INFO(...)  Log::log  ( __FUNCTION__, __VA_ARGS__ )
 #define ENGINE_DEBUG(...) Log::debug( __FUNCTION__, __VA_ARGS__ )
 #define ENGINE_WARN(...)  Log::warn ( __FUNCTION__, __VA_ARGS__ )  
@@ -97,6 +104,22 @@ namespace Anvil
         } \
     } while (false);
 
-#define ENGINE_OUT(message) logger::LOG(message, " ", 4)
+#define ENGINE_OUT(message) Log::out(message);
+#else
+#define ANVIL_INFO(...)  Log::log  ( __FUNCTION__, __VA_ARGS__ )
+#define ANVIL_DEBUG(...) Log::debug( __FUNCTION__, __VA_ARGS__ )
+#define ANVIL_WARN(...)  Log::warn ( __FUNCTION__, __VA_ARGS__ )  
+#define ANVIL_ERROR(...) Log::error( __FUNCTION__, __VA_ARGS__ )
 
+
+#define ANVIL_ASSERT(condition_and_message) \
+    do { \
+        if (!(condition_and_message)) { \
+            std::cerr << "\033[31m[Assertion failed " << " (" << __FILE__ << ":" << __LINE__ << ")]\n\033[0m" << #condition_and_message  << std::endl; \
+            std::abort(); \
+        } \
+    } while (false);
+
+#define ANVIL_OUT(message) Log::out(message);
+#endif
 }
