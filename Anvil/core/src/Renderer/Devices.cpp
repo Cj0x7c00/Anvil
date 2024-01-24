@@ -93,6 +93,11 @@ namespace Anvil
         return m_Surface;
     }
 
+    VkCommandPool& Devices::CommandPool()
+    {
+        return m_CommandPool;
+    }
+
     SwapChainSupportDetails Devices::QuerySwapChainSupport()
     {
         SwapChainSupportDetails details;
@@ -164,7 +169,7 @@ namespace Anvil
 
     void Devices::create_instance()
 	{
-        Time::Profile(" Devices::create_instance");
+        auto t = Time::Profile(" Devices::create_instance");
 
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -271,7 +276,7 @@ namespace Anvil
 
     void Devices::select_gpu()
     {
-        Time::Profile("Devices::select_gpu");
+        auto time = Time::Profile("Devices::select_gpu");
 
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
@@ -317,7 +322,7 @@ namespace Anvil
     }
     void Devices::logical_setup()
     {
-        Time::Profile("Devices::logical_setup");
+        auto t = Time::Profile("Devices::logical_setup");
         QueueFamilyIndices indices = FindQueueFamilies(m_GPU);
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
         std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
@@ -366,6 +371,21 @@ namespace Anvil
         auto res = glfwCreateWindowSurface(m_Instance, (GLFWwindow*)m_Window->Get(), nullptr, &m_Surface);
         ENGINE_ASSERT((res == VK_SUCCESS) && "[VK] Failed to create window surface");
         ENGINE_INFO("[VK] Created window surface");
+    }
+
+    void Devices::create_command_pool()
+    {
+        QueueFamilyIndices queueFamilyIndices = FindQueueFamilies(m_GPU);
+
+        VkCommandPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+
+        if (vkCreateCommandPool(m_Device, &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS) {
+            ENGINE_WARN("[VK] failed to create command pool");
+        }
+        ENGINE_INFO("[VK] Created command pool");
     }
 
     SwapChainSupportDetails Devices::query_sc_support(VkPhysicalDevice dev)

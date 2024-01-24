@@ -9,7 +9,7 @@ namespace Anvil
 	{
 	public:
 		static Ref<SwapChain> Create();
-		SwapChain() : m_Devices{Devices::GetInstance()}
+		SwapChain() : m_Devices{ Devices::GetInstance() }
 		{
 			ENGINE_DEBUG("Creating Swap Chain");
 			create_swap_chain();
@@ -18,23 +18,26 @@ namespace Anvil
 		}
 		~SwapChain() {}
 
-		VkFormat GetFormat()
-		{
-			return m_SwapChainImageFormat;
-		}
+		void CreateFrameBuffers(VkRenderPass& _rp);
+
+		VkFormat GetFormat()						  { return m_SwapChainImageFormat;  }
+		std::vector<VkFramebuffer>& GetFrameBuffers() { return m_SwapChainFramebuffers; }
+		VkExtent2D	GetExtent()		   { return m_SwapChainExtent; }
+		VkSwapchainKHR& GetSwapChain() { return m_SwapChain; }
 
 	private:
 		void create_swap_chain();
 		void create_image_views();
 
 	private:
-		VkSwapchainKHR			 m_SwapChain;
-		std::vector<VkImage>	 m_SwapChainImages;
-		std::vector<VkImageView> m_SwapChainImageViews;
-		Ref<Devices>			 m_Devices;
+		std::vector<VkImage>	   m_SwapChainImages;
+		std::vector<VkImageView>   m_SwapChainImageViews;
+		std::vector<VkFramebuffer> m_SwapChainFramebuffers;
+		Ref<Devices>			   m_Devices;
 
-		VkFormat   m_SwapChainImageFormat;
-		VkExtent2D m_SwapChainExtent;
-
+		VkSwapchainKHR m_SwapChain;
+		VkFormat       m_SwapChainImageFormat;
+		VkExtent2D	   m_SwapChainExtent;
+		VkRenderPass   m_RenderPass;
 	};
 }

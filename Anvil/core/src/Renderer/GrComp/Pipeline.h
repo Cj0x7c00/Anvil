@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Base/Pointer.hpp"
 #include "../../Base/macros.hpp"
+#include "../CommandBuffer.h"
 #include "Shader.h"
 #include <vector>
 #include <vulkan/vulkan.h>
@@ -15,6 +16,8 @@ namespace Anvil
         Pipeline(std::vector<Ref<Shader>> _shaders);
 
         ~Pipeline();
+
+        void Bind(Ref<CommandBuffer> cmdBuffer);
 
     private:
         void process_shaders(std::vector<Ref<Shader>> _shaders);

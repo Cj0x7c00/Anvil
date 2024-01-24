@@ -46,11 +46,12 @@ namespace Anvil
 			create_surface();
 			select_gpu();
 			logical_setup();
-
+			create_command_pool();
 		}
 
 		~Devices()
 		{
+			
 		}
 
 		static Ref<Devices> Init(Ref<Window> window);
@@ -61,6 +62,7 @@ namespace Anvil
 		VkPhysicalDevice& GPU();
 		VkDevice&         Device();
 		VkSurfaceKHR&	  Surface();
+		VkCommandPool&    CommandPool();
 
 		// API //
 		SwapChainSupportDetails QuerySwapChainSupport();
@@ -68,12 +70,15 @@ namespace Anvil
 		VkPresentModeKHR		ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		VkExtent2D				ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 		QueueFamilyIndices		FindQueueFamilies(VkPhysicalDevice dev);
+		VkQueue& GraphicsQueue() { return m_GraphicsQueue; };
+		VkQueue& PresentQueue() { return m_PresentQueue; };
 
 	private:
 		void create_instance();
 		void select_gpu();
 		void logical_setup();
 		void create_surface();
+		void create_command_pool();
 		bool check_layer_support();
 		bool check_devEXT_support(VkPhysicalDevice dev);
 		int  rate_device_suitability(VkPhysicalDevice dev);
@@ -83,14 +88,15 @@ namespace Anvil
 	private:
 		// class instance ref
 		static Ref<Devices> m_This;
+		Ref<Window>		    m_Window;
 
 		VkInstance		 m_Instance;
 		VkPhysicalDevice m_GPU = VK_NULL_HANDLE;
-		VkDevice		 m_Device;
+		VkDevice		 m_Device = VK_NULL_HANDLE;
 		VkQueue			 m_GraphicsQueue;
 		VkQueue			 m_PresentQueue;
 		VkSurfaceKHR	 m_Surface;
-		Ref<Window>		 m_Window;
+		VkCommandPool    m_CommandPool;
 
 		std::vector<const char*> m_DeviceExt = {
 			VK_KHR_SWAPCHAIN_EXTENSION_NAME

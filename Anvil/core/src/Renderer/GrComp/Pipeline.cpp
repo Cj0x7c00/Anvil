@@ -24,6 +24,12 @@ namespace Anvil
     {
 
     }
+
+    void Pipeline::Bind(Ref<CommandBuffer> cmdBuffer)
+    {
+        vkCmdBindPipeline(cmdBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+    }
+
 	void Pipeline::process_shaders(std::vector<Ref<Shader>> _shaders)
 	{
         for (auto& shader : _shaders)
@@ -116,7 +122,7 @@ namespace Anvil
         pipelineInfo.pColorBlendState = &colorBlending;
         pipelineInfo.pDynamicState = &dynamicState;
         pipelineInfo.layout = m_Layout;
-        pipelineInfo.renderPass = Renderer::GetRenderPass();
+        pipelineInfo.renderPass = Renderer::GetRenderPass()->Get();
         pipelineInfo.subpass = 0;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
