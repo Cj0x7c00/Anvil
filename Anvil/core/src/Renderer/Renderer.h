@@ -28,16 +28,17 @@ namespace Anvil
 	{
 	public:
 		static void Init(Ref<Window> window);
-
 		static void UseSystem(Ref<RenderSystem> _system);
-
 		static void UseDefaultConfiguration();
-		
+		static void NewFrame();
+		static void WaitIdle();
+		static void CreateNewSwapChain();
+		static void WindowWasResized();
+
 		static Ref<RenderPass> GetRenderPass() { return m_RenderPass; };
 
-		static void NewFrame();
-
-		static void WaitIdle();
+	public:
+		static const int MAX_FRAMES_IN_FLIGHT = 3;
 
 	private:
 		static void create_render_pass();
@@ -46,17 +47,19 @@ namespace Anvil
 		static void present(uint32_t imgIndex);
 
 	private:
+		static uint32_t m_FrameIndex;
+		static uint32_t m_ImageIndex;
+
 		static Ref<Devices>      m_Devices;
 		static Ref<SwapChain>    m_SwapChain;
 		static Ref<Window>		 m_Window;
 		static Ref<RenderSystem> m_RenderSystem;
 		static Ref<RenderPass>	 m_RenderPass;
 
-		static VkCommandBuffer   m_CommandBuffer;
+		static std::vector<VkSemaphore> m_ImageAvailableSemaphores;
+		static std::vector<VkSemaphore> m_RenderFinishedSemaphores;
+		static std::vector<VkFence>     m_InFlightFences;
 
-		static VkSemaphore m_ImageAvailableSemaphore;
-		static VkSemaphore m_RenderFinishedSemaphore;
-		static VkFence     m_InFlightFence;
 	};
 }
 

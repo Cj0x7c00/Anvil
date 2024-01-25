@@ -157,10 +157,10 @@ namespace Anvil
             auto winExtnt = m_Window->GetExtent();
             VkExtent2D actualExtent = {
                 static_cast<uint32_t>(winExtnt.width),
-                static_cast<uint32_t>(winExtnt.width)
+                static_cast<uint32_t>(winExtnt.height)
             };
 
-            actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+            actualExtent.width  = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
             actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
             return actualExtent;

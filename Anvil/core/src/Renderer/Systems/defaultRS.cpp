@@ -16,13 +16,11 @@ namespace Anvil
 	void defaultRS::NewFrame(Ref<RenderPass> renderPass, uint32_t imageIndex)
 	{
 		auto time = Time::Profile("defaultRS::NewFrame");
-		m_CommandBuffer->BeginRecording();
+		m_CommandBuffers[imageIndex]->BeginRecording();
 
+		renderPass->Begin(m_CommandBuffers[imageIndex], imageIndex);
 
-		renderPass->Begin(m_CommandBuffer, imageIndex);
-		
-
-		m_Pipeline->Bind(m_CommandBuffer);
+		m_Pipeline->Bind(m_CommandBuffers[imageIndex]);
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -31,18 +29,18 @@ namespace Anvil
 		viewport.height = static_cast<float>(m_SwapChain->GetExtent().height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(m_CommandBuffer->Get(), 0, 1, &viewport);
+		vkCmdSetViewport(m_CommandBuffers[imageIndex]->Get(), 0, 1, &viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
 		scissor.extent = m_SwapChain->GetExtent();
-		vkCmdSetScissor(m_CommandBuffer->Get(), 0, 1, &scissor);
+		vkCmdSetScissor(m_CommandBuffers[imageIndex]->Get(), 0, 1, &scissor);
 
-		vkCmdDraw(m_CommandBuffer->Get(), 3, 1, 0, 0);
+		vkCmdDraw(m_CommandBuffers[imageIndex]->Get(), 3, 1, 0, 0);
 		
-		renderPass->End(m_CommandBuffer);
+		renderPass->End(m_CommandBuffers[imageIndex]);
 
-		m_CommandBuffer->EndRecording();
+		m_CommandBuffers[imageIndex]->EndRecording();
 	}
 
 	void defaultRS::load_shaders()

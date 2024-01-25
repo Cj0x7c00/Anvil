@@ -22,6 +22,7 @@ namespace Anvil
 
 		VkFormat GetFormat()						  { return m_SwapChainImageFormat;  }
 		std::vector<VkFramebuffer>& GetFrameBuffers() { return m_SwapChainFramebuffers; }
+		std::vector<VkImageView>& GetImageViews() { return m_SwapChainImageViews; }
 		VkExtent2D	GetExtent()		   { return m_SwapChainExtent; }
 		VkSwapchainKHR& GetSwapChain() { return m_SwapChain; }
 

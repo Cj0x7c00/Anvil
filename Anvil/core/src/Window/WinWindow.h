@@ -23,18 +23,20 @@ namespace Anvil
 
         virtual void* Get() override { return m_WinHandle; };
 
-        virtual bool WasWindowResized() override { return false; };
+        virtual bool WasWindowResized() override;
 
+        static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
         virtual Extent2D GetExtent() override { return Extent2D(); };
 
         virtual void* GetSurface() override;
 
     private:
-        void Init(const WindowProps& _p);
+        void Init(WindowProps _p);
 
     private:
         GLFWwindow*  m_WinHandle;
         VkSurfaceKHR m_Surface;
+        static WindowProps  m_Props;
     };
 }

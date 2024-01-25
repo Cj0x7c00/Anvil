@@ -2,7 +2,8 @@
 #include "Systems/defaultRS.h"
 #include "SwapChain.h"
 #include "Devices.h"
-
+#include "Renderer.h"
+#include "Util/anvLog.hpp"
 #include <vulkan/vulkan.h>
 
 namespace Anvil
@@ -15,7 +16,12 @@ namespace Anvil
 	RenderSystem::RenderSystem(Ref<SwapChain> _sc)
 		: m_SwapChain{_sc}
 	{
-		m_CommandBuffer = CommandBuffer::Create();
+		m_CommandBuffers.clear();
+		for (int i = 0; i < Renderer::MAX_FRAMES_IN_FLIGHT; i++)
+		{
+			m_CommandBuffers.push_back(CommandBuffer::Create());
+			ENGINE_DEBUG("Command buffer {} pushed back", i);
+		}
 	}
 
 	void RenderSystem::NewFrame(Ref<RenderPass> renderPass, Ref<Scene> scene)
@@ -23,14 +29,14 @@ namespace Anvil
 		
 	}
 
-	void RenderSystem::Flush()
+	void RenderSystem::Flush(uint32_t imageIndex)
 	{
-		m_CommandBuffer->Reset();
+		m_CommandBuffers[imageIndex]->Reset();
 	}
 
-	Ref<CommandBuffer> RenderSystem::GetCommandBuffer()
+	Ref<CommandBuffer> RenderSystem::GetCommandBuffer(uint32_t imageIndex)
 	{
-		return m_CommandBuffer;
+		return m_CommandBuffers[imageIndex];
 	}
 
 }
