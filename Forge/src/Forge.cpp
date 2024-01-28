@@ -33,8 +33,8 @@ Anvil::AnvilApplication* Anvil::CreateApplication()
 {
 	AppProperties props;
 	props.win_props.name = "Forge Editor";
-	props.win_props.width = 1400;
-	props.win_props.height = 750;
+	props.win_props.width = 1000;
+	props.win_props.height = 900;
 
 	ANVIL_DEBUG("Work Dir: {}", props.wrkdir);
 	return new Forge(props);

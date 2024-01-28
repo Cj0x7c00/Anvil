@@ -150,21 +150,19 @@ namespace Anvil
 
     VkExtent2D Devices::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities)
     {
-        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
-            return capabilities.currentExtent;
-        }
-        else {
-            auto winExtnt = m_Window->GetExtent();
-            VkExtent2D actualExtent = {
-                static_cast<uint32_t>(winExtnt.width),
-                static_cast<uint32_t>(winExtnt.height)
-            };
+        auto winExtnt = m_Window->GetExtent();
+        VkExtent2D actualExtent = {
+            static_cast<uint32_t>(winExtnt.width),
+            static_cast<uint32_t>(winExtnt.height)
+        };
 
-            actualExtent.width  = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-            actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
-            return actualExtent;
-        }
+        actualExtent.width  = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+        actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+
+        ENGINE_INFO("SwapChain Extent: {}, {}", actualExtent.width, actualExtent.height);
+        
+        return actualExtent;
     }
 
     void Devices::create_instance()
@@ -173,9 +171,9 @@ namespace Anvil
 
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = "Hello Triangle";
+        appInfo.pApplicationName = "Anvil";
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "No Engine";
+        appInfo.pEngineName = "Anvil";
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
 

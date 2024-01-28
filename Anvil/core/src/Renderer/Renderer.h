@@ -18,6 +18,7 @@ typedef struct VkRenderPass_T* VkRenderPass;
 typedef struct VkCommandBuffer_T* VkCommandBuffer;
 typedef struct VkSemaphore_T* VkSemaphore;
 typedef struct VkFence_T* VkFence;
+enum VkResult;
 
 namespace Anvil
 {
@@ -42,9 +43,9 @@ namespace Anvil
 
 	private:
 		static void create_render_pass();
+		static void check_swapchain_suitability(VkResult res);
 		static void sync();
-		static void submit();
-		static void present(uint32_t imgIndex);
+		static void submit(uint32_t imgIndex);
 
 	private:
 		static uint32_t m_FrameIndex;

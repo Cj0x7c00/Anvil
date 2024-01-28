@@ -39,4 +39,9 @@ namespace Anvil
 		return m_CommandBuffers[imageIndex];
 	}
 
+	void RenderSystem::WindowWasResized(Ref<SwapChain> _sc)
+	{
+		m_SwapChain = _sc;
+	}
+
 }

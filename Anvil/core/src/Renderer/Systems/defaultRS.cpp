@@ -15,7 +15,6 @@ namespace Anvil
 
 	void defaultRS::NewFrame(Ref<RenderPass> renderPass, uint32_t imageIndex)
 	{
-		auto time = Time::Profile("defaultRS::NewFrame");
 		m_CommandBuffers[imageIndex]->BeginRecording();
 
 		renderPass->Begin(m_CommandBuffers[imageIndex], imageIndex);

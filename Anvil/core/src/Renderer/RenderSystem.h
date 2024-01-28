@@ -24,6 +24,8 @@ namespace Anvil
 		void Flush(uint32_t imageIndex);
 		Ref<CommandBuffer> GetCommandBuffer(uint32_t imageIndex);
 
+		void WindowWasResized(Ref<SwapChain> _sc);
+
 	protected:
 		std::vector<Ref<CommandBuffer>> m_CommandBuffers;
 		Ref<SwapChain>  m_SwapChain;

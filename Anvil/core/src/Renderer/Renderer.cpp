@@ -30,8 +30,10 @@ namespace Anvil
 
 		ENGINE_DEBUG("Renderer initializing");
 
+        m_Window = window;
+
 		// initialize Vulkan specific stuff
-		m_Devices   = Devices::Init(window);
+		m_Devices   = Devices::Init(m_Window);
 
 		m_SwapChain = SwapChain::Create();
         create_render_pass();
@@ -56,31 +58,19 @@ namespace Anvil
 
     void Renderer::NewFrame()
     {
-        auto time = Time::Profile("Renderer::NewFrame");
+
         vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_ImageIndex], VK_TRUE, UINT64_MAX);
 
         auto result = vkAcquireNextImageKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), UINT64_MAX,
             m_ImageAvailableSemaphores[m_FrameIndex], VK_NULL_HANDLE, &m_ImageIndex);
-        
-        ENGINE_DEBUG("Image Index: {}", m_ImageIndex);
-        ENGINE_DEBUG("Frame Index: {}", m_FrameIndex);
-
-        if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-            CreateNewSwapChain();
-            return;
-        }
-        else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-            ENGINE_WARN("Failed to aquire swap chain image");
-        }
+     
+        check_swapchain_suitability(result);
 
         vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_ImageIndex]);
         m_RenderSystem->Flush(m_ImageIndex);
 
         m_RenderSystem->NewFrame(m_RenderPass, m_ImageIndex);
-
-        submit();
-        
-        present(m_ImageIndex);
+        submit(m_ImageIndex);   
 
         m_FrameIndex = (m_FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
@@ -92,7 +82,9 @@ namespace Anvil
 
     void Renderer::CreateNewSwapChain()
     {
+
         WaitIdle();
+
         for (size_t i = 0; i < m_SwapChain->GetFrameBuffers().size(); i++) {
             vkDestroyFramebuffer(m_Devices->Device(), m_SwapChain->GetFrameBuffers()[i], nullptr);
         }
@@ -104,19 +96,33 @@ namespace Anvil
         vkDestroySwapchainKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), nullptr);
 
         m_SwapChain = SwapChain::Create();
-        create_render_pass();
         m_SwapChain->CreateFrameBuffers(m_RenderPass->Get());
+
     }
 
     void Renderer::WindowWasResized()
     {
         CreateNewSwapChain();
+        create_render_pass();
+        m_RenderSystem->WindowWasResized(m_SwapChain);
     }
 
     void Renderer::create_render_pass()
 	{
         m_RenderPass = RenderPass::Create(m_SwapChain);
 	}
+
+    void Renderer::check_swapchain_suitability(VkResult res)
+    {
+        if (res == VK_ERROR_OUT_OF_DATE_KHR) {
+            CreateNewSwapChain();
+            return;
+        }
+        else if (res != VK_SUCCESS && res != VK_SUBOPTIMAL_KHR) {
+            ENGINE_WARN("failed to acquire swap chain image!");
+        }
+
+    }
 
     void Renderer::sync()
     {
@@ -141,12 +147,12 @@ namespace Anvil
         }
     }
 
-    void Renderer::submit()
+    void Renderer::submit(uint32_t imgIndex)
     {
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-        VkSemaphore waitSemaphores[] = { m_ImageAvailableSemaphores[m_ImageIndex] };
+        VkSemaphore waitSemaphores[] = { m_ImageAvailableSemaphores[m_FrameIndex] };
         VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
@@ -162,16 +168,12 @@ namespace Anvil
             ENGINE_WARN("Failed to submit command buffer");
         }
 
-    }
-
-    void Renderer::present(uint32_t imgIndex)
-    {
         VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
         presentInfo.waitSemaphoreCount = 1;
-        presentInfo.pWaitSemaphores = { &m_RenderFinishedSemaphores[m_ImageIndex] };
-        VkSwapchainKHR swapChains[] = { m_SwapChain->GetSwapChain()};
+        presentInfo.pWaitSemaphores = signalSemaphores;
+        VkSwapchainKHR swapChains[] = { m_SwapChain->GetSwapChain() };
         presentInfo.swapchainCount = 1;
         presentInfo.pSwapchains = swapChains;
         presentInfo.pImageIndices = &imgIndex;
@@ -185,7 +187,6 @@ namespace Anvil
         else if (result != VK_SUCCESS) {
             ENGINE_WARN("Failed to present swap chain image!");
         }
-
     }
 
 }

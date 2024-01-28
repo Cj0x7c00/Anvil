@@ -21,13 +21,11 @@ namespace Anvil
 		if (vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) != VK_SUCCESS) {
 			ENGINE_WARN("Failed to record the command buffer");
 		}
-		ENGINE_DEBUG("Recording Command Buffer");
 	}
 
 	void CommandBuffer::EndRecording()
 	{
 		vkEndCommandBuffer(m_CommandBuffer);
-		ENGINE_DEBUG("Recording done");
 	}
 
 	void CommandBuffer::Reset()

@@ -25,7 +25,7 @@ namespace Anvil
 		void End(Ref<CommandBuffer> _cmdBuffer);
 
 		VkRenderPass& Get();
-
+		void WindowWasResized(Ref<SwapChain> _new);
 	private:
 		void create_pass();
 

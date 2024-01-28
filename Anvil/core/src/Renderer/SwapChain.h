@@ -9,6 +9,8 @@ namespace Anvil
 	{
 	public:
 		static Ref<SwapChain> Create();
+		static Ref<SwapChain> Create(Extent2D _ext);
+
 		SwapChain() : m_Devices{ Devices::GetInstance() }
 		{
 			ENGINE_DEBUG("Creating Swap Chain");
@@ -16,6 +18,15 @@ namespace Anvil
 			create_image_views();
 			
 		}
+
+		SwapChain(Extent2D _ext) : m_Devices{ Devices::GetInstance() }
+		{
+			ENGINE_DEBUG("Creating Swap Chain");
+			create_swap_chain(_ext);
+			create_image_views();
+
+		}
+
 		~SwapChain() {}
 
 		void CreateFrameBuffers(VkRenderPass& _rp);
@@ -28,6 +39,7 @@ namespace Anvil
 
 	private:
 		void create_swap_chain();
+		void create_swap_chain(Extent2D _ext);
 		void create_image_views();
 
 	private:

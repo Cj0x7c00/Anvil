@@ -39,6 +39,11 @@ namespace Anvil
         return m_RenderPass;
     }
 
+    void RenderPass::WindowWasResized(Ref<SwapChain> _new)
+    {
+        m_SwapChain = _new;
+    }
+
     void RenderPass::create_pass()
 	{
         VkAttachmentDescription colorAttachment{};

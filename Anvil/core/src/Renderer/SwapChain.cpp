@@ -9,6 +9,11 @@ namespace Anvil
 		return CreateRef<SwapChain>();
 	}
 
+	Ref<SwapChain> SwapChain::Create(Extent2D _ext)
+	{
+		return CreateRef<SwapChain>(_ext);
+	}
+
 	void SwapChain::create_swap_chain()
 	{
 		SwapChainSupportDetails swapChainSupport = m_Devices->QuerySwapChainSupport();
@@ -16,6 +21,8 @@ namespace Anvil
 		VkSurfaceFormatKHR surfaceFormat = m_Devices->ChooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentMode = m_Devices->ChooseSwapPresentMode(swapChainSupport.presentModes);
 		VkExtent2D extent = m_Devices->ChooseSwapExtent(swapChainSupport.capabilities);
+
+		ENGINE_DEBUG("SwapChain Extent: {}, {}", extent.width, extent.height);
 
 		uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;	
 
@@ -54,6 +61,67 @@ namespace Anvil
 		createInfo.presentMode = presentMode;
 		createInfo.clipped = VK_TRUE;
 		createInfo.oldSwapchain = VK_NULL_HANDLE;	
+
+		if (vkCreateSwapchainKHR(m_Devices->Device(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
+			ENGINE_ERROR("[VK] Failed to create swap chain");
+		}
+		ENGINE_INFO("[VK] Created Swap Chain");
+
+		vkGetSwapchainImagesKHR(m_Devices->Device(), m_SwapChain, &imageCount, nullptr);
+		m_SwapChainImages.resize(imageCount);
+		vkGetSwapchainImagesKHR(m_Devices->Device(), m_SwapChain, &imageCount, m_SwapChainImages.data());
+
+		m_SwapChainImageFormat = surfaceFormat.format;
+		m_SwapChainExtent = extent;
+	}
+
+	void SwapChain::create_swap_chain(Extent2D _ext)
+	{
+		SwapChainSupportDetails swapChainSupport = m_Devices->QuerySwapChainSupport();
+
+		VkSurfaceFormatKHR surfaceFormat = m_Devices->ChooseSwapSurfaceFormat(swapChainSupport.formats);
+		VkPresentModeKHR presentMode = m_Devices->ChooseSwapPresentMode(swapChainSupport.presentModes);
+		VkExtent2D extent { _ext.width, _ext.height };
+
+		ENGINE_DEBUG("SwapChain Extent: {}, {}", extent.width, extent.height);
+
+		uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
+
+		if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+			imageCount = swapChainSupport.capabilities.maxImageCount;
+		}
+
+		VkSwapchainCreateInfoKHR createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		createInfo.surface = m_Devices->Surface();
+		createInfo.minImageCount = imageCount;
+		createInfo.imageFormat = surfaceFormat.format;
+		createInfo.imageColorSpace = surfaceFormat.colorSpace;
+		createInfo.imageExtent = extent;
+		createInfo.imageArrayLayers = 1;
+		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+		QueueFamilyIndices indices = m_Devices->FindQueueFamilies(m_Devices->GPU());
+		uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+
+		if (indices.graphicsFamily != indices.presentFamily) {
+			createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+			createInfo.queueFamilyIndexCount = 2;
+			createInfo.pQueueFamilyIndices = queueFamilyIndices;
+		}
+
+		else {
+			createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+			createInfo.queueFamilyIndexCount = 0; // Optional
+			createInfo.pQueueFamilyIndices = nullptr; // Optional
+		}
+
+		createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+		createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+
+		createInfo.presentMode = presentMode;
+		createInfo.clipped = VK_TRUE;
+		createInfo.oldSwapchain = VK_NULL_HANDLE;
 
 		if (vkCreateSwapchainKHR(m_Devices->Device(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
 			ENGINE_ERROR("[VK] Failed to create swap chain");
@@ -116,6 +184,8 @@ namespace Anvil
 			framebufferInfo.width = m_SwapChainExtent.width;
 			framebufferInfo.height = m_SwapChainExtent.height;
 			framebufferInfo.layers = 1;
+
+			ENGINE_DEBUG("Framebuffer size: {},{}", framebufferInfo.width, framebufferInfo.height);
 
 			if (vkCreateFramebuffer(m_Devices->Device(), &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]) != VK_SUCCESS) {
 				ENGINE_WARN("failed to create framebuffer!");
