@@ -12,6 +12,18 @@ namespace Anvil
     {
         int width;
         int height;
+
+        bool operator==(const Extent2D& _ext)
+        {
+            if (_ext.width == width && _ext.height == height)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     };
 
     struct WindowProps
