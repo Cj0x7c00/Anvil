@@ -82,6 +82,15 @@ namespace Anvil
 
     void Renderer::CreateNewSwapChain()
     {
+        // Window minimization
+        {
+            int width = 0, height = 0;
+            glfwGetFramebufferSize((GLFWwindow*)m_Window->Get(), &width, &height);
+            while (width == 0 || height == 0) {
+                glfwGetFramebufferSize((GLFWwindow*)m_Window->Get(), &width, &height);
+                glfwWaitEvents();
+            }
+        }
 
         WaitIdle();
 
