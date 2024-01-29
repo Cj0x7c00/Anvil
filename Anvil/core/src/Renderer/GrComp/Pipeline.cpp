@@ -127,7 +127,7 @@ namespace Anvil
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
         if (vkCreateGraphicsPipelines(Devices::GetInstance()->Device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_Pipeline) != VK_SUCCESS) {
-            ENGINE_WARN("Failed to create pipeline");
+            ENGINE_ERROR("Failed to create pipeline");
         }
 
         ENGINE_INFO("Created Pipeline");

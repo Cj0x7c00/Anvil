@@ -1,7 +1,6 @@
 #include "Shader.h"
 #include "Util/TaskRunner/TaskRunner.h"
 #include "../Devices.h"
-#include <vulkan/vulkan.h>
 #include <filesystem>
 #include <sstream>
 
@@ -40,19 +39,44 @@ namespace Anvil
         }
     }
 
+    shaderc_shader_kind Shader::enum_t_to_kind(ShaderType t)
+    {
+        switch (t)
+        {
+        case Anvil::VERTEX:
+            return shaderc_shader_kind::shaderc_vertex_shader;
+            break;
+        case Anvil::FRAGMENT:
+            return shaderc_shader_kind::shaderc_fragment_shader;
+            break;
+        case Anvil::GEOMETRY:
+            return shaderc_shader_kind::shaderc_geometry_shader;
+            break;
+        case Anvil::TESSELATION:
+            return shaderc_shader_kind::shaderc_tess_control_shader;
+            break;
+        default:
+            ENGINE_WARN("Failed to find a shader type");
+            break;
+        }
+    }
+
     Ref<Shader> Shader::Create(const char* _file_path, ShaderType _t, const char* _od)
     {
         ENGINE_INFO("[VK] Creating Shader: {}", _file_path);
         return CreateRef<Shader>(_file_path, _t);
     }
+
     VkShaderModule& Shader::GetModule()
     {
         return m_Module;
     }
+
     ShaderType Shader::GetType()
     {
         return m_Type;
     }
+
     void Shader::compile()
     {
         ENGINE_DEBUG("Compiling shader: {}", m_Source);
@@ -70,11 +94,12 @@ namespace Anvil
         m_CompFile = m_Source + ".spv";
 
         cmd << m_CompFile;
-            
+
         TaskRunner::Execute(cmd.str().c_str()); // compile command execution
-        
+
         ENGINE_INFO("Compiled Shader: {}", m_Source);
     }
+
     void Shader::make_module()
     {
         std::ifstream file(m_CompFile, std::ios::ate | std::ios::binary);
@@ -118,7 +143,7 @@ namespace Anvil
             return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
             break;
         default:
-            ENGINE_WARN("No shader type for {} found. vertex assumed", m_CompFile);
+            ENGINE_WARN("No shader type for {} found. vertex assumed", m_Source);
             return VK_SHADER_STAGE_VERTEX_BIT;
             break;
         }

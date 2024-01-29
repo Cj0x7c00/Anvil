@@ -3,13 +3,14 @@
 
 #include "../../Base/Pointer.hpp"
 #include "../../Base/macros.hpp"
-#include "Shader.h"
 
 namespace Anvil
 {
 
 	class Pipeline;
 	class Shader;
+
+	enum ShaderType;
 
 	/// <summary>
 	/// Graphics factory for creating shaders, pipelines, ond others

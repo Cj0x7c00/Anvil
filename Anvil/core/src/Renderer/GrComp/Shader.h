@@ -1,12 +1,10 @@
 #pragma once
 #include "../../Base/Pointer.hpp"
 #include "../../Base/macros.hpp"
+#include <shaderc/shaderc.hpp>
 #include <string>
-//#include <vulkan/vulkan.h>
-// indirectly link to the struct
-typedef struct VkShaderModule_T* VkShaderModule;
-typedef struct VkPipelineShaderStageCreateInfo;
-enum VkShaderStageFlagBits;
+#include <vulkan/vulkan.h>
+
 
 namespace Anvil
 {	
@@ -22,8 +20,8 @@ namespace Anvil
 	public:
 		static Ref<Shader> Create(const char* _file_path, ShaderType _t, const char* _od="");
 
-		Shader(const char* _file_path, ShaderType _t, const char* _od="")
-			: m_Source{_file_path}, m_Type{_t}, m_OutDir{_od}
+		Shader(const char* _file_path, ShaderType _t)
+			: m_Source{ _file_path }, m_Type{ _t }, m_OutDir{ "" }
 		{
 			compile();
 			make_module();
@@ -31,7 +29,7 @@ namespace Anvil
 
 		~Shader() {};
 
-		std::string GetName() { return m_CompFile; };
+		std::string GetName() { return m_Source; };
 
 		VkShaderModule& GetModule();
 		ShaderType GetType();
@@ -44,6 +42,8 @@ namespace Anvil
 
 		std::string get_dir(std::string dir);
 		std::string enum_t_to_str(ShaderType t);
+		shaderc_shader_kind enum_t_to_kind(ShaderType t);
+
 	private:
 		std::string    m_Source;
 		std::string    m_CompFile;
