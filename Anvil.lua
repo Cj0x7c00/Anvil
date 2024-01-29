@@ -41,15 +41,9 @@ project "Anvil"
         links
         {
             "GLFW",
+            "shaderc_combined",
             "vulkan-1"
         }
-
-        if os.target() == "windows" then
-            postbuildcommands
-            {
-                '{COPYFILE} "%{wks.location}/bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}/bin/'.. outdir ..'/Forge"'
-            }   
-        end
 
 
         filter "configurations:Debug"

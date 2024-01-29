@@ -1,5 +1,3 @@
-
-
 #include "ForgeLayer.h"
 
 #include "core/src/Base/EntryPoint.hpp"
