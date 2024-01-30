@@ -22,7 +22,6 @@ namespace Anvil
 		VkPresentModeKHR presentMode = m_Devices->ChooseSwapPresentMode(swapChainSupport.presentModes);
 		VkExtent2D extent = m_Devices->ChooseSwapExtent(swapChainSupport.capabilities);
 
-		ENGINE_DEBUG("SwapChain Extent: {}, {}", extent.width, extent.height);
 
 		uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;	
 
@@ -65,7 +64,6 @@ namespace Anvil
 		if (vkCreateSwapchainKHR(m_Devices->Device(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
 			ENGINE_ERROR("[VK] Failed to create swap chain");
 		}
-		ENGINE_INFO("[VK] Created Swap Chain");
 
 		vkGetSwapchainImagesKHR(m_Devices->Device(), m_SwapChain, &imageCount, nullptr);
 		m_SwapChainImages.resize(imageCount);
@@ -82,8 +80,6 @@ namespace Anvil
 		VkSurfaceFormatKHR surfaceFormat = m_Devices->ChooseSwapSurfaceFormat(swapChainSupport.formats);
 		VkPresentModeKHR presentMode = m_Devices->ChooseSwapPresentMode(swapChainSupport.presentModes);
 		VkExtent2D extent { _ext.width, _ext.height };
-
-		ENGINE_DEBUG("SwapChain Extent: {}, {}", extent.width, extent.height);
 
 		uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
 
@@ -126,7 +122,6 @@ namespace Anvil
 		if (vkCreateSwapchainKHR(m_Devices->Device(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
 			ENGINE_ERROR("[VK] Failed to create swap chain");
 		}
-		ENGINE_INFO("[VK] Created Swap Chain");
 
 		vkGetSwapchainImagesKHR(m_Devices->Device(), m_SwapChain, &imageCount, nullptr);
 		m_SwapChainImages.resize(imageCount);
@@ -163,7 +158,6 @@ namespace Anvil
 				ENGINE_ERROR("[VK] Failed to create image views");
 			}
 
-			ENGINE_INFO("[VK] Created image Views");
 		}
 	}
 
@@ -185,12 +179,10 @@ namespace Anvil
 			framebufferInfo.height = m_SwapChainExtent.height;
 			framebufferInfo.layers = 1;
 
-			ENGINE_DEBUG("Framebuffer size: {},{}", framebufferInfo.width, framebufferInfo.height);
 
 			if (vkCreateFramebuffer(m_Devices->Device(), &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]) != VK_SUCCESS) {
 				ENGINE_WARN("failed to create framebuffer!");
 			}
-			ENGINE_INFO("[VK] Created frame buffer");
 		}
 	}
 

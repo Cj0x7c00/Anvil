@@ -160,8 +160,6 @@ namespace Anvil
         actualExtent.width  = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
         actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
-        ENGINE_INFO("SwapChain Extent: {}, {}", actualExtent.width, actualExtent.height);
-        
         return actualExtent;
     }
 

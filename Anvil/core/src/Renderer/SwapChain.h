@@ -13,7 +13,6 @@ namespace Anvil
 
 		SwapChain() : m_Devices{ Devices::GetInstance() }
 		{
-			ENGINE_DEBUG("Creating Swap Chain");
 			create_swap_chain();
 			create_image_views();
 			
@@ -21,7 +20,6 @@ namespace Anvil
 
 		SwapChain(Extent2D _ext) : m_Devices{ Devices::GetInstance() }
 		{
-			ENGINE_DEBUG("Creating Swap Chain");
 			create_swap_chain(_ext);
 			create_image_views();
 
