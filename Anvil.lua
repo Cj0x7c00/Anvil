@@ -27,6 +27,7 @@ project "Anvil"
             "Anvil/core/src",
             "Anvil/include/glm",
             "Anvil/include/glfw/include",
+            "Anvil/include/entt/single_include",
             "%{VULKAN_SDK}/include"
         }
 
@@ -36,8 +37,6 @@ project "Anvil"
             "include/glfw/".. outdir .."/GLFW"
         }
 
-
-        
         links
         {
             "GLFW",
@@ -45,6 +44,10 @@ project "Anvil"
             "vulkan-1"
         }
 
+        postbuildcommands
+        {
+            '{COPYFILE} "%{wks.location}bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}bin/'.. outdir ..'/Forge"'
+        } 
 
         filter "configurations:Debug"
             defines "DEBUG"
