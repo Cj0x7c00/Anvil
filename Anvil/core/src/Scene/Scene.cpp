@@ -21,7 +21,7 @@ namespace Anvil
 
     void Scene::DeleteEntity(Entity& _ent)
     {
-        m_Registry->destroy(_ent.Get());
+        m_Registry.destroy(_ent.Get());
     }
 
     Entity* Scene::GetEntityByUUID(UuID uuid)
@@ -29,13 +29,13 @@ namespace Anvil
         // Find the UUID component that mached the UUID specified
         Entity* ent = nullptr;
 
-        m_Registry->view<UUIDComponent>().each(
+        m_Registry.view<UUIDComponent>().each(
         [this, &ent, &uuid](entt::entity entity, UUIDComponent& comp)
         {
             // Get the user pointer (Anvil::Entity) and return its value
             if (comp.Get() == uuid.GetUUID())
             {
-                auto Ent = m_Registry->get<UserPointerComponent>(entity);
+                auto Ent = m_Registry.get<UserPointerComponent>(entity);
                 ent = Ent.Get();
             }
         });
@@ -43,7 +43,7 @@ namespace Anvil
         return ent;
     }
 
-    Ref<entt::registry> Scene::GetRegistry()
+    entt::registry& Scene::GetRegistry()
     {
         return m_Registry;
     }

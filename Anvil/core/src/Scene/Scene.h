@@ -17,18 +17,18 @@ namespace Anvil
 
 		Scene(std::string _name);
 
-		Ref<Entity> CreateEntity(std::string _name);
+		Ref<Entity> CreateEntity(std::string _name="New Object");
 		void        DeleteEntity(Entity& _ent);
 		Entity*     GetEntityByUUID(UuID uuid);
 
-		Ref<entt::registry> GetRegistry();
+		entt::registry& GetRegistry();
 
 		std::string GetName();
 
 	private:
 		std::string m_Name;
 
-		Ref<entt::registry> m_Registry;
+		entt::registry m_Registry;
 		friend class Entity;
 	};
 }

@@ -4,6 +4,8 @@ ForgeLayer::ForgeLayer()
 	: AnvilLayer("Forge Editor Layer")
 {
 	m_Scene = Anvil::Scene::Create("Main Scene");
+
+	auto entity = m_Scene->CreateEntity();
 }
 
 void ForgeLayer::Attach()

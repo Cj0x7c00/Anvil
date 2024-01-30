@@ -9,13 +9,7 @@ namespace Anvil
 	class ANV_API Entity
 	{
 	public:
-		Entity(Ref<entt::registry> _reg, std::string _name)
-			: m_Reg{ _reg }
-		{
-			AddComponent<TagComponent>(_name);
-			AddComponent<UUIDComponent>();
-			set_user_pointer();
-		}
+		Entity(entt::registry& _reg, std::string _name);
 
 		template <typename Component, typename... Args>
 		void AddComponent(Args&&... args); 
@@ -29,8 +23,8 @@ namespace Anvil
 		void set_user_pointer();
 
 	private:
-		entt::entity m_Entity;
-		Ref<entt::registry> m_Reg;
+		entt::entity    m_Entity;
+	    entt::registry& m_Reg;
 	};
 }
 
