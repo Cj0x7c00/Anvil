@@ -3,7 +3,7 @@
 ForgeLayer::ForgeLayer() 
 	: AnvilLayer("Forge Editor Layer")
 {
-	ANVIL_ASSERT(true && "Assert msg");
+	m_Scene = Anvil::Scene::Create("Main Scene");
 }
 
 void ForgeLayer::Attach()

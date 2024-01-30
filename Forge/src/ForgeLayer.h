@@ -1,6 +1,5 @@
 #pragma once
 #include "Anvil.hpp"
-#include "Rendering.hpp"
 
 class ForgeLayer :
     public Anvil::AnvilLayer
@@ -13,5 +12,7 @@ public:
     void Update() override;
     void Detach() override;
 
+private:
+    SCENE m_Scene;
 };
 
