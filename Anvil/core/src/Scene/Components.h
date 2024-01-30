@@ -1,6 +1,8 @@
 #pragma once
 #include "../UUID/uuid.h"
+#include "glm/glm.hpp"
 #include <string>
+#include <vector>
 
 
 namespace Anvil
@@ -62,6 +64,28 @@ namespace Anvil
 		{
 			return uuid.GetUUID();
 		}
+	};
 
+	struct vertex
+	{
+		glm::vec2 position{};
+		glm::vec3 color{};
+
+		vertex(glm::vec2 _pos, glm::vec3 _col)
+			: position{ _pos }, color{ _col }
+		{
+
+		}
+	};
+
+	struct SpriteComponent
+	{
+		std::vector<vertex> verts;
+	
+		SpriteComponent(std::vector<vertex> _vert)
+			: verts{ _vert }
+		{
+		
+		};
 	};
 }

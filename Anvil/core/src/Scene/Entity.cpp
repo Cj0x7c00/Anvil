@@ -3,11 +3,11 @@
 
 namespace Anvil
 {
-	template<typename Component, typename... Args>
-	void Entity::AddComponent(Args&&... args)
-	{
-		m_Reg.emplace<Component>(m_Entity, std::forward<Args>(args)...);
-	}
+	//template <typename Component, typename... Args>
+	//Component& Entity::AddComponent(Args&&... args)
+	//{
+	//	return m_Reg.emplace<Component>(m_Entity, std::forward<Args>(args)...);
+	//}
 
 	template<typename Component>
 	void Entity::RemoveComponent()

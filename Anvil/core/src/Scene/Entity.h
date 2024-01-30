@@ -6,13 +6,17 @@
 
 namespace Anvil
 {
+	
 	class ANV_API Entity
 	{
 	public:
 		Entity(entt::registry& _reg, std::string _name);
 
 		template <typename Component, typename... Args>
-		void AddComponent(Args&&... args); 
+		Component& AddComponent(Args&&... args)
+		{
+			return m_Reg.emplace<Component>(m_Entity, std::forward<Args>(args)...);
+		}
 
 		template<typename Component>
 		void RemoveComponent();
