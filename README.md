@@ -19,7 +19,8 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 - Entity/Scene system [still in development]
 
 ***Working On:***
- - [ ] scene system 
+ - [ ] scene system and rendering 
+ - [ ] UI 
 
 
 ## Build
@@ -32,6 +33,4 @@ in Vis Studio, add the GLFW lib path to "additional library directories"
 
 run the "Setup.sh" for Mac  
 
-## News
-Rebuilding the renderer. threw the old one out and replacing it
 
