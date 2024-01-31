@@ -1,5 +1,5 @@
 #pragma once
-
+#include "../Base/macros.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -10,7 +10,7 @@
 namespace Anvil
 {
 
-    class Log {
+    class ANV_API Log {
     public:
         // Static log function to format and print log messages
         template <typename... Args>
@@ -106,10 +106,10 @@ namespace Anvil
 
 #define ENGINE_OUT(message) Log::out(message);
 #else
-#define ANVIL_INFO(...)  Log::log  ( __FUNCTION__, __VA_ARGS__ )
-#define ANVIL_DEBUG(...) Log::debug( __FUNCTION__, __VA_ARGS__ )
-#define ANVIL_WARN(...)  Log::warn ( __FUNCTION__, __VA_ARGS__ )  
-#define ANVIL_ERROR(...) Log::error( __FUNCTION__, __VA_ARGS__ )
+#define ANVIL_INFO(...)  Anvil::Log::log  ( __FUNCTION__, __VA_ARGS__ )
+#define ANVIL_DEBUG(...) Anvil::Log::debug( __FUNCTION__, __VA_ARGS__ )
+#define ANVIL_WARN(...)  Anvil::Log::warn ( __FUNCTION__, __VA_ARGS__ )  
+#define ANVIL_ERROR(...) Anvil::Log::error( __FUNCTION__, __VA_ARGS__ )
 
 
 #define ANVIL_ASSERT(condition_and_message) \
