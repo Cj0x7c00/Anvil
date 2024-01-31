@@ -3,7 +3,11 @@
 #include "glm/glm.hpp"
 #include <string>
 #include <vector>
+#include <array>
 
+struct VkVertexInputBindingDescription;
+struct VkVertexInputAttributeDescription;
+typedef struct VkBuffer_T* VkBuffer;
 
 namespace Anvil
 {
@@ -56,6 +60,11 @@ namespace Anvil
 	{
 		UuID uuid;
 
+		UUIDComponent()
+		{
+			
+		}
+
 		/// <summary>
 		/// Get the UUID of the entity
 		/// </summary>
@@ -76,16 +85,21 @@ namespace Anvil
 		{
 
 		}
+
+		static VkVertexInputBindingDescription GetBindingDescription();
+
+		static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions();
 	};
 
 	struct SpriteComponent
 	{
 		std::vector<vertex> verts;
-	
+		VkBuffer vertexBuffer = nullptr;
+
 		SpriteComponent(std::vector<vertex> _vert)
 			: verts{ _vert }
 		{
-		
+
 		};
 	};
 }
