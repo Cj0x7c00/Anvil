@@ -13,6 +13,10 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 
 # Updates
 
+## Whats New 
+- DLL abstraction 
+- Renderer
+- Entity/Scene system [still in development]
 
 ***Working On:***
  - [ ] scene system 
