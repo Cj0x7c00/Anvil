@@ -15,12 +15,13 @@ namespace Anvil
 	{
 	public:
 		static Ref<RenderSystem> Default(Ref<SwapChain> _sc);
+		static std::vector<RenderSystem*> GetSystems() { return m_SystemsInPlace; }
 
 		RenderSystem(Ref<SwapChain> _sc);
 
 		virtual void Init() = 0;
 		virtual void NewFrame(NewFrameInfo& frameInfo, Ref<Scene> scene) = 0;
-		virtual void NewFrame(NewFrameInfo& frameInfo) = 0;
+		//virtual void NewFrame(NewFrameInfo& frameInfo) = 0;
 
 		void Flush(uint32_t imageIndex);
 		Ref<CommandBuffer> GetCommandBuffer(uint32_t imageIndex);
@@ -31,6 +32,7 @@ namespace Anvil
 		std::vector<Ref<CommandBuffer>> m_CommandBuffers;
 		Ref<SwapChain>  m_SwapChain;
 
-		
+	private:
+		static std::vector<RenderSystem*> m_SystemsInPlace;
 	};
 }
