@@ -1,6 +1,7 @@
 #include "Scene.h"
-#include "../Base/anvApplication.hpp"
-#include <entt/single_include/entt/entt.hpp>
+#include "Components.h"
+#include <entt/entt.hpp>
+#include "Base/anvApplication.hpp"
 
 namespace Anvil
 {
