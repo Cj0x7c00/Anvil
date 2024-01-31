@@ -6,22 +6,35 @@ void Forge::Awake()
 	Scene = m_SceneManager.GetActiveScene();
 
 	Triangle1 = Scene->CreateEntity("Triangle");
-	Triangle2 = Scene->CreateEntity("Triangle2");
+	Background = Scene->CreateEntity("Background");
 
-	std::vector<Anvil::vertex> verts =
-	{
-		{{0.0, -0.5}, {1.0, 0.0, 0.0}},
-		{{0.5, 0.5}, {0.0, 1.0, 0.0}},
-		{{-0.5, 0.5}, {0.0, 0.0, 1.0}}
+	const std::vector<Anvil::vertex> vertices = {
+		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
 	};
 
-	std::vector<Anvil::vertex> verts2 =
-	{
-		{{0.1, -0.2}, {1.6, 0.0, 0.0}},
-		{{0.6, 0.2}, {0.4, 1.0, 0.0}},
-		{{-0.6, 0.2}, {0.2, 0.6, 1.0}}
+	const std::vector<uint16_t> indices = {
+	0, 1, 2, 2, 3, 0
 	};
 
-	auto Sprite = Triangle1->AddComponent<Anvil::SpriteComponent>(verts);
-	auto Sprite2 = Triangle2->AddComponent<Anvil::SpriteComponent>(verts2);
+	const std::vector<Anvil::vertex> vertices2 = {
+	{{-1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}},
+	{{1.0f, -1.0f}, {0.0f, 1.0f, 0.04f}},
+	{{1.0f, 1.0f}, {0.6f, 0.0f, 0.0f}},
+	{{-1.0f, 1.0f}, {1.0f, 0.0f, 1.0f}}
+	};
+
+	const std::vector<uint16_t> indices2 = {
+	0, 1, 2, 2, 3, 0
+	};
+
+	auto Sprite = Triangle1->AddComponent<Anvil::SpriteComponent>(vertices, indices);
+	auto Sprite2 = Background->AddComponent<Anvil::SpriteComponent>(vertices2, indices2);
+}
+
+void Forge::Update()
+{
+
 }

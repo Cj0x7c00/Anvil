@@ -9,7 +9,7 @@ class Forge : public Anvil::AnvilApplication
 public:
 	SCENE  Scene;
 	ENTITY Triangle1;
-	ENTITY Triangle2;
+	ENTITY Background;
 
 	Forge(Anvil::AppProperties _p) : AnvilApplication(_p)
 	{
@@ -23,10 +23,8 @@ public:
 
 	void Awake() override;
 
-	void Update() override
-	{
+	void Update() override;
 
-	}
 
 	void LateUpdate() override
 	{
