@@ -7,12 +7,13 @@
 ******************************************************/
 
 #pragma once
-#include "../Window/Window.hpp"
-#include "../Base/Pointer.hpp"
-#include "../Base/macros.hpp"
 #include "RenderPass.h"
-#include "GrComp/GraphicsFactory.h"
 #include "RenderSystem.h"
+#include "../Base/macros.hpp"
+#include "../Base/Pointer.hpp"
+#include "../Window/Window.hpp"
+#include "../Scene/SceneManager.h"
+#include "GrComp/GraphicsFactory.h"
 
 typedef struct VkRenderPass_T* VkRenderPass;
 typedef struct VkCommandBuffer_T* VkCommandBuffer;
@@ -25,10 +26,17 @@ namespace Anvil
 	class Devices;
 	class SwapChain;
 
+	struct NewFrameInfo
+	{
+		uint32_t FrameIndex;
+		uint32_t ImageIndex;
+		Ref<RenderPass>	 RenderPass;
+	};
+
 	class ANV_API Renderer
 	{
 	public:
-		static void Init(Ref<Window> window);
+		static void Init(Ref<Window> window, SceneManager* _scene_manager);
 		static void UseSystem(Ref<RenderSystem> _system);
 		static void UseDefaultConfiguration();
 		static void NewFrame();
@@ -36,7 +44,7 @@ namespace Anvil
 		static void CreateNewSwapChain();
 		static void WindowWasResized();
 
-		static Ref<RenderPass> GetRenderPass() { return m_RenderPass; };
+		static Ref<RenderPass> GetRenderPass() { return m_FrameInfo.RenderPass; };
 
 	public:
 		static const int MAX_FRAMES_IN_FLIGHT = 3;
@@ -48,14 +56,14 @@ namespace Anvil
 		static void submit(uint32_t imgIndex);
 
 	private:
-		static uint32_t m_FrameIndex;
-		static uint32_t m_ImageIndex;
+		static NewFrameInfo m_FrameInfo;
 
 		static Ref<Devices>      m_Devices;
 		static Ref<SwapChain>    m_SwapChain;
 		static Ref<Window>		 m_Window;
 		static Ref<RenderSystem> m_RenderSystem;
-		static Ref<RenderPass>	 m_RenderPass;
+
+		static SceneManager* m_SceneManager;
 
 		static std::vector<VkSemaphore> m_ImageAvailableSemaphores;
 		static std::vector<VkSemaphore> m_RenderFinishedSemaphores;

@@ -1,5 +1,5 @@
 #include "RenderSystem.h"
-#include "Systems/defaultRS.h"
+#include "Systems/Scene.System.h"
 #include "SwapChain.h"
 #include "Devices.h"
 #include "Renderer.h"
@@ -10,7 +10,7 @@ namespace Anvil
 {
 	Ref<RenderSystem> RenderSystem::Default(Ref<SwapChain> _sc)
 	{
-		return CreateRef<defaultRS>(_sc);
+		return CreateRef<SceneSys>(_sc);
 	}
 
 	RenderSystem::RenderSystem(Ref<SwapChain> _sc)
@@ -22,11 +22,6 @@ namespace Anvil
 			m_CommandBuffers.push_back(CommandBuffer::Create());
 			ENGINE_DEBUG("Command buffer {} pushed back", i);
 		}
-	}
-
-	void RenderSystem::NewFrame(Ref<RenderPass> renderPass, Ref<Scene> scene)
-	{
-		
 	}
 
 	void RenderSystem::Flush(uint32_t imageIndex)

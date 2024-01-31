@@ -12,19 +12,18 @@ Anvil::Ref<Anvil::Devices>      Anvil::Renderer::m_Devices	    = nullptr;
 Anvil::Ref<Anvil::SwapChain>    Anvil::Renderer::m_SwapChain    = nullptr;
 Anvil::Ref<Anvil::Window>       Anvil::Renderer::m_Window       = nullptr;
 Anvil::Ref<Anvil::RenderSystem> Anvil::Renderer::m_RenderSystem = nullptr;
-Anvil::Ref<Anvil::RenderPass>   Anvil::Renderer::m_RenderPass   = nullptr;
+
+Anvil::NewFrameInfo      Anvil::Renderer::m_FrameInfo = {};
+Anvil::SceneManager*     Anvil::Renderer::m_SceneManager = nullptr;
 
 std::vector<VkSemaphore> Anvil::Renderer::m_ImageAvailableSemaphores = { VK_NULL_HANDLE };
 std::vector<VkSemaphore> Anvil::Renderer::m_RenderFinishedSemaphores = { VK_NULL_HANDLE };
 std::vector<VkFence>     Anvil::Renderer::m_InFlightFences           = { VK_NULL_HANDLE };
 
-uint32_t Anvil::Renderer::m_FrameIndex = 0;
-uint32_t Anvil::Renderer::m_ImageIndex = 0;
-
 
 namespace Anvil
 {
-	void Renderer::Init(Ref<Window> window)
+	void Renderer::Init(Ref<Window> window, SceneManager* _scene_manager)
 	{
 		auto t = Time::Profile("Renderer::Init");
 
@@ -37,7 +36,9 @@ namespace Anvil
 
 		m_SwapChain = SwapChain::Create();
         create_render_pass();
-        m_SwapChain->CreateFrameBuffers(m_RenderPass->Get());
+        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get());
+
+        m_SceneManager = _scene_manager;
 
         UseDefaultConfiguration();
 
@@ -59,20 +60,20 @@ namespace Anvil
     void Renderer::NewFrame()
     {
 
-        vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_ImageIndex], VK_TRUE, UINT64_MAX);
+        vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.FrameIndex], VK_TRUE, UINT64_MAX);
 
         auto result = vkAcquireNextImageKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), UINT64_MAX,
-            m_ImageAvailableSemaphores[m_FrameIndex], VK_NULL_HANDLE, &m_ImageIndex);
+            m_ImageAvailableSemaphores[m_FrameInfo.FrameIndex], VK_NULL_HANDLE, &m_FrameInfo.ImageIndex);
      
         check_swapchain_suitability(result);
 
-        vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_ImageIndex]);
-        m_RenderSystem->Flush(m_ImageIndex);
+        vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex]);
+        m_RenderSystem->Flush(m_FrameInfo.ImageIndex);
 
-        m_RenderSystem->NewFrame(m_RenderPass, m_ImageIndex);
-        submit(m_ImageIndex);   
+        m_RenderSystem->NewFrame(m_FrameInfo, m_SceneManager->GetActiveScene());
+        submit(m_FrameInfo.ImageIndex);
 
-        m_FrameIndex = (m_FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
+        m_FrameInfo.FrameIndex = (m_FrameInfo.FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
 
     void Renderer::WaitIdle()
@@ -105,7 +106,7 @@ namespace Anvil
         vkDestroySwapchainKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), nullptr);
 
         m_SwapChain = SwapChain::Create();
-        m_SwapChain->CreateFrameBuffers(m_RenderPass->Get());
+        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get());
 
     }
 
@@ -118,7 +119,7 @@ namespace Anvil
 
     void Renderer::create_render_pass()
 	{
-        m_RenderPass = RenderPass::Create(m_SwapChain);
+        m_FrameInfo.RenderPass = RenderPass::Create(m_SwapChain);
 	}
 
     void Renderer::check_swapchain_suitability(VkResult res)
@@ -161,19 +162,19 @@ namespace Anvil
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-        VkSemaphore waitSemaphores[] = { m_ImageAvailableSemaphores[m_FrameIndex] };
+        VkSemaphore waitSemaphores[] = { m_ImageAvailableSemaphores[m_FrameInfo.FrameIndex] };
         VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &m_RenderSystem->GetCommandBuffer(m_ImageIndex)->Get();
+        submitInfo.pCommandBuffers = &m_RenderSystem->GetCommandBuffer(m_FrameInfo.ImageIndex)->Get();
 
-        VkSemaphore signalSemaphores[] = { m_RenderFinishedSemaphores[m_ImageIndex]};
+        VkSemaphore signalSemaphores[] = { m_RenderFinishedSemaphores[m_FrameInfo.ImageIndex]};
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
 
-        if (vkQueueSubmit(m_Devices->GraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_ImageIndex]) != VK_SUCCESS) {
+        if (vkQueueSubmit(m_Devices->GraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_FrameInfo.ImageIndex]) != VK_SUCCESS) {
             ENGINE_WARN("Failed to submit command buffer");
         }
 

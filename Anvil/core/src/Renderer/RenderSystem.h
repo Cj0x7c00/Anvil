@@ -7,6 +7,7 @@
 
 namespace Anvil
 {
+	struct NewFrameInfo;
 
 	class SwapChain;
 
@@ -18,8 +19,8 @@ namespace Anvil
 		RenderSystem(Ref<SwapChain> _sc);
 
 		virtual void Init() = 0;
-		virtual void NewFrame(Ref<RenderPass> renderPass, Ref<Scene> scene) = 0;
-		virtual void NewFrame(Ref<RenderPass>, uint32_t imageIndex) = 0;
+		virtual void NewFrame(NewFrameInfo& frameInfo, Ref<Scene> scene) = 0;
+		virtual void NewFrame(NewFrameInfo& frameInfo) = 0;
 
 		void Flush(uint32_t imageIndex);
 		Ref<CommandBuffer> GetCommandBuffer(uint32_t imageIndex);
