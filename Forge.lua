@@ -17,7 +17,8 @@ project "Forge"
         includedirs
         {
             "Anvil/",
-            "Anvil/include/entt/single_include",
+            "Anvil/include/glm",
+            "Anvil/include/entt/single_include"
         }
 
         libdirs 
