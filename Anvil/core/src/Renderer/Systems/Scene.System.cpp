@@ -1,4 +1,4 @@
-#include "defaultRS.h"
+#include "Scene.System.h"
 #include "Util/Time/Time.h"
 #include "../SwapChain.h"
 #include "../GrComp/Pipeline.h"
@@ -7,19 +7,17 @@
 
 namespace Anvil
 {
-	void defaultRS::Init()
+	void SceneSys::Init()
 	{
 		load_shaders();
 		create_pipeline();
 	}
 
-	void defaultRS::NewFrame(Ref<RenderPass> renderPass, uint32_t imageIndex)
+	void SceneSys::NewFrame(NewFrameInfo& frameInfo, Ref<Scene> scene)
 	{
-		m_CommandBuffers[imageIndex]->BeginRecording();
-
-		renderPass->Begin(m_CommandBuffers[imageIndex], imageIndex);
-
-		m_Pipeline->Bind(m_CommandBuffers[imageIndex]);
+		m_CommandBuffers[frameInfo.ImageIndex]->BeginRecording();
+		frameInfo.RenderPass->Begin(m_CommandBuffers[frameInfo.ImageIndex], frameInfo.ImageIndex);
+		m_Pipeline->Bind(m_CommandBuffers[frameInfo.ImageIndex]);
 
 		VkViewport viewport{};
 		viewport.x = 0.0f;
@@ -28,21 +26,20 @@ namespace Anvil
 		viewport.height = static_cast<float>(m_SwapChain->GetExtent().height);
 		viewport.minDepth = 0.0f;
 		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(m_CommandBuffers[imageIndex]->Get(), 0, 1, &viewport);
+		vkCmdSetViewport(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, &viewport);
 
 		VkRect2D scissor{};
 		scissor.offset = { 0, 0 };
 		scissor.extent = m_SwapChain->GetExtent();
-		vkCmdSetScissor(m_CommandBuffers[imageIndex]->Get(), 0, 1, &scissor);
+		vkCmdSetScissor(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, &scissor);
 
-		vkCmdDraw(m_CommandBuffers[imageIndex]->Get(), 3, 1, 0, 0);
-		
-		renderPass->End(m_CommandBuffers[imageIndex]);
+		vkCmdDraw(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 3, 1, 0, 0);
 
-		m_CommandBuffers[imageIndex]->EndRecording();
+		frameInfo.RenderPass->End(m_CommandBuffers[frameInfo.ImageIndex]);
+		m_CommandBuffers[frameInfo.ImageIndex]->EndRecording();
 	}
 
-	void defaultRS::load_shaders()
+	void SceneSys::load_shaders()
 	{
 		ENGINE_INFO("Default System: Loading Shaders");
 		auto vert = GraphicsFactory::CreateShader("shaders/DefaultRSVert.glsl", VERTEX);
@@ -52,7 +49,7 @@ namespace Anvil
 		m_Shaders.push_back(frag);
 	}
 
-	void defaultRS::create_pipeline()
+	void SceneSys::create_pipeline()
 	{
 		ENGINE_INFO("Default System: Creating Pipeline");
 		m_Pipeline = GraphicsFactory::CreatePipeline(m_Shaders);

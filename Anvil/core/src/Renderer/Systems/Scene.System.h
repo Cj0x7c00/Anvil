@@ -1,27 +1,29 @@
 #pragma once
-#include "../RenderSystem.h"
 #include "Base/Pointer.hpp"
+#include "../RenderSystem.h"
+#include "../Renderer.h"
 #include "../GrComp/GraphicsFactory.h"
+
 #include <vector>
 #include <Util/anvLog.hpp>
 
 namespace Anvil
 {
-    class defaultRS :
+    class SceneSys :
         public RenderSystem
     {
     public:
 
-        defaultRS(Ref<SwapChain> _sc) : RenderSystem(_sc)
+        SceneSys(Ref<SwapChain> _sc) : RenderSystem(_sc)
         {
             ENGINE_INFO("Creating Render System");
         }
         
-        ~defaultRS() {}
+        ~SceneSys() {}
 
         void Init() override;
-        void NewFrame(Ref<RenderPass> renderPass, Ref<Scene> scene) override {};
-        void NewFrame(Ref<RenderPass> renderPass, uint32_t imageIndex) override;
+        void NewFrame(NewFrameInfo& frameInfo, Ref<Scene> scene) override;
+        void NewFrame(NewFrameInfo& frameInfo) override {};
 
     private:
         void load_shaders();
