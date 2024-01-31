@@ -25,59 +25,87 @@ namespace Anvil
 	{
 		auto& Reg = scene->GetRegistry();
 		auto sprites = Reg.view<SpriteComponent>();
-		ENGINE_DEBUG("Sprites: {}", sprites.size());
 		auto devices = Devices::GetInstance();
 
 		sprites.each([&frameInfo, &devices, this, &Reg](auto entity, SpriteComponent& spriteData) {
 
 			VkBuffer& vertexBuffer = spriteData.vertexBuffer;
-			if (vertexBuffer != NULL)
+			VkBuffer& indexBuffer  = spriteData.indexBuffer;
+
+			if (vertexBuffer != NULL || indexBuffer != NULL)
 			{
-				ENGINE_DEBUG("Handling: {}", Reg.get<TagComponent>(entity).Get());
 				VkBuffer vertexBuffers[] = { vertexBuffer };
 				VkDeviceSize offsets[] = { 0 };
 
 				vkCmdBindVertexBuffers(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, vertexBuffers, offsets);
-				vkCmdDraw(m_CommandBuffers[frameInfo.ImageIndex]->Get(), static_cast<uint32_t>(spriteData.verts.size()), 1, 0, 0);
+				vkCmdBindIndexBuffer(m_CommandBuffers[frameInfo.ImageIndex]->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+				vkCmdDrawIndexed(m_CommandBuffers[frameInfo.ImageIndex]->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
 				return;
 			}
 			else {
-
-				VkBufferCreateInfo bufferInfo{};
-				bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-				bufferInfo.size = sizeof(spriteData.verts[0]) * spriteData.verts.size();
-				bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-				bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-				if (vkCreateBuffer(devices->Device(), &bufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS) {
-					ENGINE_ERROR("Failed to create vertex buffer!");;
-				}
-
+				
 				VkDeviceMemory vertexBufferMemory;
+				VkDeviceMemory indexBufferMemory;
 
-				VkMemoryRequirements memRequirements;
-				vkGetBufferMemoryRequirements(devices->Device(), vertexBuffer, &memRequirements);
+				// vertex
+				{
 
-				VkMemoryAllocateInfo allocInfo{};
-				allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				allocInfo.allocationSize = memRequirements.size;
-				allocInfo.memoryTypeIndex = devices->FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+					VkDeviceSize bufferSize = sizeof(spriteData.verts[0]) * spriteData.verts.size();
 
-				if (vkAllocateMemory(devices->Device(), &allocInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS) {
-					ENGINE_ERROR("Failed to allocate vertex buffer memory!");
+					VkBuffer stagingBuffer;
+					VkDeviceMemory stagingBufferMemory;
+					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+						| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+					void* data;
+					vkMapMemory(devices->Device(), stagingBufferMemory, 0, bufferSize, 0, &data);
+					memcpy(data, spriteData.verts.data(), (size_t)bufferSize);
+					vkUnmapMemory(devices->Device(), stagingBufferMemory);
+
+					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+						VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
+
+					devices->CopyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+
+					vkDestroyBuffer(devices->Device(), stagingBuffer, nullptr);
+					vkFreeMemory(devices->Device(), stagingBufferMemory, nullptr);
+
+					
+					VkBuffer vertexBuffers[] = { vertexBuffer };
+					VkDeviceSize offsets[] = { 0 };
+
+					vkCmdBindVertexBuffers(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, vertexBuffers, offsets);
 				}
 
-				vkBindBufferMemory(devices->Device(), vertexBuffer, vertexBufferMemory, 0);
-				void* data;
-				vkMapMemory(devices->Device(), vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-				memcpy(data, spriteData.verts.data(), (size_t)bufferInfo.size);
-				vkUnmapMemory(devices->Device(), vertexBufferMemory);
+				// index
+				{
 
-				VkBuffer vertexBuffers[] = { vertexBuffer };
-				VkDeviceSize offsets[] = { 0 };
+					VkDeviceSize bufferSize = sizeof(spriteData.indexs[0]) * spriteData.indexs.size();
 
-				vkCmdBindVertexBuffers(this->m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, vertexBuffers, offsets);
-				vkCmdDraw(m_CommandBuffers[frameInfo.ImageIndex]->Get(), static_cast<uint32_t>(spriteData.verts.size()), 1, 0, 0);
+					VkBuffer stagingBuffer;
+					VkDeviceMemory stagingBufferMemory;
+					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+						VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+					void* data;
+					vkMapMemory(devices->Device(), stagingBufferMemory, 0, bufferSize, 0, &data);
+					memcpy(data, spriteData.indexs.data(), (size_t)bufferSize);
+					vkUnmapMemory(devices->Device(), stagingBufferMemory);
+
+					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+						VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
+
+					devices->CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
+
+					vkDestroyBuffer(devices->Device(), stagingBuffer, nullptr);
+					vkFreeMemory(devices->Device(), stagingBufferMemory, nullptr);
+
+					vkCmdBindIndexBuffer(m_CommandBuffers[frameInfo.ImageIndex]->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+				}
+
+				vkCmdDrawIndexed(m_CommandBuffers[frameInfo.ImageIndex]->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
+
 			}
 
 		});
