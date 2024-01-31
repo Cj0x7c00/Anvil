@@ -66,6 +66,8 @@ namespace Anvil
 
 		// API //
 		SwapChainSupportDetails QuerySwapChainSupport();
+		void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+		void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 		uint32_t                FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 		VkSurfaceFormatKHR		ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		VkPresentModeKHR		ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
