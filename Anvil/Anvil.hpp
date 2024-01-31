@@ -13,7 +13,7 @@
 #include "core/src/Renderer/GrComp/GraphicsFactory.h" // Shaders, Pipelines
 
 typedef Anvil::Ref<Anvil::Scene>    SCENE;
-typedef Anvil::Entity               ENTITY;
+typedef Anvil::Ref<Anvil::Entity>   ENTITY;
 
 typedef Anvil::Ref<Anvil::Shader>	SHADER;
 typedef Anvil::Ref<Anvil::Pipeline> PIPELINE;
