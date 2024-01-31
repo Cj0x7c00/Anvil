@@ -23,3 +23,5 @@ core/extras/Notes
 /bin/Release-windows-x86_64
 /bin-int/Release-windows-x86_64
 *.spv
+*.exe
+/packages/Microsoft.Windows.CppWinRT.2.0.220531.1
