@@ -20,6 +20,12 @@ namespace Anvil
 		template<typename Component>
 		void RemoveComponent();
 
+		template <typename Component>
+		Component& GetComponent()
+		{
+			return m_Reg.get<Component>(m_Entity);
+		}
+
 		entt::entity& Get() { return m_Entity; }
 
 	private:
