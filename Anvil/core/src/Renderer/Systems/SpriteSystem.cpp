@@ -145,8 +145,8 @@ namespace Anvil
 	void SpriteSystem::load_shaders()
 	{
 		ENGINE_INFO("Default System: Loading Shaders");
-		auto vert = GraphicsFactory::CreateShader("shaders/DefaultRSVert.glsl", VERTEX);
-		auto frag = GraphicsFactory::CreateShader("shaders/DefaultRSFrag.glsl", FRAGMENT);
+		auto vert = GraphicsFactory::CreateShader("shaders/SpriteSystemV.glsl", VERTEX);
+		auto frag = GraphicsFactory::CreateShader("shaders/SpriteSystemF.glsl", FRAGMENT);
 
 		m_Shaders.push_back(vert);
 		m_Shaders.push_back(frag);
