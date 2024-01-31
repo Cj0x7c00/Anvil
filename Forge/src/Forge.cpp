@@ -1,10 +1,14 @@
 #include "ForgeLayer.h"
-
+#include <glm/glm.hpp>
+#include "Anvil.hpp"
 #include "core/src/Base/EntryPoint.hpp"
 
 class Forge : public Anvil::AnvilApplication
 {
 public:
+	SCENE  Scene;
+	ENTITY Triangle;
+
 	Forge(Anvil::AppProperties _p) : AnvilApplication(_p)
 	{
 		PushLayer(new ForgeLayer());
@@ -12,17 +16,32 @@ public:
 
 	~Forge()
 	{
-		
+
 	}
 
-	void Run() override
+	void Awake() override
 	{
-        while (!GetWindow()->ShouldClose()) {
+		Scene = m_SceneManager.GetActiveScene();
+		Triangle = Scene->CreateEntity("Triangle");
 
-            GetWindow()->PollEvents();
-			Anvil::Renderer::NewFrame();
-        }
-		Anvil::Renderer::WaitIdle();
+		std::vector<Anvil::vertex> verts =
+		{
+			{{0.0, -0.5}, {1.0, 0.0, 0.0}},
+			{{0.5, 0.5}, {0.0, 1.0, 0.0}},
+			{{-0.5, -0.5}, {0.0, 0.0, 1.0}}
+		};
+
+		auto Sprite = Triangle->AddComponent<Anvil::SpriteComponent>(verts);
+	}
+
+	void Update() override
+	{
+
+	}
+
+	void LateUpdate() override
+	{
+
 	}
 };
 
