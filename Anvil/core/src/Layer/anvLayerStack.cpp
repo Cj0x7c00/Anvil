@@ -2,22 +2,25 @@
 
 namespace Anvil
 {
-    AnvilLayerStack::~AnvilLayerStack()
+
+    LayerStack::~LayerStack()
     {
         for (AnvilLayer* layer : Layers)
         {
             layer->Detach();
+            ENGINE_INFO("Deleted layer: {}", layer->GetName());
             delete layer;
         }
     }
 
-    void AnvilLayerStack::PushLayer(AnvilLayer* layer)
+    void LayerStack::PushLayer(AnvilLayer* layer)
     {
+        layer->Attach();
         Layers.emplace(Layers.begin() + insertIndex, layer);
         insertIndex++;
     }
 
-    void AnvilLayerStack::PopLayer(AnvilLayer* layer)
+    void LayerStack::PopLayer(AnvilLayer* layer)
     {
         auto it = std::find(Layers.begin(), Layers.begin() + insertIndex, layer);
 		if (it != Layers.begin() + insertIndex)
@@ -27,4 +30,6 @@ namespace Anvil
 			insertIndex--;
 		}
     }
+
+    std::vector<AnvilLayer*>& LayerStack::GetLayers() { return Layers; }
 }

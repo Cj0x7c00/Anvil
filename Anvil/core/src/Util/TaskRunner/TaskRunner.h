@@ -1,5 +1,5 @@
 #pragma once
-#include "../../settings.hpp"
+#include "../../Base/macros.hpp"
 #include <string>
 
 namespace Anvil
@@ -11,16 +11,26 @@ namespace Anvil
 	public:
 		typedef void (*CallbackFunction)(std::string);
 
+		static void ChangeDir(const char* _dir);
+
+		/// <summary>
+		/// Execute a console command
+		/// </summary>
+		/// <param name="cmd"></param>
+		/// <param name="filename"></param>
+		/// <returns></returns>
 		static std::string Execute(const char* cmd, const char* filename = "cmd_output.txt");
 
 		/// <summary>
 		/// Silently execute a command.
 		/// </summary>
 		/// <param name="cmd">command</param>
-		/// <param name="callback">Callback function, hase to take in a string, calls if failed</param>
 		/// <param name="filename">intermediate file</param>
 		/// <returns>exit code, 0 if successful</returns>
-		static int SilentExecute(const char* cmd, CallbackFunction callback = NULL, const char* filename = "cmd_output.txt");
+		static int SilentExecute(const char* cmd, const char* filename = "cmd_output.txt");
+
+		// -- Experimental --
+		//static int SilentExecute(const char* cmd, CallbackFunction callback = NULL, const char* filename = "cmd_output.txt");
 	};
 
 }

@@ -1,5 +1,7 @@
-workspace "Anvil-2D"
+workspace "AnvilEngine"
+
     architecture "x64"
+    startproject "Forge" -- editor
 
     configurations 
     {
@@ -7,60 +9,22 @@ workspace "Anvil-2D"
         "Release"
     }
 
-    outdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-
     VULKAN_SDK = os.getenv("VULKAN_SDK")
+    print("Vulkan SDK: ", VULKAN_SDK)
+    outdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+    root_dir = os.getcwd() .. "/"
+    print("Root Directory: ", root_dir)
+    vendor_dir = root_dir .. "Anvil/include/"
+    print("Vendor Directory: ", vendor_dir)
 
-    project "Anvil"
-        location "Anvil"
-        kind "ConsoleApp"
-        language "C++"
-        cppdialect "C++17"
+    group "Dependencies"
+        include "Anvil/include/glfw/glfw.lua"
+    group ""
 
-        targetdir("build/bin/" .. outdir .. "/%{prj.name}")
-        objdir( "build/bin-int/" .. outdir .. "/%{prj.name}")
+    group "Engine"
+        include "Anvil.lua"
+    group ""
 
-        files
-        {
-
-            "Anvil/core/src/**.hpp",
-            "Anvil/core/src/**.cpp"
-
-        }
-
-        includedirs
-        {
-            "Anvil/include",
-            "Anvil/include/glm",
-            "Anvil/include/glfw/include",
-            "%{VULKAN_SDK}/include"
-        }
-
-        libdirs 
-        {
-            "%{VULKAN_SDK}/Lib"
-        }
-
-        if os.target() == "windows" then
-            links
-            {
-                "glfw3",   -- just glfw for mac
-                "vulkan-1" -- just vulkan for mac
-            }
-        end
-        
-        if os.target() == "macosx" then
-            links
-            {
-                "glfw",   -- just glfw for mac
-                "vulkan" -- just vulkan for mac
-            }
-        end
-
-    filter "configurations:Debug"
-        defines "DEBUG"
-        optimize "on"
-
-    filter "configurations:Release"
-        defines "RELEASE"
-        optimize "on"
+    group "Tools"
+        include "Forge.lua"
+    group ""

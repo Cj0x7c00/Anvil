@@ -1,4 +1,4 @@
-
+#include "../Base/macros.hpp"
 
 #include <iostream>
 #include <random>
@@ -6,9 +6,9 @@
 
 namespace Anvil{
 
-    class UUID{
+    class ANV_API UuID{
         public:
-        UUID() {
+        UuID() {
             std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_int_distribution<> dis(0, 15);

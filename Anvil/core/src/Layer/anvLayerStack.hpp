@@ -4,14 +4,21 @@
 
 namespace Anvil
 {
-    class AnvilLayerStack
+
+    class ANV_API LayerStack
     {
-        public:
-         std::vector<AnvilLayer*> Layers;
-         unsigned int insertIndex = 0;
-         
-         ~AnvilLayerStack();
-         void PushLayer(AnvilLayer* layer);
-         void PopLayer(AnvilLayer* layer);
+
+    public:
+
+        ~LayerStack();
+
+        void PushLayer(AnvilLayer* layer);
+        void PopLayer(AnvilLayer* layer);
+
+        std::vector<AnvilLayer*>& GetLayers();
+
+    private:
+        unsigned int insertIndex = 0;
+        std::vector<AnvilLayer*> Layers;
     };
 }
