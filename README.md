@@ -26,6 +26,8 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 ## Build
 #### **Install the vulkan SDK**
 
+if you haven't already, set a VULKAN_SDK environment variable to the vulkan SDK path. this is required for the engine to work
+
 run the "Setup.bat" script and link with the GLFW library.
 
 in Vis Studio, add the GLFW lib path to "additional library directories"
