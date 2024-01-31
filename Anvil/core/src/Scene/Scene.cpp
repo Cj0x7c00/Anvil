@@ -1,11 +1,14 @@
 #include "Scene.h"
+#include "../Base/anvApplication.hpp"
 #include <entt/single_include/entt/entt.hpp>
 
 namespace Anvil
 {
-    Ref<Scene> Scene::Create(std::string _name="New Scene")
+    Ref<Scene> Scene::Create(std::string _name)
     {
-        return CreateRef<Scene>(_name);
+        auto new_scene = CreateRef<Scene>(_name);
+        SceneManager::NewSceneCreated(new_scene);
+        return new_scene;
     }
 
     Scene::Scene(std::string _name)

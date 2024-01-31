@@ -11,6 +11,7 @@ namespace Anvil
 	{
 	public:
 		Entity(entt::registry& _reg, std::string _name);
+		Entity();
 
 		template <typename Component, typename... Args>
 		Component& AddComponent(Args&&... args)
