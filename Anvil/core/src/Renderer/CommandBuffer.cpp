@@ -50,6 +50,5 @@ namespace Anvil
 			ENGINE_WARN("[Render System]: Failed to create command buffer");
 		}
 
-		ENGINE_INFO("Created command buffer");
 	}
 }
