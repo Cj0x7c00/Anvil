@@ -94,10 +94,19 @@ namespace Anvil
 	struct SpriteComponent
 	{
 		std::vector<vertex> verts;
-		VkBuffer vertexBuffer = nullptr;
+		std::vector<uint16_t> indexs;
 
-		SpriteComponent(std::vector<vertex> _vert)
-			: verts{ _vert }
+		VkBuffer vertexBuffer = nullptr;
+		VkBuffer indexBuffer  = nullptr;
+
+		SpriteComponent(std::vector<vertex> _vert, std::vector<uint16_t> _index)
+			: verts{ _vert }, indexs{_index}
+		{
+
+		};
+
+		SpriteComponent(SpriteComponent& _comp)
+			: verts{ _comp.verts }, indexs{ _comp.indexs }
 		{
 
 		};
