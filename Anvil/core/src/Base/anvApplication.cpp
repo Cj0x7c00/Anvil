@@ -11,12 +11,25 @@ namespace Anvil{
 
         m_Window = Window::Create(_p.win_props);
 
-        Renderer::Init(m_Window);
+        Renderer::Init(m_Window, &m_SceneManager);
     }
 
     AnvilApplication::~AnvilApplication()
     {
         m_LayerStack.~LayerStack();
+    }
+
+    void AnvilApplication::Run()
+    {
+        Awake();
+        while (!m_Window->ShouldClose()) {
+
+            m_Window->PollEvents();
+			Update();
+			Anvil::Renderer::NewFrame();
+			LateUpdate();
+        }
+		Anvil::Renderer::WaitIdle();
     }
 
     Ref<Window> AnvilApplication::GetWindow()

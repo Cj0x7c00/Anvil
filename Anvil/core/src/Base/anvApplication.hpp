@@ -3,6 +3,7 @@
 #include "../Window/Window.hpp"
 #include "../Util/Time/anvTimeStep.hpp"
 #include "../Layer/anvLayerStack.hpp"
+#include "../Scene/SceneManager.h"
 #include "Pointer.hpp"
 #include "macros.hpp"
 
@@ -38,7 +39,11 @@ namespace Anvil
 
         AnvilApplication(AppProperties& _p);
         ~AnvilApplication();
-        virtual void Run() = 0;
+        void Run();
+        virtual void Awake() = 0;
+        virtual void Update() = 0;
+        virtual void LateUpdate() = 0;
+
 
         Ref<Window> GetWindow();
 
@@ -49,6 +54,7 @@ namespace Anvil
         Ref<Window>    m_Window;
         Ref<Renderer>  m_Renderer;
 
+        SceneManager   m_SceneManager;
         LayerStack     m_LayerStack;
     };
     
