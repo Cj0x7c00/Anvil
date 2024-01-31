@@ -3,31 +3,30 @@
 #include "../RenderSystem.h"
 #include "../Renderer.h"
 #include "../GrComp/GraphicsFactory.h"
-
 #include <vector>
 #include <Util/anvLog.hpp>
 
 namespace Anvil
 {
-    class SceneSys :
+    class SpriteSystem :
         public RenderSystem
     {
     public:
 
-        SceneSys(Ref<SwapChain> _sc) : RenderSystem(_sc)
+        SpriteSystem(Ref<SwapChain> _sc) : RenderSystem(_sc)
         {
             ENGINE_INFO("Creating Render System");
         }
         
-        ~SceneSys() {}
+        ~SpriteSystem() {}
 
         void Init() override;
         void NewFrame(NewFrameInfo& frameInfo, Ref<Scene> scene) override;
-        void NewFrame(NewFrameInfo& frameInfo) override {};
 
     private:
         void load_shaders();
         void create_pipeline();
+        void render_sprites(NewFrameInfo& frameInfo, Ref<Scene> scene);
 
     private:
         Ref<Pipeline>            m_Pipeline;
