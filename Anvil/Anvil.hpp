@@ -4,7 +4,6 @@
 #include "core/src/Layer/anvLayer.hpp"
 #include "core/src/Scene/Scene.h"
 #include "core/src/Scene/Entity.h"
-#include "core/src/Scene/Components.h"
 #include "core/src/Util/Time/anvTimeStep.hpp"
 #include "core/src/Util/anvLog.hpp"
 
