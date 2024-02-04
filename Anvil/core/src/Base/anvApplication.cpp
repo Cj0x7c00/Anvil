@@ -22,14 +22,15 @@ namespace Anvil{
     void AnvilApplication::Run()
     {
         Awake();
+        Renderer::BeginOneTimeOps();
         while (!m_Window->ShouldClose()) {
 
             m_Window->PollEvents();
 			Update();
-			Anvil::Renderer::NewFrame();
+			Renderer::NewFrame();
 			LateUpdate();
         }
-		Anvil::Renderer::WaitIdle();
+		Renderer::WaitIdle();
     }
 
     Ref<Window> AnvilApplication::GetWindow()
@@ -47,7 +48,7 @@ namespace Anvil{
     void AnvilApplication::PopLayer(AnvilLayer* _layer)
     {
 
-        ENGINE_INFO("Popping Layer {}", _layer->GetName());
+        ENGINE_INFO("Popping Layer \"{}\"", _layer->GetName());
         m_LayerStack.PopLayer(_layer);
     }
 
