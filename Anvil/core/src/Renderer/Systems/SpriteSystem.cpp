@@ -15,15 +15,23 @@
 
 namespace Anvil
 {
+	SpriteSystem::~SpriteSystem()
+	{
+
+	}
+
 	void SpriteSystem::Init()
 	{
 		load_shaders();
 		create_pipeline();
+		create_ubos();
+		create_descriptor_pool();
+		create_descriptor_sets();
 	}
 
-	void SpriteSystem::render_sprites(NewFrameInfo& frameInfo, Ref<Scene> scene)
+	void SpriteSystem::render_sprites(NewFrameInfo& frameInfo)
 	{
-		auto& Reg = scene->GetRegistry();
+		auto& Reg = frameInfo.Scene->GetRegistry();
 		auto sprites = Reg.view<SpriteComponent>();
 		auto devices = Devices::GetInstance();
 
@@ -32,15 +40,16 @@ namespace Anvil
 			VkBuffer& vertexBuffer = spriteData.vertexBuffer;
 			VkBuffer& indexBuffer  = spriteData.indexBuffer;
 
+
 			if (vertexBuffer != NULL || indexBuffer != NULL)
 			{
 				VkBuffer vertexBuffers[] = { vertexBuffer };
 				VkDeviceSize offsets[] = { 0 };
 
-				vkCmdBindVertexBuffers(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, vertexBuffers, offsets);
-				vkCmdBindIndexBuffer(m_CommandBuffers[frameInfo.ImageIndex]->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-				vkCmdDrawIndexed(m_CommandBuffers[frameInfo.ImageIndex]->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
-				return;
+				vkCmdBindVertexBuffers(frameInfo.CommandBuffer->Get(), 0, 1, vertexBuffers, offsets);
+				vkCmdBindIndexBuffer(frameInfo.CommandBuffer->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+				vkCmdBindDescriptorSets(frameInfo.CommandBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline->GetPipelineLayout(), 0, 1, &m_DescriptorSets[frameInfo.FrameIndex], 0, nullptr);
+				vkCmdDrawIndexed(frameInfo.CommandBuffer->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
 			}
 			else {
 				
@@ -74,7 +83,7 @@ namespace Anvil
 					VkBuffer vertexBuffers[] = { vertexBuffer };
 					VkDeviceSize offsets[] = { 0 };
 
-					vkCmdBindVertexBuffers(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, vertexBuffers, offsets);
+					vkCmdBindVertexBuffers(frameInfo.CommandBuffer->Get(), 0, 1, vertexBuffers, offsets);
 				}
 
 				// index
@@ -100,46 +109,109 @@ namespace Anvil
 					vkDestroyBuffer(devices->Device(), stagingBuffer, nullptr);
 					vkFreeMemory(devices->Device(), stagingBufferMemory, nullptr);
 
-					vkCmdBindIndexBuffer(m_CommandBuffers[frameInfo.ImageIndex]->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+					vkCmdBindIndexBuffer(frameInfo.CommandBuffer->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 
 				}
-
-				vkCmdDrawIndexed(m_CommandBuffers[frameInfo.ImageIndex]->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
-
+				vkCmdBindDescriptorSets(frameInfo.CommandBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline->GetPipelineLayout(), 0, 1, &m_DescriptorSets[frameInfo.FrameIndex], 0, nullptr);
+				vkCmdDrawIndexed(frameInfo.CommandBuffer->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
 			}
 
 		});
 	}
 
-
-
-	void SpriteSystem::NewFrame(NewFrameInfo& frameInfo, Ref<Scene> scene)
+	void SpriteSystem::NewFrame(NewFrameInfo& frameInfo)
 	{
-		m_CommandBuffers[frameInfo.ImageIndex]->BeginRecording();
-		frameInfo.RenderPass->Begin(m_CommandBuffers[frameInfo.ImageIndex], frameInfo.ImageIndex);
-		m_Pipeline->Bind(m_CommandBuffers[frameInfo.ImageIndex]);
+		
+		m_Pipeline->Bind(frameInfo.CommandBuffer.get());
 
-		// these need abstraction
-		{
-			VkViewport viewport{};
-			viewport.x = 0.0f;
-			viewport.y = 0.0f;
-			viewport.width = static_cast<float>(m_SwapChain->GetExtent().width);
-			viewport.height = static_cast<float>(m_SwapChain->GetExtent().height);
-			viewport.minDepth = 0.0f;
-			viewport.maxDepth = 1.0f;
-			vkCmdSetViewport(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, &viewport);
+		Renderer::SetViewport(ViewportInfo::Default(), frameInfo.CommandBuffer.get());
+		render_sprites(frameInfo);
+		
+	}
 
-			VkRect2D scissor{};
-			scissor.offset = { 0, 0 };
-			scissor.extent = m_SwapChain->GetExtent();
-			vkCmdSetScissor(m_CommandBuffers[frameInfo.ImageIndex]->Get(), 0, 1, &scissor);
+	void SpriteSystem::create_ubos()
+	{
+		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+
+		m_UniformBuffers.resize(Renderer::MAX_FRAMES_IN_FLIGHT);
+		m_UniformBuffersMemory.resize(Renderer::MAX_FRAMES_IN_FLIGHT);
+		m_UniformBuffersMapped.resize(Renderer::MAX_FRAMES_IN_FLIGHT);
+
+		for (size_t i = 0; i < Renderer::MAX_FRAMES_IN_FLIGHT; i++) {
+			Devices::GetInstance()->CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_UniformBuffers[i], m_UniformBuffersMemory[i]);
+
+			vkMapMemory(Devices::GetInstance()->Device(), m_UniformBuffersMemory[i], 0, bufferSize, 0, &m_UniformBuffersMapped[i]);
+		}
+	}
+
+	void SpriteSystem::Update(NewFrameInfo& frameInfo)
+	{
+		update_ubos(frameInfo);
+	}
+
+	void SpriteSystem::update_ubos(NewFrameInfo& frameInfo)
+	{
+		static auto startTime = std::chrono::high_resolution_clock::now();
+
+		auto currentTime = std::chrono::high_resolution_clock::now();
+		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+		UniformBufferObject ubo{};
+		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.proj = glm::perspective(glm::radians(45.0f), m_SwapChain->GetExtent().width / (float)m_SwapChain->GetExtent().height, 0.1f, 10.0f);
+		ubo.proj[1][1] *= -1;
+		memcpy(m_UniformBuffersMapped[frameInfo.FrameIndex], &ubo, sizeof(ubo));
+	}
+
+	void SpriteSystem::create_descriptor_pool()
+	{
+		VkDescriptorPoolSize poolSize{};
+		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSize.descriptorCount = static_cast<uint32_t>(Renderer::MAX_FRAMES_IN_FLIGHT) ;
+
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.poolSizeCount = 1;
+		poolInfo.pPoolSizes = &poolSize;
+		poolInfo.maxSets = static_cast<uint32_t>(Renderer::MAX_FRAMES_IN_FLIGHT);
+
+		if (vkCreateDescriptorPool(Devices::GetInstance()->Device(), &poolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS) {
+			ENGINE_ERROR("failed to create descriptor pool!");
+		}
+	}
+
+	void SpriteSystem::create_descriptor_sets()
+	{
+		std::vector<VkDescriptorSetLayout> layouts(Renderer::MAX_FRAMES_IN_FLIGHT, m_Pipeline->GetDescriptorLayout());
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = m_DescriptorPool;
+		allocInfo.descriptorSetCount = static_cast<uint32_t>(Renderer::MAX_FRAMES_IN_FLIGHT);
+		allocInfo.pSetLayouts = layouts.data();
+
+		m_DescriptorSets.resize(Renderer::MAX_FRAMES_IN_FLIGHT);
+		if (vkAllocateDescriptorSets(Devices::GetInstance()->Device(), &allocInfo, m_DescriptorSets.data()) != VK_SUCCESS) {
+			ENGINE_WARN("failed to allocate descriptor sets");
 		}
 
-		render_sprites(frameInfo, scene);
+		for (size_t i = 0; i < Renderer::MAX_FRAMES_IN_FLIGHT; i++) {
+			VkDescriptorBufferInfo bufferInfo{};
+			bufferInfo.buffer = m_UniformBuffers[i];
+			bufferInfo.offset = 0;
+			bufferInfo.range = sizeof(UniformBufferObject);
 
-		frameInfo.RenderPass->End(m_CommandBuffers[frameInfo.ImageIndex]);
-		m_CommandBuffers[frameInfo.ImageIndex]->EndRecording();
+			VkWriteDescriptorSet descriptorWrite{};
+			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrite.dstSet = m_DescriptorSets[i];
+			descriptorWrite.dstBinding = 0;
+			descriptorWrite.dstArrayElement = 0;
+			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;	
+			descriptorWrite.descriptorCount = 1;
+			descriptorWrite.pBufferInfo = &bufferInfo;
+
+			vkUpdateDescriptorSets(Devices::GetInstance()->Device(), 1, &descriptorWrite, 0, nullptr);
+		}
 	}
 
 	void SpriteSystem::load_shaders()
@@ -150,6 +222,8 @@ namespace Anvil
 
 		m_Shaders.push_back(vert);
 		m_Shaders.push_back(frag);
+
+
 	}
 
 	void SpriteSystem::create_pipeline()
