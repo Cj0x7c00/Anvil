@@ -96,8 +96,8 @@ namespace Anvil
 		std::vector<vertex> verts;
 		std::vector<uint16_t> indexs;
 
-		VkBuffer vertexBuffer = nullptr;
-		VkBuffer indexBuffer  = nullptr;
+		VkBuffer vertexBuffer = NULL;
+		VkBuffer indexBuffer = NULL;
 
 		SpriteComponent(std::vector<vertex> _vert, std::vector<uint16_t> _index)
 			: verts{ _vert }, indexs{_index}

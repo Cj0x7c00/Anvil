@@ -26,6 +26,7 @@ project "Anvil"
             "Anvil/include",
             "Anvil/core/src",
             "Anvil/include/glm",
+            "Anvil/include/imgui",
             "Anvil/include/glfw/include",
             "Anvil/include/entt/single_include",
             "%{VULKAN_SDK}/include"
@@ -48,6 +49,8 @@ project "Anvil"
         {
             '{COPYFILE} "%{wks.location}bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}bin/'.. outdir ..'/Forge"'
         } 
+
+        buildoptions { "/MP" }
 
         filter "configurations:Debug"
             defines "DEBUG"

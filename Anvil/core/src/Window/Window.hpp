@@ -4,6 +4,8 @@
 #include "../Base/macros.hpp"
 #include "../Base/Pointer.hpp"
 
+struct VkExtent2D;
+
 namespace Anvil
 {
     typedef void (*ResizeCallbackFn)();
@@ -24,6 +26,8 @@ namespace Anvil
                 return false;
             }
         }
+
+        Extent2D operator=(VkExtent2D& ext);
     };
 
     struct WindowProps

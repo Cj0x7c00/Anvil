@@ -9,7 +9,6 @@ class Forge : public Anvil::AnvilApplication
 public:
 	SCENE  Scene;
 	ENTITY Triangle1;
-	ENTITY Background;
 
 	Forge(Anvil::AppProperties _p) : AnvilApplication(_p)
 	{
