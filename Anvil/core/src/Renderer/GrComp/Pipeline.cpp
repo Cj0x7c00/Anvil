@@ -19,6 +19,7 @@ namespace Anvil
     {
         m_ShaderStages.clear();
         process_shaders(_shaders);
+        create_descriptor_layout();
         create_pipeline_layout();
     }
     
@@ -27,9 +28,19 @@ namespace Anvil
 
     }
 
-    void Pipeline::Bind(Ref<CommandBuffer> cmdBuffer)
+    void Pipeline::Bind(CommandBuffer* cmdBuffer)
     {
         vkCmdBindPipeline(cmdBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
+    }
+
+    VkDescriptorSetLayout& Pipeline::GetDescriptorLayout()
+    {
+        return m_DescriptorSetLayout;
+    }
+
+    VkPipelineLayout& Pipeline::GetPipelineLayout()
+    {
+        return m_Layout;
     }
 
 	void Pipeline::process_shaders(std::vector<Ref<Shader>> _shaders)
@@ -46,9 +57,30 @@ namespace Anvil
         }
 	}
 
+    void Pipeline::create_descriptor_layout()
+    {
+        VkDescriptorSetLayoutBinding uboLayoutBinding{};
+        uboLayoutBinding.binding = 0;
+        uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        uboLayoutBinding.descriptorCount = 1;
+
+        uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+        uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
+
+        VkDescriptorSetLayoutCreateInfo layoutInfo{};
+        layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        layoutInfo.bindingCount = 1;
+        layoutInfo.pBindings = &uboLayoutBinding;
+
+        if (vkCreateDescriptorSetLayout(Devices::GetInstance()->Device(), &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
+            ENGINE_ERROR("Failed to create descriptor set layout!");
+        }
+    }
+
 	void Pipeline::create_pipeline_layout()
 	{
-        auto bindingDescription = vertex::GetBindingDescription();
+        auto bindingDescription    = vertex::GetBindingDescription();
         auto attributeDescriptions = vertex::GetAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
@@ -75,7 +107,7 @@ namespace Anvil
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
         rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
 
         VkPipelineMultisampleStateCreateInfo multisampling{};
@@ -102,6 +134,7 @@ namespace Anvil
             VK_DYNAMIC_STATE_VIEWPORT,
             VK_DYNAMIC_STATE_SCISSOR
         };
+
         VkPipelineDynamicStateCreateInfo dynamicState{};
         dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
         dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
@@ -109,7 +142,8 @@ namespace Anvil
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 0;
+        pipelineLayoutInfo.setLayoutCount = 1;
+        pipelineLayoutInfo.pSetLayouts = &m_DescriptorSetLayout;
         pipelineLayoutInfo.pushConstantRangeCount = 0;
 
         if (vkCreatePipelineLayout(Devices::GetInstance()->Device(), &pipelineLayoutInfo, nullptr, &m_Layout) != VK_SUCCESS) {
