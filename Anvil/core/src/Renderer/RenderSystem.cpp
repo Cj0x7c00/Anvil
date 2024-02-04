@@ -1,41 +1,39 @@
 #include "RenderSystem.h"
 #include "Systems/SpriteSystem.h"
+#include "Systems/UISystem.h"
 #include "SwapChain.h"
 #include "Devices.h"
 #include "Renderer.h"
 #include "Util/anvLog.hpp"
+#include "UBO.h"
 #include <vulkan/vulkan.h>
 
 std::vector<Anvil::RenderSystem*> Anvil::RenderSystem::m_SystemsInPlace = {};
+Anvil::Ref<Anvil::SwapChain> Anvil::RenderSystem::m_SwapChain = nullptr;
 
 namespace Anvil
 {
-	Ref<RenderSystem> RenderSystem::Default(Ref<SwapChain> _sc)
+	std::vector<Ref<RenderSystem>> RenderSystem::Default(Ref<SwapChain> _sc)
 	{
-		return CreateRef<SpriteSystem>(_sc);
+		return { CreateRef<SpriteSystem>(_sc), CreateRef<UISystem>(_sc)};
 	}
 
 	RenderSystem::RenderSystem(Ref<SwapChain> _sc)
-		: m_SwapChain{_sc}
 	{
-		m_CommandBuffers.clear();
-		for (int i = 0; i < Renderer::MAX_FRAMES_IN_FLIGHT; i++)
-		{
-			m_CommandBuffers.push_back(CommandBuffer::Create());
-		}
+		m_SwapChain = _sc;
+
 
 		m_SystemsInPlace.push_back(this);
 		ENGINE_INFO("Render system count: {}", m_SystemsInPlace.size());
 	}
 
-	void RenderSystem::Flush(uint32_t imageIndex)
+	void RenderSystem::OnCallOnce(CommandBuffer cmdBuffer)
 	{
-		m_CommandBuffers[imageIndex]->Reset();
 	}
 
-	Ref<CommandBuffer> RenderSystem::GetCommandBuffer(uint32_t imageIndex)
+	void RenderSystem::Update(NewFrameInfo& frameInfo)
 	{
-		return m_CommandBuffers[imageIndex];
+
 	}
 
 	void RenderSystem::WindowWasResized(Ref<SwapChain> _sc)
@@ -43,4 +41,23 @@ namespace Anvil
 		m_SwapChain = _sc;
 	}
 
+    void RenderSystem::create_ubos()
+    {
+
+    }
+
+    void RenderSystem::update_ubos(NewFrameInfo& frameInfo)
+    {
+
+    }
+
+    void RenderSystem::create_descriptor_pool()
+    {
+
+    }
+
+    void RenderSystem::create_descriptor_sets()
+    {
+
+    }
 }
