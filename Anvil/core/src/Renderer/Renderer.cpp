@@ -11,17 +11,15 @@
 Anvil::Ref<Anvil::Devices>      Anvil::Renderer::m_Devices	    = nullptr;
 Anvil::Ref<Anvil::SwapChain>    Anvil::Renderer::m_SwapChain    = nullptr;
 Anvil::Ref<Anvil::Window>       Anvil::Renderer::m_Window       = nullptr;
+Anvil::SceneManager*            Anvil::Renderer::m_SceneManager = nullptr;
 
-Anvil::NewFrameInfo      Anvil::Renderer::m_FrameInfo = {};
-Anvil::SceneManager*     Anvil::Renderer::m_SceneManager = nullptr;
-
-std::vector<Anvil::Ref<Anvil::RenderSystem>> Anvil::Renderer::m_RenderSystems = {};
-
+Anvil::NewFrameInfo                           Anvil::Renderer::m_FrameInfo      = {};
+std::vector<Anvil::Ref<Anvil::RenderSystem>>  Anvil::Renderer::m_RenderSystems  = {};
 std::vector<Anvil::Ref<Anvil::CommandBuffer>> Anvil::Renderer::m_CommandBuffers = {};
 
+std::vector<VkFence>     Anvil::Renderer::m_InFlightFences           = { VK_NULL_HANDLE };
 std::vector<VkSemaphore> Anvil::Renderer::m_ImageAvailableSemaphores = { VK_NULL_HANDLE };
 std::vector<VkSemaphore> Anvil::Renderer::m_RenderFinishedSemaphores = { VK_NULL_HANDLE };
-std::vector<VkFence>     Anvil::Renderer::m_InFlightFences           = { VK_NULL_HANDLE };
 
 
 namespace Anvil
@@ -97,10 +95,15 @@ namespace Anvil
             vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex]);
 
             m_FrameInfo.CommandBuffer->Reset();
+            for (auto& sys : m_RenderSystems)
+            {
+                sys->Update(m_FrameInfo);
+            }
             m_FrameInfo.CommandBuffer->BeginRecording(m_FrameInfo, nullptr);
-            m_RenderSystems[0]->Update(m_FrameInfo);
-            m_RenderSystems[0]->NewFrame(m_FrameInfo);
-            m_RenderSystems[1]->NewFrame(m_FrameInfo);
+            for (auto& sys : m_RenderSystems)
+            {
+                sys->NewFrame(m_FrameInfo);
+            }
             m_FrameInfo.CommandBuffer->EndRecording(m_FrameInfo);
            Submit(m_FrameInfo);
         }
