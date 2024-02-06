@@ -15,7 +15,7 @@
 # endif
 #endif
 
-
+// takes in a lambda that will only ever be called once
 #define ANV_CALL_ONCE(Lambda) \
-std::once_flag flag; \
+static std::once_flag flag; \
 std::call_once(flag, Lambda);
