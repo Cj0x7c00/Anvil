@@ -23,6 +23,13 @@ namespace Anvil
         return CreateRef<Entity>(m_Registry, _name);
     }
 
+    Ref<Canvas> Scene::CreateCanvas()
+    {
+        auto& entity = CreateEntity("Canvas");
+        auto& canvas = entity->AddComponent<CanvasComponent>();
+        return canvas.Get();
+    }
+
     void Scene::DeleteEntity(Entity& _ent)
     {
         m_Registry.destroy(_ent.Get());

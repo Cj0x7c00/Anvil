@@ -1,6 +1,8 @@
 #pragma once
 #include "../UUID/uuid.h"
+#include "../UI/Canvas.h"
 #include "glm/glm.hpp"
+#include "entt/entt.hpp"
 #include <string>
 #include <vector>
 #include <array>
@@ -91,6 +93,9 @@ namespace Anvil
 		static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions();
 	};
 
+	/// <summary>
+	/// Sprite component. holds data of the sprite in use for rendering
+	/// </summary>
 	struct SpriteComponent
 	{
 		std::vector<vertex> verts;
@@ -103,12 +108,27 @@ namespace Anvil
 			: verts{ _vert }, indexs{_index}
 		{
 
-		};
+		}
 
 		SpriteComponent(SpriteComponent& _comp)
 			: verts{ _comp.verts }, indexs{ _comp.indexs }
 		{
 
-		};
+		}
+	};
+
+	struct CanvasComponent
+	{
+		Ref<Canvas> canvas;
+
+		CanvasComponent()
+		{
+			canvas = Canvas::Create();
+		}
+
+		Ref<Canvas> Get()
+		{
+			return canvas;
+		}
 	};
 }

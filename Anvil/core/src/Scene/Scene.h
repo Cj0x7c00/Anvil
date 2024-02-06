@@ -1,9 +1,10 @@
 #pragma once
-#include "Entity.h"
+#include "../UI/Canvas.h"
 #include "../Base/macros.hpp"
 #include "../Base/Pointer.hpp"
 #include "../Util/anvLog.hpp"
 #include "../UUID/uuid.h"
+#include "Entity.h"
 #include <entt/entt.hpp>
 #include <string>
 
@@ -18,6 +19,8 @@ namespace Anvil
 		Scene(std::string _name);
 
 		Ref<Entity> CreateEntity(std::string _name="New Object");
+		Ref<Canvas> CreateCanvas();
+
 		
 		Entity*     GetEntityByUUID(UuID uuid);
 		void        DeleteEntity(Entity& _ent);
