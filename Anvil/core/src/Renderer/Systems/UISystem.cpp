@@ -16,6 +16,7 @@
 
 #include <vulkan/vulkan.h>
 #include <Util/anvLog.hpp>
+#include <Util/TaskRunner/TaskRunner.h>
 
 
 namespace Anvil
@@ -67,7 +68,14 @@ namespace Anvil
 
 		ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 		
-		ImGui::ShowDemoWindow();
+		auto& Reg = frameInfo.Scene->GetRegistry();
+		auto view = Reg.view<CanvasComponent>();
+		view.each([](CanvasComponent& canComp) {
+
+			auto& canvas = canComp.Get();
+			canvas->Update();
+			
+		});
 
 		ImGui::Render();
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), frameInfo.CommandBuffer->Get(), NULL);
