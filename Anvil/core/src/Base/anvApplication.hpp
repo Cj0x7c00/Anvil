@@ -44,11 +44,15 @@ namespace Anvil
         virtual void Update() = 0;
         virtual void LateUpdate() = 0;
 
+        void PushLayer(AnvilLayer* _layer);
+        void PopLayer(AnvilLayer* _layer);
 
         Ref<Window> GetWindow();
 
-        void PushLayer(AnvilLayer* _layer);
-        void PopLayer(AnvilLayer* _layer);
+        static std::string GetLibDir() { return m_DllDir; }
+    private:
+        void set_dll_dir();
+        static std::string m_DllDir;
 
     protected:
         Ref<Window>    m_Window;
