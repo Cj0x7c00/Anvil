@@ -35,9 +35,10 @@ namespace Anvil
         uint32_t width;
         uint32_t height;
         const char* name;
+        bool maximized;
 
-        WindowProps(uint32_t w=900, uint32_t h = 700, const char* n="Window")
-            : width{w}, height{h}, name{n}
+        WindowProps(uint32_t w=900, uint32_t h = 700, const char* n="Window", bool _max=false)
+            : width{w}, height{h}, name{n}, maximized{_max}
         {
 
         }
