@@ -3,9 +3,11 @@
 #include "../UI/Canvas.h"
 #include "glm/glm.hpp"
 #include "entt/entt.hpp"
+#include "../Renderer/UBO.h"
 #include <string>
 #include <vector>
 #include <array>
+#include "../Renderer/Renderer.h"
 
 struct VkVertexInputBindingDescription;
 struct VkVertexInputAttributeDescription;
@@ -98,11 +100,15 @@ namespace Anvil
 	/// </summary>
 	struct SpriteComponent
 	{
-		std::vector<vertex> verts;
-		std::vector<uint16_t> indexs;
+		std::vector<vertex>     verts;
+		std::vector<uint16_t>   indexs;
 
 		VkBuffer vertexBuffer = NULL;
-		VkBuffer indexBuffer = NULL;
+		VkBuffer indexBuffer  = NULL;
+
+		UniformBufferObject UBO = {};
+
+		bool buffersCreatedFlag = false;
 
 		SpriteComponent(std::vector<vertex> _vert, std::vector<uint16_t> _index)
 			: verts{ _vert }, indexs{_index}
@@ -110,11 +116,10 @@ namespace Anvil
 
 		}
 
-		SpriteComponent(SpriteComponent& _comp)
-			: verts{ _comp.verts }, indexs{ _comp.indexs }
-		{
+		void CreatBuffers();
 
-		}
+		void Bind(CommandBuffer* cmdBuffer, Ref<Pipeline> pipeline);
+		void Draw(CommandBuffer* cmdBuffer);
 	};
 
 	struct CanvasComponent

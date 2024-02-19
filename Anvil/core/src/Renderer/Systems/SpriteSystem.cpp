@@ -29,94 +29,9 @@ namespace Anvil
 		create_descriptor_sets();
 	}
 
-	void SpriteSystem::render_sprites(NewFrameInfo& frameInfo)
+	void SpriteSystem::OnCallOnce(CommandBuffer cmdBuffer)
 	{
-		auto& Reg = frameInfo.Scene->GetRegistry();
-		auto sprites = Reg.view<SpriteComponent>();
-		auto devices = Devices::GetInstance();
 
-		sprites.each([&frameInfo, &devices, this, &Reg](auto entity, SpriteComponent& spriteData) {
-
-			VkBuffer& vertexBuffer = spriteData.vertexBuffer;
-			VkBuffer& indexBuffer  = spriteData.indexBuffer;
-
-
-			if (vertexBuffer != NULL || indexBuffer != NULL)
-			{
-				VkBuffer vertexBuffers[] = { vertexBuffer };
-				VkDeviceSize offsets[] = { 0 };
-
-				vkCmdBindVertexBuffers(frameInfo.CommandBuffer->Get(), 0, 1, vertexBuffers, offsets);
-				vkCmdBindIndexBuffer(frameInfo.CommandBuffer->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-				vkCmdBindDescriptorSets(frameInfo.CommandBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline->GetPipelineLayout(), 0, 1, &m_DescriptorSets[frameInfo.FrameIndex], 0, nullptr);
-				vkCmdDrawIndexed(frameInfo.CommandBuffer->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
-			}
-			else {
-				
-				VkDeviceMemory vertexBufferMemory;
-				VkDeviceMemory indexBufferMemory;
-
-				// vertex
-				{
-
-					VkDeviceSize bufferSize = sizeof(spriteData.verts[0]) * spriteData.verts.size();
-
-					VkBuffer stagingBuffer;
-					VkDeviceMemory stagingBufferMemory;
-					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
-						| VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-					void* data;
-					vkMapMemory(devices->Device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-					memcpy(data, spriteData.verts.data(), (size_t)bufferSize);
-					vkUnmapMemory(devices->Device(), stagingBufferMemory);
-
-					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-						VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-
-					devices->CopyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-
-					vkDestroyBuffer(devices->Device(), stagingBuffer, nullptr);
-					vkFreeMemory(devices->Device(), stagingBufferMemory, nullptr);
-
-					
-					VkBuffer vertexBuffers[] = { vertexBuffer };
-					VkDeviceSize offsets[] = { 0 };
-
-					vkCmdBindVertexBuffers(frameInfo.CommandBuffer->Get(), 0, 1, vertexBuffers, offsets);
-				}
-
-				// index
-				{
-
-					VkDeviceSize bufferSize = sizeof(spriteData.indexs[0]) * spriteData.indexs.size();
-
-					VkBuffer stagingBuffer;
-					VkDeviceMemory stagingBufferMemory;
-					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-						VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-					void* data;
-					vkMapMemory(devices->Device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-					memcpy(data, spriteData.indexs.data(), (size_t)bufferSize);
-					vkUnmapMemory(devices->Device(), stagingBufferMemory);
-
-					devices->CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-						VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-
-					devices->CopyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-					vkDestroyBuffer(devices->Device(), stagingBuffer, nullptr);
-					vkFreeMemory(devices->Device(), stagingBufferMemory, nullptr);
-
-					vkCmdBindIndexBuffer(frameInfo.CommandBuffer->Get(), indexBuffer, 0, VK_INDEX_TYPE_UINT16);
-
-				}
-				vkCmdBindDescriptorSets(frameInfo.CommandBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline->GetPipelineLayout(), 0, 1, &m_DescriptorSets[frameInfo.FrameIndex], 0, nullptr);
-				vkCmdDrawIndexed(frameInfo.CommandBuffer->Get(), static_cast<uint32_t>(spriteData.indexs.size()), 1, 0, 0, 0);
-			}
-
-		});
 	}
 
 	void SpriteSystem::NewFrame(NewFrameInfo& frameInfo)
@@ -125,7 +40,21 @@ namespace Anvil
 		m_Pipeline->Bind(frameInfo.CommandBuffer.get());
 
 		Renderer::SetViewport(ViewportInfo::Default(), frameInfo.CommandBuffer.get());
-		render_sprites(frameInfo);
+		
+		auto& Reg = frameInfo.Scene->GetRegistry();
+		auto sprites = Reg.view<SpriteComponent>();
+		auto devices = Devices::GetInstance();
+
+		sprites.each([&](SpriteComponent& spriteData)
+			{
+				(spriteData.buffersCreatedFlag == false) ? spriteData.CreatBuffers() : NULL;
+
+				spriteData.Bind(frameInfo.CommandBuffer.get(), m_Pipeline);
+				vkCmdBindDescriptorSets(frameInfo.CommandBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, 
+					m_Pipeline->GetPipelineLayout(), 0, 1, &m_DescriptorSets[frameInfo.FrameIndex], 
+					0, nullptr);
+				spriteData.Draw(frameInfo.CommandBuffer.get());
+			});
 		
 	}
 

@@ -17,12 +17,13 @@ namespace Anvil
 
         SpriteSystem(Ref<SwapChain> _sc) : RenderSystem(_sc)
         {
-            ENGINE_INFO("Creating Render System");
+            ENGINE_INFO("Creating Sprite System");
         }
         
         ~SpriteSystem();
 
         void Init() override;
+        void OnCallOnce(CommandBuffer cmdBuffer) override;
         void Update(NewFrameInfo& frameInfo) override;
         void NewFrame(NewFrameInfo& frameInfo) override;
         void create_ubos() override;
@@ -33,11 +34,9 @@ namespace Anvil
     private:
         void load_shaders();
         void create_pipeline();
-        void render_sprites(NewFrameInfo& frameInfo);
 
     private:
-        UniformBufferObject      m_Ubo{};
-        std::once_flag           m_InitFlag;
+
         Ref<Pipeline>            m_Pipeline;
         std::vector<Ref<Shader>> m_Shaders;
     };
