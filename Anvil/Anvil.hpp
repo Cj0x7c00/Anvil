@@ -11,10 +11,20 @@
 #include "core/src/Renderer/Renderer.h"
 #include "core/src/Renderer/GrComp/GraphicsFactory.h" // Shaders, Pipelines
 
+
+/*====== UI ======*/
+#include "core/src/UI/Canvas.h"
+#include "core/src/UI/CanvasItems.h"
+
+/*==== TYPES ====*/
 typedef Anvil::Ref<Anvil::Scene>    SCENE;
 typedef Anvil::Ref<Anvil::Entity>   ENTITY;
 
 typedef Anvil::Ref<Anvil::Shader>	SHADER;
 typedef Anvil::Ref<Anvil::Pipeline> PIPELINE;
+
+
+typedef Anvil::UI_Button UI_BUTTON;
+typedef Anvil::UI_Rect   UI_RECT;
 
 
