@@ -12,7 +12,7 @@ public:
 
 	Forge(Anvil::AppProperties _p) : AnvilApplication(_p)
 	{
-		PushLayer(new ForgeLayer());
+		
 	}
 
 	~Forge()
@@ -36,8 +36,10 @@ Anvil::AnvilApplication* Anvil::CreateApplication()
 {
 	AppProperties props;
 	props.win_props.name = "Forge Editor";
-	props.win_props.width = 1000;
-	props.win_props.height = 900;
+	//props.win_props.width = 1500;
+	//props.win_props.height = 900;
+
+	props.win_props.maximized = true;
 
 	ANVIL_DEBUG("Work Dir: {}", props.wrkdir);
 	return new Forge(props);
