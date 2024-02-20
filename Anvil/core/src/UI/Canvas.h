@@ -1,10 +1,10 @@
 #pragma once
 
 #include "CanvasItems.h"
-#include "../Base/macros.hpp"
-#include "../Base/Pointer.hpp"
 #include "entt/entt.hpp"
 #include <functional>
+#include "../Base/macros.hpp"
+#include "../Base/Pointer.hpp"
 
 struct ImVec2;
 
@@ -17,8 +17,27 @@ namespace Anvil
 
 		void Update();
 
-		CanvasItem& AddButton(const char* label, Vec2 size= Vec2(0, 0), Vec2 position= Vec2(0, 0), std::function<void()> FnCmd = nullptr);
+		
+		template<typename CItem, typename... Args>
+		Ref<CItem> AddItem(Args&&... args) {
+			// Construct the derived item and add it to the vector
+			std::shared_ptr<CItem> item = std::make_shared<CItem>(std::forward<Args>(args)...);
+			m_Items.push_back(item);
+
+			// Return a reference to the newly added item
+			return item;
+		}
+
+		template<typename CItem, typename... Args>
+		Ref<CItem> DrawElement(Args&&... args) {
+			// Construct the derived item and add it to the vector
+			std::shared_ptr<CItem> item = std::make_shared<CItem>(std::forward<Args>(args)...);
+			item->Draw();
+			return item;
+		}
+
 	private:
-		entt::registry m_CanvasItems;
+		/*entt::registry m_Reg;*/
+		std::vector<Ref<CanvasItem>> m_Items = {};
 	};
 }
