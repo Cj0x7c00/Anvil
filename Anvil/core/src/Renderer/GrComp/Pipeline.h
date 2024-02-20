@@ -8,6 +8,11 @@
 
 namespace Anvil
 {
+    struct PipelineInfo
+    {
+
+    };
+
     class ANV_API Pipeline
     {
     public:
