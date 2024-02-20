@@ -14,32 +14,28 @@ namespace Anvil
     {
         static ImGuiWindowFlags windowFlags = 0;
         windowFlags |= ImGuiWindowFlags_NoBackground;
+        windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
         windowFlags |= ImGuiWindowFlags_NoTitleBar;
         windowFlags |= ImGuiWindowFlags_NoResize;
         windowFlags |= ImGuiWindowFlags_NoMove;
+        windowFlags |= ImGuiWindowFlags_NoDocking;
 
-        //ImGuiIO& io = ImGui::GetIO();
+       
 
-        //
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->Pos);
-        ImGui::SetNextWindowSize(viewport->Size);
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
 
         ImGui::Begin("##Canvas", 0, windowFlags);
         
-        auto view = m_CanvasItems.view<Button>();
-
-        view.each([](Button& item) {
-            item.Draw();
-        });
-
+        for (auto& item : m_Items)
+        {
+            item->Draw();
+        }
+       
+        ImGui::DockSpace(ImGui::GetID("##Canvas"), ImVec2(), ImGuiDockNodeFlags_PassthruCentralNode);
         ImGui::End();
     }
+    
 
-    CanvasItem& Canvas::AddButton(const char* label, Vec2 size, Vec2 position, std::function<void()> FnCmd)
-    {
-        auto ent = m_CanvasItems.create();
-        auto btn = m_CanvasItems.emplace<Button>(ent, label, size, position, FnCmd);
-        return btn;
-    }
 }
