@@ -32,6 +32,10 @@ namespace Anvil
 			//maximized
 			glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
+			//// no decoration
+			//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
+
 			m_WinHandle = glfwCreateWindow(_p.width, _p.height, _p.name, NULL, NULL);
 			glfwSetWindowUserPointer(m_WinHandle, this);
 
@@ -40,8 +44,7 @@ namespace Anvil
 		} else {
 			// API selection made by renderer, not GLFW
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-			// TODO: Window resizing
-			//glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
 			m_WinHandle = glfwCreateWindow(_p.width, _p.height, _p.name, NULL, NULL);
 			glfwSetWindowUserPointer(m_WinHandle, this);
 
