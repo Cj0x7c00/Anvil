@@ -16,6 +16,8 @@ namespace Anvil{
         virtual void Attach() = 0; 
         // Called once per frame
         virtual void Update() = 0; 
+        // Called for UI Rendering
+        virtual void OnGUI() = 0;
         // Called before destructor
         virtual void Detach() = 0; 
 

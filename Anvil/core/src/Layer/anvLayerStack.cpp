@@ -2,10 +2,11 @@
 
 namespace Anvil
 {
+   std::vector<AnvilLayer*> LayerStack::Layers = {};
 
     LayerStack::~LayerStack()
     {
-        for (AnvilLayer* layer : Layers)
+        for (AnvilLayer* layer : GetLayers())
         {
             layer->Detach();
             ENGINE_INFO("Deleted layer: {}", layer->GetName());
