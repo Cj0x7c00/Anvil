@@ -21,14 +21,15 @@ public:
 		Init();
 	}
 
+	void Update();
 private:
 	void Init();
-	void DrawEntities();
-	void DrawUI();
+	void InitUI();
 
 private:
 	Anvil::SceneManager& m_SceneManager;
 	Ref<Canvas> m_Canvas;
+	Ref<UI_WINDOW> window;
 	SCENE m_activeScene;
 };
 
