@@ -7,7 +7,7 @@ namespace Anvil{
 
     std::string AnvilApplication::m_DllDir = std::string();
 
-    AnvilApplication::AnvilApplication(AppProperties& _p)
+    AnvilApplication::AnvilApplication(AppProperties& _p) : m_Props{_p}
     {
         set_dll_dir();
         m_Window = Window::Create(_p.win_props);
@@ -16,19 +16,29 @@ namespace Anvil{
 
     AnvilApplication::~AnvilApplication()
     {
-        m_LayerStack.~LayerStack();
+
     }
 
     void AnvilApplication::Run()
     {
         Awake();
         Renderer::BeginOneTimeOps();
+        ENGINE_DEBUG("{}", m_Props.wrkdir);
+        std::filesystem::current_path(m_Props.wrkdir.c_str());
         while (!m_Window->ShouldClose()) {
 
             m_Window->PollEvents();
 			Update();
+            
 			Renderer::NewFrame();
+
+            for (auto& Layer : m_LayerStack.GetLayers())
+            {
+                Layer->Update();
+            }
+
 			LateUpdate();
+
         }
 		Renderer::WaitIdle();
     }

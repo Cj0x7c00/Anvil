@@ -12,6 +12,9 @@ namespace Anvil
 
     class Renderer;
 
+    /// <summary>
+    /// Struct used to configure the application,
+    /// </summary>
     struct AppProperties
     {
         std::string name;
@@ -30,6 +33,9 @@ namespace Anvil
         }
     };
 
+    /// <summary>
+    /// Main class for anvil
+    /// </summary>
     class ANV_API AnvilApplication
     {
 
@@ -37,16 +43,43 @@ namespace Anvil
 
         AnvilApplication(AppProperties& _p);
         ~AnvilApplication();
+
         void Run();
+
+        /// <summary>
+        /// Called after construction
+        /// </summary>
         virtual void Awake() = 0;
+        /// <summary>
+        /// Called once per frame
+        /// </summary>
         virtual void Update() = 0;
+        /// <summary>
+        /// Called after rendering
+        /// </summary>
         virtual void LateUpdate() = 0;
 
+        /// <summary>
+        /// Push a Layer on the LayerStack
+        /// </summary>
+        /// <param name="_layer">A pointer to a layer</param>
         void PushLayer(AnvilLayer* _layer);
+        /// <summary>
+        /// Pop a layer off of the Layer Stack
+        /// </summary>
+        /// <param name="_layer"></param>
         void PopLayer(AnvilLayer* _layer);
 
+        /// <summary>
+        /// Get the main window in use
+        /// </summary>
+        /// <returns>Ref<Window></returns>
         Ref<Window> GetWindow();
 
+        /// <summary>
+        /// Get the main DLL work directory
+        /// </summary>
+        /// <returns></returns>
         static std::string GetLibDir() { return m_DllDir; }
     private:
         void set_dll_dir();
@@ -58,8 +91,14 @@ namespace Anvil
 
         SceneManager   m_SceneManager;
         LayerStack     m_LayerStack;
+
+        AppProperties m_Props;
     };
     
+    /// <summary>
+    /// Engine entry point
+    /// </summary>
+    /// <returns>AnvilApplication*</returns>
     AnvilApplication* CreateApplication();
 
 }
