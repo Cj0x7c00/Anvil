@@ -1,5 +1,7 @@
 #pragma once
 #include "../Base/macros.hpp"
+#include "../Base/Pointer.hpp"
+#include "../Util/anvLog.hpp"
 #include <string>
 #include <functional>
 
@@ -14,7 +16,33 @@ struct Vec2
 
 	}
 
-	Vec2() {}
+    Vec2() {}
+
+	bool operator!=(const Vec2& other)
+	{
+		if (other.x == x && other.y == y)
+		{
+			return true;
+		}
+
+		return false;
+	}
+};
+
+struct Vec4
+{
+	float x;
+	float y;
+	float z;
+	float a;
+
+	Vec4(float _x, float _y, float _z, float _a)
+		: x(_x), y(_y), z(_z), a(_a)
+	{
+
+	}
+
+	Vec4() {}
 };
 
 namespace Anvil
@@ -53,7 +81,7 @@ namespace Anvil
 	};
 
 
-	class ANV_API UI_Rect : public CanvasItem
+	class ANV_API UI_Window : public CanvasItem
 	{
 	public:
 		static std::string item;
@@ -61,30 +89,48 @@ namespace Anvil
 		const char* name;
 		Vec2 size;
 		Vec2 position;
-		std::function<void()> InnerElements; // inner elements
+		std::vector<Ref<CanvasItem>> InnerElements; // inner elements
 
-		UI_Rect(const char* _name = "New Rect", Vec2 _size = Vec2(300, 300), Vec2 _pos = Vec2(60, 60), std::function<void()> Elements = nullptr/*TODO: Window Flags*/)
-			: name{ _name }, size{ _size }, position{ _pos }, InnerElements{Elements}, CanvasItem(item)
+		UI_Window(const char* _name = "New Window", Vec2 _size = Vec2(300, 300), Vec2 _pos = Vec2(60, 60))
+			: name{ _name }, size{ _size }, position{ _pos }, CanvasItem(item)
 		{
 			
 		}
 
 		void Draw() override;
+
+		template<typename Elm , typename... Args>
+		void DrawElement(Args&&... args)
+		{
+			auto el = CreateRef<Elm>(std::forward<Args>(args)...);
+			InnerElements.push_back(el);
+		}
 	};
 
-	class ANV_API UI_Text : public CanvasItem
+	class ANV_API UI_Selectable : public CanvasItem
 	{
 	public:
 		static std::string item;
+		std::string text = "##";
+		bool selected = false;
+		Vec4 OnSelectedSetColor = Vec4(133.0, 158.0, 209.0, 0.8);
 
-		const char* text;
+		UI_Selectable(std::string Text);
 
-		UI_Text(const char* Text)
-			: text{ Text }, CanvasItem(item)
+		void Draw() override;
+	};
+
+	class ANV_API UI_Menue : public CanvasItem
+	{
+	public:
+		static std::string item;
+		std::vector<std::string> menueItems;
+
+		UI_Menue(std::vector<std::string> _mItems) :  menueItems{_mItems}, CanvasItem(item)
 		{
 
 		}
 
-		virtual void Draw();
+		void Draw() override;
 	};
 }

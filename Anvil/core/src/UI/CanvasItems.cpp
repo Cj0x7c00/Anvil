@@ -1,15 +1,18 @@
 #include "CanvasItems.h"
 #include "imgui/imgui.h"
+#include <Util/anvLog.hpp>
 
 namespace Anvil
 {
 
+	std::string UI_Menue::item  = "Menue";
 	std::string UI_Button::item = "Button";
-	std::string UI_Rect::item   = "Rect";
-	std::string UI_Text::item   = "Text";
+	std::string UI_Window::item = "Window";
+	std::string UI_Selectable::item = "Selectable";
 
 	void UI_Button::Draw()
 	{
+		if (position != Vec2(0, 0))
 		ImGui::SetCursorPos(ImVec2(position.x, position.y));
 		if (ImGui::Button(label, ImVec2(size.x, size.y)))
 		{
@@ -20,27 +23,67 @@ namespace Anvil
 		}
 	}
 
-	void UI_Rect::Draw()
+	void UI_Window::Draw()
 	{
-		static ImGuiViewport* viewport = ImGui::GetMainViewport();
+		//static ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-		ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
-		ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + position.x, viewport->WorkPos.y + position.y));
+		//ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
+		//ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + position.x, viewport->Pos.y + position.y));		
 
-		ImGui::Begin(name, 0, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | 
-			ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar | 
-			ImGuiWindowFlags_::ImGuiWindowFlags_NoDocking  |
-			ImGuiWindowFlags_::ImGuiWindowFlags_ChildWindow);
+		ImGui::Begin(name);
+	
+		for (auto& el : InnerElements)
+		{
+			el->Draw();
+		}
 
-		// Draw Inner Elements
-		(InnerElements == nullptr) ? NULL : InnerElements();
-
-		ImGui::EndChild();
+		ImGui::End();
 	}
 
 
-	void UI_Text::Draw()
+	UI_Selectable::UI_Selectable(std::string Text="##")
+		: text{ Text }, CanvasItem(item)
 	{
-		ImGui::Text(text);
+		
+	}
+
+	void UI_Selectable::Draw()
+	{
+		if (text == "" || text == " ")
+		{
+			ImGui::Selectable("##", &selected);
+		}
+		else {
+			ImGui::Selectable(text.c_str(), &selected);
+		}
+
+		if (selected)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+			ImGui::Button("No");
+			ImGui::PopStyleColor();
+		}
+
+	}
+
+	void UI_Menue::Draw()
+	{
+		if(ImGui::BeginMenuBar())
+		{
+			for (auto& item : menueItems)
+			{
+				if (ImGui::BeginMenu(item.c_str()))
+				{
+					if (ImGui::MenuItem(item.c_str()))
+					{
+
+					}
+
+					ImGui::EndMenu();
+				}
+			}
+
+			ImGui::EndMenuBar();
+		}
 	}
 }
