@@ -12,7 +12,11 @@ public:
 
     void Attach() override;
     void Update() override;
+    void OnGUI()  override;
     void Detach() override;
+
+private:
+    void setup_menue();
 
 private:
     SceneManager& scManager;
