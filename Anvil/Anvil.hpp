@@ -25,6 +25,8 @@ typedef Anvil::Ref<Anvil::Pipeline> PIPELINE;
 
 
 typedef Anvil::UI_Button UI_BUTTON;
-typedef Anvil::UI_Rect   UI_RECT;
+typedef Anvil::UI_Window UI_WINDOW;
+typedef Anvil::UI_Menue  UI_MENUE;
+
 
 
