@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 #include "entt/entt.hpp"
 #include "../Renderer/UBO.h"
+#include "../Renderer/Texture/Texture.h"
 #include <string>
 #include <vector>
 #include <array>
@@ -100,8 +101,15 @@ namespace Anvil
 	/// </summary>
 	struct SpriteComponent
 	{
-		std::vector<vertex>     verts;
-		std::vector<uint16_t>   indexs;
+		std::vector<vertex>     verts{
+			{{-0.5f , -0.5f}, {0.63, 0.63, 0.63}},
+			{{0.5f  , -0.5f}, {0.63, 0.63, 0.63}},
+			{{0.5f  ,  0.5f}, {0.63, 0.63, 0.63}},
+			{{-0.5f ,  0.5f}, {0.63, 0.63, 0.63}}
+		};
+		std::vector<uint16_t>   indexs{
+			0, 1, 2, 2, 3, 0
+		};
 
 		VkBuffer vertexBuffer = NULL;
 		VkBuffer indexBuffer  = NULL;
@@ -110,8 +118,12 @@ namespace Anvil
 
 		bool buffersCreatedFlag = false;
 
-		SpriteComponent(std::vector<vertex> _vert, std::vector<uint16_t> _index)
-			: verts{ _vert }, indexs{_index}
+		SpriteComponent()
+		{
+
+		}
+
+		SpriteComponent(Texture& text)
 		{
 
 		}

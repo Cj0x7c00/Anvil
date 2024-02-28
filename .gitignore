@@ -25,3 +25,5 @@ core/extras/Notes
 *.spv
 *.exe
 /packages/Microsoft.Windows.CppWinRT.2.0.220531.1
+/Anvil/html
+/Anvil/man/man3
