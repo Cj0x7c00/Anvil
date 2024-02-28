@@ -30,7 +30,7 @@ namespace Anvil
         //void create_descriptor_sets() override;
 
     private:
-
+        void load_anvil_colors();
     private:
         UniformBufferObject      m_Ubo{};
         Ref<Pipeline>            m_Pipeline;

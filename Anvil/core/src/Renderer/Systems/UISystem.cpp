@@ -17,6 +17,7 @@
 #include <vulkan/vulkan.h>
 #include <Util/anvLog.hpp>
 #include <Util/TaskRunner/TaskRunner.h>
+#include <Layer/anvLayerStack.hpp>
 
 
 namespace Anvil
@@ -35,9 +36,15 @@ namespace Anvil
 		ImGui::CreateContext();
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		ImGui::StyleColorsDark();
+		load_anvil_colors();
+		//ImGui::StyleColorsDark();
 
 		ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)Renderer::GetWindow()->Get(), true);
+
+		std::filesystem::current_path("../../../../");
+		std::filesystem::current_path("include/imgui/misc/fonts");
+
+		ImGui::GetIO().Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f);
 
 		auto devices = Devices::GetInstance();
 
@@ -51,7 +58,9 @@ namespace Anvil
 		init_info.ImageCount = Renderer::MAX_FRAMES_IN_FLIGHT;
 		init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 
+
 		ImGui_ImplVulkan_Init(&init_info, Renderer::GetRenderPass()->Get());
+
 	}
 
 	void UISystem::OnCallOnce(CommandBuffer cmdBuffer)
@@ -76,6 +85,11 @@ namespace Anvil
 			canvas->Update();
 			
 		});
+
+		for (auto& layer : LayerStack::GetLayers())
+		{
+			layer->OnGUI();
+		}
 
 		ImGui::Render();
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), frameInfo.CommandBuffer->Get(), NULL);
@@ -110,6 +124,20 @@ namespace Anvil
 		if (vkCreateDescriptorPool(Devices::GetInstance()->Device(), &poolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS) {
 			ENGINE_ERROR("failed to create descriptor pool!");
 		}
+	}
+
+	void UISystem::load_anvil_colors()
+	{
+		ImVec4* colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_Border] = ImVec4(0.49f, 0.49f, 0.49f, 0.55f);
+		colors[ImGuiCol_TitleBgActive] = ImVec4(0.45f, 0.38f, 0.34f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.00f, 0.66f, 0.31f, 1.00f);
+		colors[ImGuiCol_SliderGrab] = ImVec4(0.42f, 0.35f, 0.15f, 1.00f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.77f, 0.69f, 0.47f, 1.00f);
+		colors[ImGuiCol_Button] = ImVec4(0.49f, 0.52f, 0.55f, 0.40f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.55f, 0.63f, 0.72f, 1.00f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.34f, 0.36f, 0.37f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(0.26f, 0.27f, 0.29f, 0.31f);
 	}
 
 }
