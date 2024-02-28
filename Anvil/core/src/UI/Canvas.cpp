@@ -19,22 +19,25 @@ namespace Anvil
         windowFlags |= ImGuiWindowFlags_NoResize;
         windowFlags |= ImGuiWindowFlags_NoMove;
         windowFlags |= ImGuiWindowFlags_NoDocking;
+        windowFlags |= ImGuiWindowFlags_MenuBar;
 
        
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(viewport->WorkPos);
-        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowPos(viewport->Pos);
+        ImGui::SetNextWindowSize(viewport->Size);
 
         ImGui::Begin("##Canvas", 0, windowFlags);
+        ImGui::DockSpace(ImGui::GetID("##Canvas"), ImVec2(), ImGuiDockNodeFlags_PassthruCentralNode);
         
         for (auto& item : m_Items)
         {
             item->Draw();
         }
        
-        ImGui::DockSpace(ImGui::GetID("##Canvas"), ImVec2(), ImGuiDockNodeFlags_PassthruCentralNode);
         ImGui::End();
+
+        //ImGui::ShowStyleEditor();
     }
     
 
