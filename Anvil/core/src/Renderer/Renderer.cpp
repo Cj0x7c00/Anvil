@@ -45,7 +45,8 @@ namespace Anvil
             m_CommandBuffers.push_back(CommandBuffer::Create());
         }
 
-        UseDefaultConfiguration();
+
+        InitCoreSystems();
 
         sync();
 	}
@@ -55,7 +56,7 @@ namespace Anvil
         m_RenderSystems.push_back(_system);
     }
 
-    void Renderer::UseDefaultConfiguration()
+    void Renderer::InitCoreSystems()
     {
         ENGINE_INFO("Using default render system");
         m_RenderSystems = RenderSystem::Default(m_SwapChain);
@@ -75,6 +76,18 @@ namespace Anvil
         {
             system->OnCallOnce(singleCmds);
         }
+
+        singleCmds.EndRecording();
+        SubmitOneTimeCommands(singleCmds);
+    }
+
+    void Renderer::OnSingleTimeCommand(std::function<void(CommandBuffer cmdBuffer)> _Fn)
+    {
+        CommandBuffer singleCmds;
+        singleCmds.BeginRecording();
+
+        _Fn(singleCmds);
+
         singleCmds.EndRecording();
         SubmitOneTimeCommands(singleCmds);
     }

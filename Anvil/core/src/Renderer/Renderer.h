@@ -13,6 +13,8 @@
 #include "../Base/Pointer.hpp"
 #include "../Window/Window.hpp"
 #include "../Scene/SceneManager.h"
+#include "../Layer/anvLayerStack.hpp"
+
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -62,20 +64,91 @@ namespace Anvil
 	class ANV_API Renderer
 	{
 	public:
+		/// <summary>
+		/// Initialization of the renderer, only the Anvil DLL should call this.
+		/// </summary>
+		/// <param name="window">window ref</param>
+		/// <param name="_scene_manager">scene manager  pointer</param>
 		static void Init(Ref<Window> window, SceneManager* _scene_manager);
+
+		/// <summary>
+		/// TODO: Impliment
+		/// Used to load your own custom Rendering System onto the system stack.
+		/// </summary>
 		static void UseSystem(Ref<RenderSystem> _system);
-		static void UseDefaultConfiguration();
+
+		/// <summary>
+		/// Initializes all the default rendering systems
+		/// </summary>
+		static void InitCoreSystems();
+
+		/// <summary>
+		/// called right before the main loop. called when 
+		/// Rendering Systems need to upload to the GPU
+		/// </summary>
 		static void BeginOneTimeOps();
+
+		/// <summary>
+		/// Similar to BeginOneTimeOps(), But can be called at any time
+		/// </summary>
+		/// <param name="_Fn">A function or lambda with your logic</param>
+		static void OnSingleTimeCommand(std::function<void(CommandBuffer cmdBuffer)>  _Fn);
+
+		/// <summary>
+		/// Main draw function
+		/// </summary>
 		static void NewFrame();
+
+		/// <summary>
+		/// Renderer tells Vulkan to wait idle
+		/// </summary>
 		static void WaitIdle();
+
+		/// <summary>
+		/// Set Viewpor information
+		/// </summary>
+		/// <param name="info">Viewport info struct</param>
+		/// <param name="cmdBuff">Command Buffer pointer</param>
 		static void SetViewport(ViewportInfo& info, CommandBuffer* cmdBuff);
+
+		/// <summary>
+		/// Submits the frame info after processing is done
+		/// </summary>
+		/// <param name="_fi">New frame info</param>
 		static void Submit(NewFrameInfo& _fi);
+
+		/// <summary>
+		/// Submits the one time commands
+		/// </summary>
+		/// <param name="cmdBuffer">Command Buffer</param>
 		static void SubmitOneTimeCommands(CommandBuffer cmdBuffer);
+
+		/// <summary>
+		/// Creates a new swapchain for a window
+		/// </summary>
 		static void CreateNewSwapChain();
+
+		/// <summary>
+		/// Callback used in Window class to tell the renderer thewindow was resized
+		/// </summary>
 		static void WindowWasResized();
 
+		/// <summary>
+		/// Get the active render pass
+		/// </summary>
+		/// <returns>Ref RenderPass</returns>
 		static Ref<RenderPass> GetRenderPass() { return m_FrameInfo.RenderPass; };
+
+		/// <summary>
+		/// Get the active swap chain
+		/// </summary>
+		/// <returns>Ref SwapChain</returns>
 		static Ref<SwapChain>  GetSwapChain();
+
+		/// <summary>
+		/// Get the active rendering window
+		/// </summary>
+		/// <returns>Ref Window</returns>
 		static Ref<Window>     GetWindow();
 
 
