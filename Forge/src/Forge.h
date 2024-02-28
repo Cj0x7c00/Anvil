@@ -8,7 +8,7 @@ class Forge : public Anvil::AnvilApplication
 {
 public:
 	SCENE  Scene;
-	ENTITY Triangle1;
+	ENTITY Quad;
 
 	Forge(Anvil::AppProperties _p) : AnvilApplication(_p)
 	{
@@ -38,9 +38,10 @@ Anvil::AnvilApplication* Anvil::CreateApplication()
 	props.win_props.name = "Forge Editor";
 	//props.win_props.width = 1500;
 	//props.win_props.height = 900;
-
+	
 	props.win_props.maximized = true;
 
+	props.wrkdir = std::filesystem::current_path().string();
 	ANVIL_DEBUG("Work Dir: {}", props.wrkdir);
 	return new Forge(props);
 }
