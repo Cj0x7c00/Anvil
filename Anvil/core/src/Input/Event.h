@@ -1,0 +1,160 @@
+#pragma once
+
+namespace Anvil
+{
+	enum EventType
+	{
+		EVENT_TYPE_KEY_PRESS,
+		EVENT_TYPE_KEY_RELEASE,
+		EVENT_TYPE_KEY_HOLD,
+	};
+
+	enum KeyCode{
+		/* Alpha */
+		
+		KEY_A,
+		KEY_B,
+		KEY_C,
+		KEY_D,
+		KEY_E,
+		KEY_F,
+		KEY_G,
+		KEY_H,
+		KEY_I,
+		KEY_J,
+		KEY_K,
+		KEY_L,
+		KEY_M,
+		KEY_N,
+		KEY_O,
+		KEY_P,
+		KEY_Q,
+		KEY_R,
+		KEY_S,
+		KEY_T,
+		KEY_U,
+		KEY_V,
+		KEY_W,
+		KEY_X,
+		KEY_Y,
+		KEY_Z,
+
+		/* Numbers */
+
+		KEY_0,
+		KEY_1,
+		KEY_2,
+		KEY_3,
+		KEY_4,
+		KEY_5,
+		KEY_6,
+		KEY_7,
+		KEY_8,
+		KEY_9,
+
+		/* Symbols */
+
+		KEY_TILDA,
+		KEY_APOSTROPHY,
+		KEY_EXCLIMATION,
+		KEY_AT,
+		KEY_HASH,
+		KEY_DOLLAR,
+		KEY_PERCENT,
+		KEY_CARROT,
+		KEY_ANDPERCAND,
+		KEY_STAR,
+		KEY_LPARA,
+		KEY_RPARA,
+		KEY_UNDERSC,
+		KEY_MIN,
+		KEY_EQU,
+		KEY_PLU,
+		KEY_LCURL,
+		KEY_RCURL,
+		KEY_LBRACKET,
+		KEY_RBRACKET,
+		KEY_PIPE,
+		KEY_BACKSL,
+		KEY_FORSL,
+		KEY_DBLQUOTE,
+		KEY_QUOTE,
+		KEY_COLON,
+		KEY_SMICOLON,
+		KEY_LESSTHN,
+		KEY_GREATERTHN,
+		KEY_COMMA,
+		KEY_PERIOD,
+		KEY_QUESTION,
+
+		/* Other */
+
+		KEY_ESC,
+		KEY_TAB,
+		KEY_CAPS,
+		KEY_LSHIFT,
+		KEY_LCTRL,
+		KEY_START,
+		KEY_LALT,
+		KEY_RALT,
+		KEY_RSTART,
+		KEY_RCTRL,
+		KEY_RSHIFT,
+		KEY_ENTER,
+		KEY_BKSPC,
+		KEY_SPACE,
+		KEY_PRTSC,
+		KEY_SCRLK,
+		KEY_PAUSE,
+		KEY_INSRT,
+		KEY_HOME,
+		KEY_PGUP,
+		KEY_DEL,
+		KEY_END,
+    	KEY_PGDN,
+
+		/* NumPad */
+		KEY_NUMPD_0,
+		KEY_NUMPD_1,
+		KEY_NUMPD_2,
+		KEY_NUMPD_3,
+		KEY_NUMPD_4,
+		KEY_NUMPD_5,
+		KEY_NUMPD_6,
+		KEY_NUMPD_7,
+		KEY_NUMPD_8,
+		KEY_NUMPD_9,
+		KEY_NUMPD_PERIOD,
+		KEY_NUMPD_ENTER,
+		KEY_NUMPD_PLUS,
+		KEY_NUMPD_MIN,
+		KEY_NUMPD_STAR,
+		KEY_NUMPD_FRDSL,
+		KEY_NUMPD_NUMLK,
+
+		/* Arrows */
+		KEY_AUP,
+		KEY_ADOWN,
+		KEY_ALEFT,
+		KEY_ARIGHT,
+
+		/* Fn */
+		KEY_F1,
+		KEY_F2,
+		KEY_F3,
+		KEY_F4,
+		KEY_F5,
+		KEY_F6,
+		KEY_F7,
+		KEY_F8,
+		KEY_F9,
+		KEY_F10,
+		KEY_F11,
+		KEY_F12
+	};
+
+	class Event
+	{
+
+	};
+}
