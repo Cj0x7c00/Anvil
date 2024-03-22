@@ -18,7 +18,15 @@ project "Anvil"
         {
             "Anvil/core/src/**.cpp",
             "Anvil/core/src/**.hpp",
-            "Anvil/core/src/**.h"
+            "Anvil/core/src/**.h",
+
+            -- ImGui
+            "Anvil/include/imgui/*.cpp",
+            "Anvil/include/imgui/*.h",
+            "Anvil/include/imgui/backends/imgui_impl_glfw.cpp",
+            "Anvil/include/imgui/backends/imgui_impl_glfw.h",
+            "Anvil/include/imgui/backends/imgui_impl_vulkan.cpp",
+            "Anvil/include/imgui/backends/imgui_impl_vulkan.h"
         }
 
         includedirs
