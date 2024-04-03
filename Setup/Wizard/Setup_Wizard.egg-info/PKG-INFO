@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: Setup_Wizard
+Version: 0.1
+License-File: licence.py
+Requires-Dist: colorama
+Requires-Dist: requests
+Requires-Dist: rich
