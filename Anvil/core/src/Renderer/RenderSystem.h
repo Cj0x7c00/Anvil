@@ -1,36 +1,69 @@
 #pragma once
-#include "../Base/Pointer.hpp"
-#include "../Scene/Scene.h"
 #include "RenderPass.h"
 #include "CommandBuffer.h"
+#include "../Scene/Scene.h"
+#include "../Base/Pointer.hpp"
 #include <vector>
+
+#include <vulkan/vulkan.h>
+
 
 namespace Anvil
 {
 	struct NewFrameInfo;
-
 	class SwapChain;
 
 	class RenderSystem
 	{
 	public:
-		static Ref<RenderSystem> Default(Ref<SwapChain> _sc);
+		static std::vector<Ref<RenderSystem>> Default(Ref<SwapChain> _sc);
+		static std::vector<RenderSystem*> GetSystems() { return m_SystemsInPlace; }
 
 		RenderSystem(Ref<SwapChain> _sc);
 
+		/// <summary>
+		/// Called right after construction
+		/// </summary>
 		virtual void Init() = 0;
-		virtual void NewFrame(NewFrameInfo& frameInfo, Ref<Scene> scene) = 0;
+
+		/// <summary>
+		/// Called only once after the initial command buffer recording.
+		/// use for single time commands.
+		/// </summary>
+		virtual void OnCallOnce(CommandBuffer cmdBuffer);
+
+
+		/// <summary>
+		/// Called before rendering begins.
+		/// </summary>
+		virtual void Update(NewFrameInfo& frameInfo);
+
+		/// <summary>
+		/// main process function. called once per frame.
+		/// </summary>
+		/// <param name="frameInfo">All the information needed for frame rendering</param>
 		virtual void NewFrame(NewFrameInfo& frameInfo) = 0;
 
-		void Flush(uint32_t imageIndex);
-		Ref<CommandBuffer> GetCommandBuffer(uint32_t imageIndex);
-
-		void WindowWasResized(Ref<SwapChain> _sc);
+		static void WindowWasResized(Ref<SwapChain> _sc);
 
 	protected:
-		std::vector<Ref<CommandBuffer>> m_CommandBuffers;
-		Ref<SwapChain>  m_SwapChain;
+		virtual void create_ubos();
+		virtual void update_ubos(NewFrameInfo& frameInfo);
+		virtual void create_descriptor_pool();
+		virtual void create_descriptor_sets();
 
+	protected:
+		static Ref<SwapChain>  m_SwapChain;
 		
+
+		std::vector<VkBuffer>       m_UniformBuffers;
+		std::vector<void*>          m_UniformBuffersMapped;
+		std::vector<VkDeviceMemory> m_UniformBuffersMemory;
+
+		VkDescriptorPool m_DescriptorPool;
+		std::vector<VkDescriptorSet> m_DescriptorSets;
+
+	private:
+		static std::vector<RenderSystem*> m_SystemsInPlace;
 	};
 }

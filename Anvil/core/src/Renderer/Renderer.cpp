@@ -1,8 +1,8 @@
 #include "Renderer.h"
 #include "Devices.h"
 #include "SwapChain.h"
-
-
+#include "CommandBuffer.h"
+#include "RenderSystem.h"
 #include "Util/Time/Time.h"
 #include "GrComp/Shader.h"
 
@@ -11,24 +11,23 @@
 Anvil::Ref<Anvil::Devices>      Anvil::Renderer::m_Devices	    = nullptr;
 Anvil::Ref<Anvil::SwapChain>    Anvil::Renderer::m_SwapChain    = nullptr;
 Anvil::Ref<Anvil::Window>       Anvil::Renderer::m_Window       = nullptr;
-Anvil::Ref<Anvil::RenderSystem> Anvil::Renderer::m_RenderSystem = nullptr;
+Anvil::SceneManager*            Anvil::Renderer::m_SceneManager = nullptr;
 
-Anvil::NewFrameInfo      Anvil::Renderer::m_FrameInfo = {};
-Anvil::SceneManager*     Anvil::Renderer::m_SceneManager = nullptr;
+Anvil::NewFrameInfo                           Anvil::Renderer::m_FrameInfo      = {};
+std::vector<Anvil::Ref<Anvil::RenderSystem>>  Anvil::Renderer::m_RenderSystems  = {};
+std::vector<Anvil::Ref<Anvil::CommandBuffer>> Anvil::Renderer::m_CommandBuffers = {};
 
+std::vector<VkFence>     Anvil::Renderer::m_InFlightFences           = { VK_NULL_HANDLE };
 std::vector<VkSemaphore> Anvil::Renderer::m_ImageAvailableSemaphores = { VK_NULL_HANDLE };
 std::vector<VkSemaphore> Anvil::Renderer::m_RenderFinishedSemaphores = { VK_NULL_HANDLE };
-std::vector<VkFence>     Anvil::Renderer::m_InFlightFences           = { VK_NULL_HANDLE };
 
 
 namespace Anvil
 {
 	void Renderer::Init(Ref<Window> window, SceneManager* _scene_manager)
 	{
-		auto t = Time::Profile("Renderer::Init");
-
 		ENGINE_DEBUG("Renderer initializing");
-
+		auto t = Time::Profile("Renderer::Init");
         m_Window = window;
 
 		// initialize Vulkan specific stuff
@@ -40,38 +39,87 @@ namespace Anvil
 
         m_SceneManager = _scene_manager;
 
-        UseDefaultConfiguration();
+        // Create command buffers
+        for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        {
+            m_CommandBuffers.push_back(CommandBuffer::Create());
+        }
+
+
+        InitCoreSystems();
 
         sync();
 	}
 
     void Renderer::UseSystem(Ref<RenderSystem> _system)
     {
-        m_RenderSystem = _system;
+        m_RenderSystems.push_back(_system);
     }
 
-    void Renderer::UseDefaultConfiguration()
+    void Renderer::InitCoreSystems()
     {
         ENGINE_INFO("Using default render system");
-        m_RenderSystem = RenderSystem::Default(m_SwapChain);
-        m_RenderSystem->Init();
+        m_RenderSystems = RenderSystem::Default(m_SwapChain);
+        for (auto& system : m_RenderSystems)
+        {
+            system->Init();
+        }
+    }
+
+    void Renderer::BeginOneTimeOps()
+    {
+        CommandBuffer singleCmds;
+        singleCmds.BeginRecording();
+
+
+        for (auto& system : m_RenderSystems)
+        {
+            system->OnCallOnce(singleCmds);
+        }
+
+        singleCmds.EndRecording();
+        SubmitOneTimeCommands(singleCmds);
+    }
+
+    void Renderer::OnSingleTimeCommand(std::function<void(CommandBuffer cmdBuffer)> _Fn)
+    {
+        CommandBuffer singleCmds;
+        singleCmds.BeginRecording();
+
+        _Fn(singleCmds);
+
+        singleCmds.EndRecording();
+        SubmitOneTimeCommands(singleCmds);
     }
 
     void Renderer::NewFrame()
     {
+        for (auto& system : m_RenderSystems)
+        {
+            m_FrameInfo.Scene = m_SceneManager->GetActiveScene();
+            vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex], VK_TRUE, UINT64_MAX);
 
-        vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.FrameIndex], VK_TRUE, UINT64_MAX);
+            auto result = vkAcquireNextImageKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), UINT64_MAX,
+                m_ImageAvailableSemaphores[m_FrameInfo.FrameIndex], VK_NULL_HANDLE, &m_FrameInfo.ImageIndex);
 
-        auto result = vkAcquireNextImageKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), UINT64_MAX,
-            m_ImageAvailableSemaphores[m_FrameInfo.FrameIndex], VK_NULL_HANDLE, &m_FrameInfo.ImageIndex);
-     
-        check_swapchain_suitability(result);
+            m_FrameInfo.CommandBuffer = m_CommandBuffers[m_FrameInfo.ImageIndex];
 
-        vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex]);
-        m_RenderSystem->Flush(m_FrameInfo.ImageIndex);
+            check_swapchain_suitability(result);
+            vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex]);
 
-        m_RenderSystem->NewFrame(m_FrameInfo, m_SceneManager->GetActiveScene());
-        submit(m_FrameInfo.ImageIndex);
+            m_FrameInfo.CommandBuffer->Reset();
+            for (auto& sys : m_RenderSystems)
+            {
+                sys->Update(m_FrameInfo);
+            }
+            m_FrameInfo.CommandBuffer->BeginRecording(m_FrameInfo, nullptr);
+            for (auto& sys : m_RenderSystems)
+            {
+                sys->NewFrame(m_FrameInfo);
+            }
+            m_FrameInfo.CommandBuffer->EndRecording(m_FrameInfo);
+           Submit(m_FrameInfo);
+        }
 
         m_FrameInfo.FrameIndex = (m_FrameInfo.FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
@@ -79,6 +127,27 @@ namespace Anvil
     void Renderer::WaitIdle()
     {
         vkDeviceWaitIdle(m_Devices->Device());
+    }
+
+    void Renderer::SetViewport(ViewportInfo& info, CommandBuffer* cmdBuff)
+    {
+
+        VkViewport viewport{};
+        viewport.x = info.x;
+        viewport.y = info.y;
+        viewport.width = info.width;
+        viewport.height = info.height;
+        viewport.minDepth = info.minDepth;
+        viewport.maxDepth = info.maxDepth;
+        vkCmdSetViewport(cmdBuff->Get(), 0, 1, &viewport);
+
+        VkRect2D scissor{};
+        scissor.offset = { 0, 0 };
+        scissor.extent.width = info.scissorExtent.width;
+        scissor.extent.height = info.scissorExtent.height;
+
+        vkCmdSetScissor(cmdBuff->Get(), 0, 1, &scissor);
+
     }
 
     void Renderer::CreateNewSwapChain()
@@ -114,7 +183,18 @@ namespace Anvil
     {
         CreateNewSwapChain();
         create_render_pass();
-        m_RenderSystem->WindowWasResized(m_SwapChain);
+
+        RenderSystem::WindowWasResized(m_SwapChain);
+    }
+
+    Ref<SwapChain> Renderer::GetSwapChain()
+    {
+        return m_SwapChain;
+    }
+
+    Ref<Window> Renderer::GetWindow()
+    {
+        return m_Window;
     }
 
     void Renderer::create_render_pass()
@@ -133,6 +213,8 @@ namespace Anvil
         }
 
     }
+
+    
 
     void Renderer::sync()
     {
@@ -157,7 +239,7 @@ namespace Anvil
         }
     }
 
-    void Renderer::submit(uint32_t imgIndex)
+    void Renderer::Submit(NewFrameInfo& _fi)
     {
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -168,7 +250,7 @@ namespace Anvil
         submitInfo.pWaitSemaphores = waitSemaphores;
         submitInfo.pWaitDstStageMask = waitStages;
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &m_RenderSystem->GetCommandBuffer(m_FrameInfo.ImageIndex)->Get();
+        submitInfo.pCommandBuffers = &_fi.CommandBuffer->Get();
 
         VkSemaphore signalSemaphores[] = { m_RenderFinishedSemaphores[m_FrameInfo.ImageIndex]};
         submitInfo.signalSemaphoreCount = 1;
@@ -186,7 +268,7 @@ namespace Anvil
         VkSwapchainKHR swapChains[] = { m_SwapChain->GetSwapChain() };
         presentInfo.swapchainCount = 1;
         presentInfo.pSwapchains = swapChains;
-        presentInfo.pImageIndices = &imgIndex;
+        presentInfo.pImageIndices = &_fi.ImageIndex;
         presentInfo.pResults = nullptr; // Optional
 
         auto result = vkQueuePresentKHR(m_Devices->PresentQueue(), &presentInfo);
@@ -197,6 +279,35 @@ namespace Anvil
         else if (result != VK_SUCCESS) {
             ENGINE_WARN("Failed to present swap chain image!");
         }
+    }
+
+    void Renderer::SubmitOneTimeCommands(CommandBuffer cmdBuffer)
+    {
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &cmdBuffer.Get();
+
+        vkQueueSubmit(m_Devices->GraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(m_Devices->GraphicsQueue());
+
+        vkFreeCommandBuffers(m_Devices->Device(), m_Devices->CommandPool(), 1, &cmdBuffer.Get());
+    }
+
+    ViewportInfo ViewportInfo::Default()
+    {
+        ViewportInfo info;
+        info.x = 0.0f;
+        info.y = 0.0f;
+        info.width = (float)Renderer::GetSwapChain()->GetExtent().width;
+        info.height = (float)Renderer::GetSwapChain()->GetExtent().height;
+        info.minDepth = 0.0f;
+        info.maxDepth = 1.0f;
+        info.scissorOffset[0] = 0;
+        info.scissorOffset[1] = 0;
+        info.scissorExtent.width = Renderer::GetSwapChain()->GetExtent().width;
+        info.scissorExtent.height = Renderer::GetSwapChain()->GetExtent().height;
+        return info;   
     }
 
 }

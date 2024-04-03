@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "Components.h"
 #include <Util/anvLog.hpp>
 
 namespace Anvil

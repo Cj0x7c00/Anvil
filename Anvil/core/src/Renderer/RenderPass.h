@@ -7,8 +7,8 @@ typedef struct  VkRenderPassBeginInfo;
 
 namespace Anvil
 {
-	class SwapChain;
 	class CommandBuffer;
+	class SwapChain;
 
 	class RenderPass
 	{
@@ -21,8 +21,8 @@ namespace Anvil
 			create_pass();
 		}
 
-		void Begin(Ref<CommandBuffer> _cmdBuffer, uint32_t imgIndex);
-		void End(Ref<CommandBuffer> _cmdBuffer);
+		void Begin(CommandBuffer* _cmdBuffer, uint32_t imgIndex);
+		void End(CommandBuffer* _cmdBuffer);
 
 		VkRenderPass& Get();
 		void WindowWasResized(Ref<SwapChain> _new);

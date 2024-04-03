@@ -15,10 +15,10 @@ namespace Anvil
         void PushLayer(AnvilLayer* layer);
         void PopLayer(AnvilLayer* layer);
 
-        std::vector<AnvilLayer*>& GetLayers();
+        static std::vector<AnvilLayer*>& GetLayers();
 
     private:
         unsigned int insertIndex = 0;
-        std::vector<AnvilLayer*> Layers;
+        static std::vector<AnvilLayer*> Layers;
     };
 }

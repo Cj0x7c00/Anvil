@@ -23,15 +23,33 @@ namespace Anvil
 		m_Props = _p;
 		if (!glfwInit())
 			ENGINE_ERROR("Failed to init glfw");
+		if (m_Props.maximized == true)
+		{
 
-		// API selection made by renderer, not GLFW
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		// TODO: Window resizing
-		//glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		m_WinHandle = glfwCreateWindow(_p.width, _p.height, _p.name, NULL, NULL);
-		glfwSetWindowUserPointer(m_WinHandle, this);
+			// API selection made by renderer, not GLFW
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-		glfwSetFramebufferSizeCallback(m_WinHandle, framebufferResizeCallback);
+			//maximized
+			glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+
+			//// no decoration
+			//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
+
+			m_WinHandle = glfwCreateWindow(_p.width, _p.height, _p.name, NULL, NULL);
+			glfwSetWindowUserPointer(m_WinHandle, this);
+
+			glfwSetFramebufferSizeCallback(m_WinHandle, framebufferResizeCallback);
+
+		} else {
+			// API selection made by renderer, not GLFW
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+
+			m_WinHandle = glfwCreateWindow(_p.width, _p.height, _p.name, NULL, NULL);
+			glfwSetWindowUserPointer(m_WinHandle, this);
+
+			glfwSetFramebufferSizeCallback(m_WinHandle, framebufferResizeCallback);
+		}
 
 		ENGINE_ASSERT((m_WinHandle != NULL) && "Failed to create window: {}", _p.name);
 		ENGINE_INFO("Window Created: {}", _p.name);

@@ -1,5 +1,4 @@
 #pragma once
-#include "Components.h"
 #include "../Base/Pointer.hpp"
 #include "../Base/macros.hpp"
 #include <entt/entt.hpp>
@@ -11,7 +10,6 @@ namespace Anvil
 	{
 	public:
 		Entity(entt::registry& _reg, std::string _name);
-		Entity();
 
 		template <typename Component, typename... Args>
 		Component& AddComponent(Args&&... args)
@@ -21,6 +19,12 @@ namespace Anvil
 
 		template<typename Component>
 		void RemoveComponent();
+
+		template <typename Component>
+		Component& GetComponent()
+		{
+			return m_Reg.get<Component>(m_Entity);
+		}
 
 		entt::entity& Get() { return m_Entity; }
 

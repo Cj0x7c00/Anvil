@@ -12,7 +12,7 @@ namespace Anvil
 		return CreateRef<RenderPass>(_sc);
 	}
 
-    void RenderPass::Begin(Ref<CommandBuffer> _cmdBuffer, uint32_t imgIndex)
+    void RenderPass::Begin(CommandBuffer* _cmdBuffer, uint32_t imgIndex)
     {
         VkRenderPassBeginInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -29,7 +29,7 @@ namespace Anvil
         vkCmdBeginRenderPass(_cmdBuffer->Get(), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     }
 
-    void RenderPass::End(Ref<CommandBuffer> _cmdBuffer)
+    void RenderPass::End(CommandBuffer* _cmdBuffer)
     {
         vkCmdEndRenderPass(_cmdBuffer->Get());
     }

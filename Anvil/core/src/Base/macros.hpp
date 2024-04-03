@@ -1,4 +1,5 @@
 #pragma once
+#include <mutex>
 
 /* TODO: add support for shared lib exports/imports on mac */
 #ifdef __APPLE__
@@ -13,3 +14,8 @@
 #  define ANV_API _declspec(dllimport)
 # endif
 #endif
+
+// takes in a lambda that will only ever be called once
+#define ANV_CALL_ONCE(Lambda) \
+static std::once_flag flag; \
+std::call_once(flag, Lambda);

@@ -8,6 +8,11 @@
 
 namespace Anvil
 {
+    struct PipelineInfo
+    {
+
+    };
+
     class ANV_API Pipeline
     {
     public:
@@ -17,15 +22,20 @@ namespace Anvil
 
         ~Pipeline();
 
-        void Bind(Ref<CommandBuffer> cmdBuffer);
+        void Bind(CommandBuffer* cmdBuffer);
+        VkDescriptorSetLayout& GetDescriptorLayout();
+        VkPipelineLayout& GetPipelineLayout();
 
     private:
         void process_shaders(std::vector<Ref<Shader>> _shaders);
+        void create_descriptor_layout();
         void create_pipeline_layout();
 
     private:
         VkPipeline       m_Pipeline;
         VkPipelineLayout m_Layout;
+
+        VkDescriptorSetLayout m_DescriptorSetLayout;
 
         std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages;
     };

@@ -90,12 +90,25 @@ namespace Anvil
     };
 
 #ifdef ANV_BUILD_SHARED
-#define ENGINE_INFO(...)  Log::log  ( __FUNCTION__, __VA_ARGS__ )
-#define ENGINE_DEBUG(...) Log::debug( __FUNCTION__, __VA_ARGS__ )
-#define ENGINE_WARN(...)  Log::warn ( __FUNCTION__, __VA_ARGS__ )  
-#define ENGINE_ERROR(...) Log::error( __FUNCTION__, __VA_ARGS__ )
-
-
+#ifdef DEBUG
+    #define ENGINE_INFO(...)  Log::log  ( __FUNCTION__, __VA_ARGS__ )
+    #define ENGINE_DEBUG(...) Log::debug( __FUNCTION__, __VA_ARGS__ )
+    #define ENGINE_WARN(...)  Log::warn ( __FUNCTION__, __VA_ARGS__ )  
+    #define ENGINE_ERROR(...) Log::error( __FUNCTION__, __VA_ARGS__ )
+#endif
+#ifdef RELEASE
+    #define ENGINE_INFO(...)  
+    #define ENGINE_DEBUG(...) 
+    #define ENGINE_WARN(...)   
+    #define ENGINE_ERROR(...) 
+#endif
+#else
+    #define ANVIL_OUT(message) Log::out(message);
+    #define ANVIL_INFO(...)  Anvil::Log::log  ( __FUNCTION__, __VA_ARGS__ )
+    #define ANVIL_DEBUG(...) Anvil::Log::debug( __FUNCTION__, __VA_ARGS__ )
+    #define ANVIL_WARN(...)  Anvil::Log::warn ( __FUNCTION__, __VA_ARGS__ )  
+    #define ANVIL_ERROR(...) Anvil::Log::error( __FUNCTION__, __VA_ARGS__ )
+#endif
 #define ENGINE_ASSERT(condition_and_message) \
     do { \
         if (!(condition_and_message)) { \
@@ -103,23 +116,4 @@ namespace Anvil
             std::abort(); \
         } \
     } while (false);
-
-#define ENGINE_OUT(message) Log::out(message);
-#else
-#define ANVIL_INFO(...)  Anvil::Log::log  ( __FUNCTION__, __VA_ARGS__ )
-#define ANVIL_DEBUG(...) Anvil::Log::debug( __FUNCTION__, __VA_ARGS__ )
-#define ANVIL_WARN(...)  Anvil::Log::warn ( __FUNCTION__, __VA_ARGS__ )  
-#define ANVIL_ERROR(...) Anvil::Log::error( __FUNCTION__, __VA_ARGS__ )
-
-
-#define ANVIL_ASSERT(condition_and_message) \
-    do { \
-        if (!(condition_and_message)) { \
-            std::cerr << "\033[31m[Assertion failed " << " (" << __FILE__ << ":" << __LINE__ << ")]\n\033[0m" << #condition_and_message  << std::endl; \
-            std::abort(); \
-        } \
-    } while (false);
-
-#define ANVIL_OUT(message) Log::out(message);
-#endif
 }

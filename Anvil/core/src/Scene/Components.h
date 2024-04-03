@@ -1,9 +1,18 @@
 #pragma once
 #include "../UUID/uuid.h"
+#include "../UI/Canvas.h"
 #include "glm/glm.hpp"
+#include "entt/entt.hpp"
+#include "../Renderer/UBO.h"
+#include "../Renderer/Texture/Texture.h"
 #include <string>
 #include <vector>
+#include <array>
+#include "../Renderer/Renderer.h"
 
+struct VkVertexInputBindingDescription;
+struct VkVertexInputAttributeDescription;
+typedef struct VkBuffer_T* VkBuffer;
 
 namespace Anvil
 {
@@ -56,6 +65,11 @@ namespace Anvil
 	{
 		UuID uuid;
 
+		UUIDComponent()
+		{
+			
+		}
+
 		/// <summary>
 		/// Get the UUID of the entity
 		/// </summary>
@@ -76,16 +90,62 @@ namespace Anvil
 		{
 
 		}
+
+		static VkVertexInputBindingDescription GetBindingDescription();
+
+		static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions();
 	};
 
+	/// <summary>
+	/// Sprite component. holds data of the sprite in use for rendering
+	/// </summary>
 	struct SpriteComponent
 	{
-		std::vector<vertex> verts;
-	
-		SpriteComponent(std::vector<vertex> _vert)
-			: verts{ _vert }
-		{
-		
+		std::vector<vertex>     verts{
+			{{-0.5f , -0.5f}, {0.63, 0.63, 0.63}},
+			{{0.5f  , -0.5f}, {0.63, 0.63, 0.63}},
+			{{0.5f  ,  0.5f}, {0.63, 0.63, 0.63}},
+			{{-0.5f ,  0.5f}, {0.63, 0.63, 0.63}}
 		};
+		std::vector<uint16_t>   indexs{
+			0, 1, 2, 2, 3, 0
+		};
+
+		VkBuffer vertexBuffer = NULL;
+		VkBuffer indexBuffer  = NULL;
+
+		UniformBufferObject UBO = {};
+
+		bool buffersCreatedFlag = false;
+
+		SpriteComponent()
+		{
+
+		}
+
+		SpriteComponent(Texture& text)
+		{
+
+		}
+
+		void CreatBuffers();
+
+		void Bind(CommandBuffer* cmdBuffer, Ref<Pipeline> pipeline);
+		void Draw(CommandBuffer* cmdBuffer);
+	};
+
+	struct CanvasComponent
+	{
+		Ref<Canvas> canvas;
+
+		CanvasComponent()
+		{
+			canvas = Canvas::Create();
+		}
+
+		Ref<Canvas> Get()
+		{
+			return canvas;
+		}
 	};
 }
