@@ -14,25 +14,18 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 # Updates
 
 ## Whats New 
-- DLL abstraction 
-- Renderer
-- Entity/Scene system [still in development]
+- scene system and rendering 
+- UI (Limited) 
 
 ***Working On:***
- - [ ] scene system and rendering 
- - [ ] UI 
-
+- [ ] Textures
+- [ ] Cameras
+- [ ] Materials
+- [ ] Python Scripting
+- [ ] Linux/Mac Ports
 
 ## Build
-#### **Install the vulkan SDK**
-
-if you haven't already, set a VULKAN_SDK environment variable to the vulkan SDK path. this is required for the engine to work
-
-run the "Setup.bat" script
-open the solution and run
-
-##### --- OR (not tested) ---
-
-run the "Setup.sh" for Mac  
+navigate to the *Setup* folder, then run "Setup.bat"
+**Note: Only works on windows**
 
 
