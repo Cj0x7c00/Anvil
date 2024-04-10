@@ -1,7 +1,7 @@
 
 
 # Anvil Engine
-Anvil Engine is my life long software project that i use to **study and learn** computer graphics. i figured the best way to do that was creating a game engine. so far, its under heavy development and can barely render anything lol. but by may i lan to have most of the core features done.
+Anvil Engine is my life long software project that i use to **study and learn** computer graphics. i figured the best way to do that was creating a game engine.
 
 ![rotating cube](Anvil/core/extras/imgs/cube.gif "9/1/2023")
 
@@ -13,25 +13,21 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 
 # Updates
 
+## Whats New 
+- scene system and rendering 
+- UI (Limited) 
 
 ***Working On:***
- - [x] properly added submodules
- - [x] port to windows
- - [x] updated include paths 
- - [x] abstract into a DLL for a core/app architecture 
- - [ ] [current] refactoring/rewriting renderer 
-
+- [ ] Textures
+- [ ] Cameras
+- [ ] Materials
+- [ ] Python Scripting
+- [ ] Linux/Mac Ports
 
 ## Build
-#### **Install the vulkan SDK**
+navigate to the *Setup* folder, then run "Setup.bat"
+**Note: Only works on windows**
 
-run the "Setup.bat" script and link with the GLFW library.
-
-in Vis Studio, add the GLFW lib path to "additional library directories"
-##### --- OR (not tested) ---
-
-run the "Setup.sh" for Mac  
-
-## News
-Rebuilding the renderer. threw the old one out and replacing it
+#### Notes
+if  you get a problem building forge, navigate to Anvil > bin > (folder problem is happening) > delete the 'Forge' file
 

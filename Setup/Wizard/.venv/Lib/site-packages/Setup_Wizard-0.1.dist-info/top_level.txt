@@ -1,0 +1,4 @@
+Wizard
+console
+licence
+wizback
