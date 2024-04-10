@@ -28,6 +28,6 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 navigate to the *Setup* folder, then run "Setup.bat"
 **Note: Only works on windows**
 
-##Notes
+#### Notes
 if  you get a problem building forge, navigate to Anvil > bin > (folder problem is happening) > delete the 'Forge' file
 
