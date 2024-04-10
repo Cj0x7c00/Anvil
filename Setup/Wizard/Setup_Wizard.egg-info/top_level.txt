@@ -1,4 +1,0 @@
-Wizard
-console
-licence
-wizback

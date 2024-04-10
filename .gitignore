@@ -27,3 +27,10 @@ core/extras/Notes
 /packages/Microsoft.Windows.CppWinRT.2.0.220531.1
 /Anvil/html
 /Anvil/man/man3
+/Setup/Wizard/Setup_Wizard.egg-info/dependency_links.txt
+/Setup/Wizard/Setup_Wizard.egg-info/top_level.txt
+/Setup/Wizard/Setup_Wizard.egg-info/SOURCES.txt
+/Setup/Wizard/Setup_Wizard.egg-info/requires.txt
+/Setup/Wizard/__pycache__/wizback.cpython-312.pyc
+/Setup/Wizard/__pycache__/licence.cpython-312.pyc
+/Setup/Wizard/__pycache__/console.cpython-312.pyc
