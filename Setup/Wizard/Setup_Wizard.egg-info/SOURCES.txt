@@ -1,0 +1,10 @@
+Wizard.py
+console.py
+licence.py
+setup.py
+wizback.py
+Setup_Wizard.egg-info/PKG-INFO
+Setup_Wizard.egg-info/SOURCES.txt
+Setup_Wizard.egg-info/dependency_links.txt
+Setup_Wizard.egg-info/requires.txt
+Setup_Wizard.egg-info/top_level.txt
