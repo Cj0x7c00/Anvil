@@ -19,6 +19,9 @@ namespace Anvil
         windowFlags |= ImGuiWindowFlags_NoResize;
         windowFlags |= ImGuiWindowFlags_NoMove;
         windowFlags |= ImGuiWindowFlags_NoDocking;
+
+        // TODO: add condition for this, should not display if no menue
+        // items are being drawn
         windowFlags |= ImGuiWindowFlags_MenuBar;
 
        
