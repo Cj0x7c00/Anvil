@@ -29,6 +29,7 @@ namespace Anvil
 
 		void CreateFrameBuffers(VkRenderPass& _rp);
 
+		float  GetAspectRatio() { return (m_SwapChainExtent.width / m_SwapChainExtent.height); }
 		VkFormat GetFormat()						  { return m_SwapChainImageFormat;  }
 		std::vector<VkFramebuffer>& GetFrameBuffers() { return m_SwapChainFramebuffers; }
 		std::vector<VkImageView>& GetImageViews() { return m_SwapChainImageViews; }
