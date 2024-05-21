@@ -10,7 +10,7 @@
 /*=== RENDERING ===*/
 #include "core/src/Renderer/Renderer.h"
 #include "core/src/Renderer/GrComp/GraphicsFactory.h" // Shaders, Pipelines
-
+#include "core/src/Renderer/Camera.h"
 
 /*====== UI ======*/
 #include "core/src/UI/Canvas.h"
@@ -22,7 +22,7 @@ typedef Anvil::Ref<Anvil::Entity>   ENTITY;
 
 typedef Anvil::Ref<Anvil::Shader>	SHADER;
 typedef Anvil::Ref<Anvil::Pipeline> PIPELINE;
-
+typedef Anvil::Ref<Anvil::Camera>   CAMERA;
 
 typedef Anvil::UI_Button UI_BUTTON;
 typedef Anvil::UI_Window UI_WINDOW;
