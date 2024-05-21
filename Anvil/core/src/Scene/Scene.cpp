@@ -2,6 +2,7 @@
 #include "Components.h"
 #include <entt/entt.hpp>
 #include "Base/anvApplication.hpp"
+#include "Renderer/Camera.h"
 
 namespace Anvil
 {
@@ -15,6 +16,8 @@ namespace Anvil
     Scene::Scene(std::string _name)
         : m_Name{ _name }
     {
+        m_ActiveCamera = CreateEntity("Main Camera");
+        m_ActiveCamera->AddComponent<Camera>();
         ENGINE_INFO("Created Scene: {}", _name);
     }
 

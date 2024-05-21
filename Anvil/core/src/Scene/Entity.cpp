@@ -22,10 +22,11 @@ namespace Anvil
 		m_Entity = m_Reg.create();
 
 		AddComponent<TagComponent>(_name);
+		auto t = AddComponent<TransformComponent>();
 		AddComponent<UUIDComponent>();
 		set_user_pointer();
 
-		ENGINE_INFO("Created Entity: {}", _name);
+		ENGINE_INFO("Created Entity: {} At position ({}, {}, {})", _name, t.position.x, t.position.y, t.position.z);
 	}
 
 	void Entity::set_user_pointer()
