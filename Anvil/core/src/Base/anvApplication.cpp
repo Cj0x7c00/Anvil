@@ -27,7 +27,6 @@ namespace Anvil{
         std::filesystem::current_path(m_Props.wrkdir.c_str());
         while (!m_Window->ShouldClose()) {
 
-            m_Window->PollEvents();
 			Update();
             
 			Renderer::NewFrame();
@@ -39,6 +38,7 @@ namespace Anvil{
 
 			LateUpdate();
 
+            m_Window->PollEvents();
         }
 		Renderer::WaitIdle();
     }
