@@ -15,7 +15,7 @@ void Forge::Awake()
 	auto Canvas = Scene->CreateCanvas();
 	Quad = Scene->CreateEntity("Triangle");
 
-	PushLayer(new ForgeLayer(m_SceneManager, Canvas));
+	PushLayer(new ForgeLayer(m_SceneManager, (GLFWwindow*)GetWindow()->Get()));
 
 	//AddComponent<SpriteComponent>(Texture text)
 	auto Sprite = Quad->AddComponent<Anvil::SpriteComponent>();
