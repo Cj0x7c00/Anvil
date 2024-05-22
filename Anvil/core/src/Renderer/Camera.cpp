@@ -9,6 +9,8 @@ namespace Anvil
     Camera::Camera() : position(glm::vec3(0.0f, 0.0f, 0.0f)), worldUp(glm::vec3(0.0f, 0.0f, 1.0f)), yaw(0.0f), pitch(0.0f),
         FOV(100.f) {
 
+        SetProjectionType(PROJ_TYPE_PERSPECTIVE);
+
         SetPlains(.01f, 200.f);
         updateCameraVectors();
 
@@ -19,7 +21,22 @@ namespace Anvil
     }
 
     glm::mat4 Camera::GetProjectionMatrix() const {
-        return glm::perspective(glm::radians(FOV), Renderer::GetSwapChain()->GetAspectRatio(), Near, Far);
+
+        glm::mat4 projectionMatrix{1.f};
+
+        float aspect = Renderer::GetSwapChain()->GetAspectRatio();
+        
+        switch (pType) {
+        case PROJ_TYPE_ORTHOGRAPHIC:
+            /*TODO: Impl ortho projection*/
+            projectionMatrix = glm::perspective(glm::radians(FOV), Renderer::GetSwapChain()->GetAspectRatio(), Near, Far);
+            break;
+        case PROJ_TYPE_PERSPECTIVE:
+            projectionMatrix = glm::perspective(glm::radians(FOV), Renderer::GetSwapChain()->GetAspectRatio(), Near, Far);
+            break;
+        }
+
+        return projectionMatrix;
     }
 
     void Camera::SetPosition(const glm::vec3& newpos) {
@@ -51,6 +68,12 @@ namespace Anvil
         Near = near;
         Far = far;
         ENGINE_DEBUG("Set near and far plains: {}, {}", Near, Far);
+    }
+
+    void Camera::SetProjectionType(ProjType _ty)
+    {
+        pType = _ty;
+        ENGINE_DEBUG("Projection set to: {}", (pType == PROJ_TYPE_ORTHOGRAPHIC) ? "Orthographic" : "Perspective");
     }
 
     void Camera::updateCameraVectors() {

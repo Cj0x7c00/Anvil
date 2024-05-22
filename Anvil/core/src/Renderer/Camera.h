@@ -5,6 +5,12 @@
 
 namespace Anvil
 {
+    enum ProjType
+    {
+        PROJ_TYPE_ORTHOGRAPHIC,
+        PROJ_TYPE_PERSPECTIVE
+    };
+
     class ANV_API Camera {
     public:
         Camera();
@@ -20,6 +26,8 @@ namespace Anvil
 
         void SetPlains(float near = 1.f, float far = 20.f);
 
+        void SetProjectionType(ProjType _ty);
+
     private:
         void updateCameraVectors();
 
@@ -27,6 +35,7 @@ namespace Anvil
         glm::vec3 front;
         glm::vec3 up;
         glm::vec3 right;
+
         glm::vec3 worldUp;
 
         float yaw;
@@ -35,6 +44,8 @@ namespace Anvil
         float FOV;
 
         float Near, Far;
+
+        ProjType pType;
     };
 }
 

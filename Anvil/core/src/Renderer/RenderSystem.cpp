@@ -15,7 +15,7 @@ namespace Anvil
 {
 	std::vector<Ref<RenderSystem>> RenderSystem::Default(Ref<SwapChain> _sc)
 	{
-		return { CreateRef<SpriteSystem>(_sc), CreateRef<UISystem>(_sc)};
+		return { CreateRef<SpriteSystem>(_sc), CreateRef<UISystem>(_sc) };
 	}
 
 	RenderSystem::RenderSystem(Ref<SwapChain> _sc)
