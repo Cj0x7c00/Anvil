@@ -5,6 +5,9 @@
 
 namespace Anvil{
 
+    Ref<Window> AnvilApplication::m_Window = nullptr;
+
+
     std::string AnvilApplication::m_DllDir = std::string();
 
     AnvilApplication::AnvilApplication(AppProperties& _p) : m_Props{_p}
@@ -27,6 +30,8 @@ namespace Anvil{
         std::filesystem::current_path(m_Props.wrkdir.c_str());
         while (!m_Window->ShouldClose()) {
 
+            m_Window->PollEvents();
+
 			Update();
             
 			Renderer::NewFrame();
@@ -38,14 +43,8 @@ namespace Anvil{
 
 			LateUpdate();
 
-            m_Window->PollEvents();
         }
 		Renderer::WaitIdle();
-    }
-
-    Ref<Window> AnvilApplication::GetWindow()
-    {
-        return m_Window;
     }
 
     void AnvilApplication::PushLayer(AnvilLayer* _layer)

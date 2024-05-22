@@ -4,6 +4,7 @@
 #include "../Util/Time/anvTimeStep.hpp"
 #include "../Layer/anvLayerStack.hpp"
 #include "../Scene/SceneManager.h"
+#include "../Input/Input.h"
 #include "Pointer.hpp"
 #include "macros.hpp"
 
@@ -50,10 +51,12 @@ namespace Anvil
         /// Called after construction
         /// </summary>
         virtual void Awake() = 0;
+
         /// <summary>
         /// Called once per frame
         /// </summary>
         virtual void Update() = 0;
+
         /// <summary>
         /// Called after rendering
         /// </summary>
@@ -64,6 +67,7 @@ namespace Anvil
         /// </summary>
         /// <param name="_layer">A pointer to a layer</param>
         void PushLayer(AnvilLayer* _layer);
+
         /// <summary>
         /// Pop a layer off of the Layer Stack
         /// </summary>
@@ -74,19 +78,23 @@ namespace Anvil
         /// Get the main window in use
         /// </summary>
         /// <returns>Ref<Window></returns>
-        Ref<Window> GetWindow();
+        static Ref<Window> GetWindow()
+        {
+            return m_Window;
+        }
 
         /// <summary>
         /// Get the main DLL work directory
         /// </summary>
         /// <returns></returns>
         static std::string GetLibDir() { return m_DllDir; }
+
     private:
         void set_dll_dir();
         static std::string m_DllDir;
 
     protected:
-        Ref<Window>    m_Window;
+        static Ref<Window>    m_Window;
         Ref<Renderer>  m_Renderer;
 
         SceneManager   m_SceneManager;
