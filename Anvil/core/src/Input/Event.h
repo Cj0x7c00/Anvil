@@ -9,9 +9,9 @@ namespace Anvil
 		EVENT_TYPE_KEY_HOLD,
 	};
 
-	enum KeyCode{
+	enum KeyCode {
 		/* Alpha */
-		
+
 		KEY_A,
 		KEY_B,
 		KEY_C,
@@ -111,7 +111,7 @@ namespace Anvil
 		KEY_PGUP,
 		KEY_DEL,
 		KEY_END,
-    	KEY_PGDN,
+		KEY_PGDN,
 
 		/* NumPad */
 		KEY_NUMPD_0,
