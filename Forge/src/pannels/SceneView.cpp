@@ -28,13 +28,13 @@ void SceneView::Init()
 void SceneView::InitUI()
 {
 
-	//auto& Reg = m_activeScene->GetRegistry();
-	//auto& View = Reg.view<TagComponent>();
+	auto& Reg = m_activeScene->GetRegistry();
+	auto& View = Reg.view<TagComponent>();
 
-	//View.each([&](TagComponent& tag) {
-	//	window->DrawElement<UI_Selectable>(tag.Get().c_str());
-	//});
+	View.each([&](TagComponent& tag) {
+		window->DrawElement<UI_Selectable>(tag.Get().c_str());
+	});
 
-	//window->DrawElement<UI_Selectable>("Hello");
+	window->DrawElement<UI_Selectable>("Hello");
 
 }

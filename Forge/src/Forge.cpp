@@ -1,13 +1,6 @@
 #include "Forge.h"
 #include <core/src/Scene/Components.h>
 
-void MyCustomFunc()
-{
-	static int clicks;
-	ANVIL_WARN("My Function clicks: {}", clicks);
-	clicks++;
-}
-
 void Forge::Awake() 
 {
 
@@ -15,7 +8,7 @@ void Forge::Awake()
 	auto Canvas = Scene->CreateCanvas();
 	Quad = Scene->CreateEntity("Triangle");
 
-	PushLayer(new ForgeLayer(m_SceneManager, (GLFWwindow*)GetWindow()->Get()));
+	PushLayer(new ForgeLayer(m_SceneManager));
 
 	//AddComponent<SpriteComponent>(Texture text)
 	auto Sprite = Quad->AddComponent<Anvil::SpriteComponent>();
