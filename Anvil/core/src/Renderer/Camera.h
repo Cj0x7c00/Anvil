@@ -15,37 +15,32 @@ namespace Anvil
     public:
         Camera();
 
-        glm::mat4 GetViewMatrix() const;
-        glm::mat4 GetProjectionMatrix() const;
+        glm::mat4 GetViewMatrix();
+        glm::mat4 GetProjectionMatrix();
 
         void SetPosition(const glm::vec3& newpos);
         void SetRotation(float yaw, float pitch);
-
         void Move(const glm::vec3& offset);
         void Rotate(float yawOffset, float pitchOffset);
-
         void SetPlains(float near = 1.f, float far = 20.f);
-
         void SetProjectionType(ProjType _ty);
 
-    private:
-        void updateCameraVectors();
 
         glm::vec3 position;
         glm::vec3 front;
         glm::vec3 up;
         glm::vec3 right;
-
         glm::vec3 worldUp;
 
         float yaw;
         float pitch;
-
         float FOV;
-
         float Near, Far;
 
         ProjType pType;
+
+    private:
+        void updateCameraVectors();
     };
 }
 

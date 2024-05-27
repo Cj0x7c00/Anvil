@@ -48,7 +48,6 @@ namespace Anvil
 
 	protected:
 		virtual void create_ubos();
-		virtual void update_ubos(NewFrameInfo& frameInfo);
 		virtual void create_descriptor_pool();
 		virtual void create_descriptor_sets();
 

@@ -12,6 +12,7 @@ namespace Anvil
 		return CreateRef<RenderPass>(_sc);
 	}
 
+    // TODO: impl Renderer::ClearColor()
     void RenderPass::Begin(CommandBuffer* _cmdBuffer, uint32_t imgIndex)
     {
         VkRenderPassBeginInfo renderPassInfo{};
@@ -22,7 +23,7 @@ namespace Anvil
         renderPassInfo.renderArea.offset = { 0, 0 };
         renderPassInfo.renderArea.extent = m_SwapChain->GetExtent();
 
-        VkClearValue clearColor = { {{0.0f, 0.0f, 0.0f, 1.0f}} };
+        VkClearValue clearColor = { {{0.141, 0.141, 0.141}} };
         renderPassInfo.clearValueCount = 1;
         renderPassInfo.pClearValues = &clearColor;
 

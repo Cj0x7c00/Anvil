@@ -46,10 +46,7 @@ namespace Anvil
 
     }
 
-    void RenderSystem::update_ubos(NewFrameInfo& frameInfo)
-    {
 
-    }
 
     void RenderSystem::create_descriptor_pool()
     {

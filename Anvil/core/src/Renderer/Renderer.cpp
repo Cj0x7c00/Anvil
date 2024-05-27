@@ -108,16 +108,14 @@ namespace Anvil
             vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex]);
 
             m_FrameInfo.CommandBuffer->Reset();
-            for (auto& sys : m_RenderSystems)
-            {
-                sys->Update(m_FrameInfo);
-            }
-            m_FrameInfo.CommandBuffer->BeginRecording(m_FrameInfo, nullptr);
+
             for (auto& sys : m_RenderSystems)
             {
                 sys->NewFrame(m_FrameInfo);
             }
+
             m_FrameInfo.CommandBuffer->EndRecording(m_FrameInfo);
+
            Submit(m_FrameInfo);
         }
 
