@@ -24,6 +24,7 @@ namespace Anvil
 		AddComponent<TagComponent>(_name);
 		auto t = AddComponent<TransformComponent>();
 		AddComponent<UUIDComponent>();
+
 		set_user_pointer();
 
 		ENGINE_INFO("Created Entity: {} At position ({}, {}, {})", _name, t.position.x, t.position.y, t.position.z);
@@ -31,6 +32,7 @@ namespace Anvil
 
 	void Entity::set_user_pointer()
 	{
+		// tie an Entt entity to an Anvil entity
 		m_Reg.emplace<UserPointerComponent>(m_Entity, this);
 	}
 }
