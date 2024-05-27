@@ -4,7 +4,9 @@
 ForgeLayer::ForgeLayer(SceneManager& manager)
 	: scManager{ manager },
 	camera{ scManager.GetActiveScene()->GetActiveCamera()->GetComponent<Camera>() }, 
+	cController{camera},
 	AnvilLayer("Forge Editor Layer")
+
 {
 	activeScene = scManager.GetActiveScene();
 }
@@ -13,45 +15,25 @@ void ForgeLayer::Attach()
 {
 	std::filesystem::current_path();
 
-	camera.SetPosition({ 0.0f, 2.f, 2.f });
+	camera.SetPosition({0, 2, 1});
+
+	Input::SetMouseMode(Anvil::MOUSE_MODE_LOCKED);
+	
+	cController.SetMouseSensitivity(1);
+	cController.SetMovementSpeed(0.3f);
 }
 
 void ForgeLayer::Update()
 {
-	if (Input::IsKeyPressed(GLFW_KEY_W))
-	{
-		camera.Move({0.f, -0.01f, 0.f});
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_S))
-	{
-		camera.Move({ 0.f, 0.01f, 0.f });
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_A))
-	{
-		camera.Move({ 0.01f, 0.f, 0.f });
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_D))
-	{
-		camera.Move({ -0.01f, 0.f, 0.f });
-	}
+	cController.ProcessKeyboard(Time::DeltaTime());
 
-	if (Input::IsKeyPressed(GLFW_KEY_UP))
-	{
-		camera.Move({ 0.f, 0.f,  0.01f });
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_DOWN))
-	{
-		camera.Move({ 0.f, 0.f,  -0.01f });
-	}
+	auto [x, y] = Input::GetMousePos();
 
-	static int rotation = 0;
-	if (Input::IsKeyPressed(GLFW_KEY_LEFT))
+	cController.ProcessMouseMovement(x, y, false);
+
+	if (Input::IsKeyPressed(ANV_KEY_T))
 	{
-		camera.SetRotation(0.f, rotation++);
-	}
-	if (Input::IsKeyPressed(GLFW_KEY_RIGHT))
-	{
-		camera.SetRotation(0.f, rotation--);
+		Input::SetMouseMode(MOUSE_MODE_FREE);
 	}
 }
 

@@ -2,7 +2,6 @@
 #include <glm/glm.hpp>
 #include "Anvil.hpp"
 #include "pannels/SceneView.h"
-#include "GLFW/glfw3.h"
 
 class ForgeLayer :
     public Anvil::AnvilLayer
@@ -21,6 +20,8 @@ public:
 private:
     SceneManager& scManager;
     SCENE activeScene;
+
     Anvil::Camera& camera;
+    Anvil::CamController cController;
 };
 
