@@ -1,5 +1,6 @@
 #pragma once
 #include "Base/Pointer.hpp"
+#include "Scene/Components.h"
 #include "../UBO.h"
 #include "../RenderSystem.h"
 #include "../Renderer.h"
@@ -27,7 +28,7 @@ namespace Anvil
         void Update(NewFrameInfo& frameInfo) override;
         void NewFrame(NewFrameInfo& frameInfo) override;
         void create_ubos() override;
-        void update_ubos(NewFrameInfo& frameInfo) override;
+        void update_ubos(NewFrameInfo& frameInfo, TransformComponent& trans);
         void create_descriptor_pool() override;
         void create_descriptor_sets() override;
 

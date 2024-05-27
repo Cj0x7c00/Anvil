@@ -3,7 +3,6 @@
 #include "Renderer/SwapChain.h"
 #include "Renderer/GrComp/Pipeline.h"
 
-#include "Scene/Components.h"
 #include "Scene/Scene.h"
 
 #include <entt/entt.hpp>
@@ -38,17 +37,22 @@ namespace Anvil
 	void SpriteSystem::NewFrame(NewFrameInfo& frameInfo)
 	{
 		
-		m_Pipeline->Bind(frameInfo.CommandBuffer.get());
+		//m_Pipeline->Bind(frameInfo.CommandBuffer.get());
 
-		Renderer::SetViewport(ViewportInfo::Default(), frameInfo.CommandBuffer.get());
+		//Renderer::SetViewport(ViewportInfo::Default(), frameInfo.CommandBuffer.get());
 		
 		auto& Reg = frameInfo.Scene->GetRegistry();
-		auto sprites = Reg.view<SpriteComponent>();
+		auto sprites = Reg.view<SpriteComponent, TransformComponent>();
 		auto devices = Devices::GetInstance();
+		frameInfo.CommandBuffer->BeginRecording(frameInfo, m_Pipeline);
 
-		sprites.each([&](SpriteComponent& spriteData)
+		sprites.each([&](auto entity, SpriteComponent& spriteData, TransformComponent& spriteTrans)
 			{
 				(spriteData.buffersCreatedFlag == false) ? spriteData.CreatBuffers() : NULL;
+
+				update_ubos(frameInfo, spriteTrans);
+
+				Renderer::SetViewport(ViewportInfo::Default(), frameInfo.CommandBuffer.get());
 
 				spriteData.Bind(frameInfo.CommandBuffer.get(), m_Pipeline);
 				vkCmdBindDescriptorSets(frameInfo.CommandBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, 
@@ -76,10 +80,10 @@ namespace Anvil
 
 	void SpriteSystem::Update(NewFrameInfo& frameInfo)
 	{
-		update_ubos(frameInfo);
+
 	}
 
-	void SpriteSystem::update_ubos(NewFrameInfo& frameInfo)
+	void SpriteSystem::update_ubos(NewFrameInfo& frameInfo, TransformComponent& trans)
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -87,7 +91,7 @@ namespace Anvil
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 		UniformBufferObject ubo{};
-		ubo.model = glm::mat4{1.f};
+		ubo.model = trans.GetModelMatrix();
 		ubo.view = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetViewMatrix();
 		ubo.proj = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetProjectionMatrix();
 		ubo.proj[1][1] *= -1;
