@@ -1,11 +1,12 @@
 #pragma once
-
 #include <chrono>
+
+#include "../../Base/macros.hpp"
 
 namespace Anvil
 {
 
-	class Profiler 
+	class ANV_API Profiler 
 	{
 	public:
 
@@ -18,12 +19,24 @@ namespace Anvil
 		friend class Time;
 	};
 
-	class Time
+	class ANV_API Time
 	{
 	public:
 		static Profiler Profile(const char* name);
 
+		static float DeltaTime();
+
+	private:
+		static void startEngineClock();
+		static void update();
+
+	private:
+		static std::chrono::high_resolution_clock::time_point lastFrameTime;
+		static std::chrono::high_resolution_clock::time_point currentFrameTime;
+
+		friend class AnvilApplication;
 	};
+
 
 }
 

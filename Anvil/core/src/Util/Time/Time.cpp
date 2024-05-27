@@ -3,6 +3,9 @@
 
 namespace Anvil
 {
+	std::chrono::high_resolution_clock::time_point Time::lastFrameTime = std::chrono::high_resolution_clock::time_point();
+	std::chrono::high_resolution_clock::time_point Time::currentFrameTime = std::chrono::high_resolution_clock::time_point();
+
 	Profiler::Profiler(const char* prof_name)
 		: m_Name{prof_name}
 	{
@@ -26,6 +29,23 @@ namespace Anvil
 	Profiler Time::Profile(const char* name)
 	{
 		return Profiler(name);
+	}
+
+	float Time::DeltaTime()
+	{
+		std::chrono::duration<float> deltaTime = currentFrameTime - lastFrameTime;
+		return deltaTime.count();
+	}
+
+	void Time::startEngineClock()
+	{
+		lastFrameTime = std::chrono::high_resolution_clock::now();
+	}
+
+	void Time::update()
+	{
+		lastFrameTime = currentFrameTime;
+		currentFrameTime = std::chrono::high_resolution_clock::now();
 	}
 
 }
