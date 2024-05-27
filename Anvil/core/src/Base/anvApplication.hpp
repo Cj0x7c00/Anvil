@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Window/Window.hpp"
-#include "../Util/Time/anvTimeStep.hpp"
 #include "../Layer/anvLayerStack.hpp"
 #include "../Scene/SceneManager.h"
 #include "../Input/Input.h"

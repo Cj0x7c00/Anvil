@@ -25,10 +25,12 @@ namespace Anvil{
     void AnvilApplication::Run()
     {
         Awake();
+        Time::startEngineClock();
         Renderer::BeginOneTimeOps();
         ENGINE_DEBUG("{}", m_Props.wrkdir);
         std::filesystem::current_path(m_Props.wrkdir.c_str());
         while (!m_Window->ShouldClose()) {
+            Time::update();
 
             m_Window->PollEvents();
 
