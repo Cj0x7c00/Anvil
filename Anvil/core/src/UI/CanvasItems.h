@@ -66,12 +66,12 @@ namespace Anvil
 	public:
 		static std::string item;
 
-		const char* label;
+		std::string label;
 		Vec2 size;
 		Vec2 position;
 		std::function<void()> Fn;
 
-		UI_Button(const char* _label="New Button", Vec2 _size = Vec2(0, 0), Vec2 _pos = Vec2(0, 0), std::function<void()> _Fn = nullptr)
+		UI_Button(std::string _label="New Button", Vec2 _size = Vec2(0, 0), Vec2 _pos = Vec2(0, 0), std::function<void()> _Fn = nullptr)
 			: label{ _label }, size{ _size }, position{ _pos }, Fn{_Fn}, CanvasItem(item)
 		{
 
@@ -86,12 +86,12 @@ namespace Anvil
 	public:
 		static std::string item;
 
-		const char* name;
+		std::string name;
 		Vec2 size;
 		Vec2 position;
 		std::vector<Ref<CanvasItem>> InnerElements; // inner elements
 
-		UI_Window(const char* _name = "New Window", Vec2 _size = Vec2(300, 300), Vec2 _pos = Vec2(60, 60))
+		UI_Window(std::string _name = "New Window", Vec2 _size = Vec2(300, 300), Vec2 _pos = Vec2(60, 60))
 			: name{ _name }, size{ _size }, position{ _pos }, CanvasItem(item)
 		{
 			
@@ -127,6 +127,23 @@ namespace Anvil
 		std::vector<std::string> menueItems;
 
 		UI_Menue(std::vector<std::string> _mItems) :  menueItems{_mItems}, CanvasItem(item)
+		{
+
+		}
+
+		void Draw() override;
+	};
+
+	class ANV_API UI_Text : public CanvasItem
+	{
+	public:
+		static std::string item;
+		
+		std::string text;
+		Vec2 position;
+
+		UI_Text(std::string _txt, Vec2 _pos=Vec2(0, 0))
+			: text(_txt), position(_pos), CanvasItem(item)
 		{
 
 		}

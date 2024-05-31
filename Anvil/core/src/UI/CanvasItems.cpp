@@ -9,12 +9,13 @@ namespace Anvil
 	std::string UI_Button::item = "Button";
 	std::string UI_Window::item = "Window";
 	std::string UI_Selectable::item = "Selectable";
+	std::string UI_Text::item = "Text";
 
 	void UI_Button::Draw()
 	{
 		if (position != Vec2(0, 0))
 		ImGui::SetCursorPos(ImVec2(position.x, position.y));
-		if (ImGui::Button(label, ImVec2(size.x, size.y)))
+		if (ImGui::Button(label.c_str(), ImVec2(size.x, size.y)))
 		{
 			if (Fn != nullptr)
 			{
@@ -30,7 +31,7 @@ namespace Anvil
 		//ImGui::SetNextWindowSize(ImVec2(size.x, size.y));
 		//ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + position.x, viewport->Pos.y + position.y));		
 
-		ImGui::Begin(name);
+		ImGui::Begin(name.c_str());
 	
 		for (auto& el : InnerElements)
 		{
@@ -85,5 +86,12 @@ namespace Anvil
 
 			ImGui::EndMenuBar();
 		}
+	}
+
+
+	void UI_Text::Draw()
+	{
+		ImGui::SetCursorPos(ImVec2(position.x, position.y));
+		ImGui::Text(text.c_str());
 	}
 }
