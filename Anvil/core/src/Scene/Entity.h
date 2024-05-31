@@ -1,6 +1,7 @@
 #pragma once
 #include "../Base/Pointer.hpp"
 #include "../Base/macros.hpp"
+#include "glm/glm.hpp"
 #include <entt/entt.hpp>
 
 namespace Anvil
@@ -10,6 +11,7 @@ namespace Anvil
 	{
 	public:
 		Entity(entt::registry& _reg, std::string _name);
+		Entity(entt::registry& _reg, std::string _name, glm::vec3 position, glm::vec3  rotation, glm::vec3 scale);
 
 		template <typename Component, typename... Args>
 		Component& AddComponent(Args&&... args)
