@@ -30,6 +30,7 @@ typedef Anvil::Ref<Anvil::Camera>   CAMERA;
 typedef Anvil::UI_Button UI_BUTTON;
 typedef Anvil::UI_Window UI_WINDOW;
 typedef Anvil::UI_Menue  UI_MENUE;
+typedef Anvil::UI_Text   UI_TEXT;
 
 
 
