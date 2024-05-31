@@ -4,21 +4,21 @@
 
 namespace Anvil
 {
-	class ANV_API CamController
+	class ANV_API CameraController
 	{
     public:
-        CamController(Camera& camera);
+        CameraController(Camera& camera);
 
         void ProcessKeyboard(float deltaTime);
-        void ProcessMouseMovement(float xOffset, float yOffset, bool constrainPitch = true);
+
 
         void SetMovementSpeed(float speed);
-        void SetMouseSensitivity(float sensitivity);
+        void SetRotationSpeed(float sensitivity);
 
     private:
         Camera& camera;
         float movementSpeed;
-        float mouseSensitivity;
+        float rotationSpeed;
 	};
 }
 
