@@ -33,19 +33,22 @@ namespace Anvil
 
 	float Time::DeltaTime()
 	{
+		static auto lastFrameTime = std::chrono::high_resolution_clock::now();
+		auto currentFrameTime = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<float> deltaTime = currentFrameTime - lastFrameTime;
+		lastFrameTime = currentFrameTime;
 		return deltaTime.count();
 	}
 
 	void Time::startEngineClock()
 	{
-		lastFrameTime = std::chrono::high_resolution_clock::now();
+		//currentFrameTime = std::chrono::high_resolution_clock::now();
 	}
 
 	void Time::update()
 	{
-		lastFrameTime = currentFrameTime;
-		currentFrameTime = std::chrono::high_resolution_clock::now();
+		//lastFrameTime = currentFrameTime;
+		//currentFrameTime = std::chrono::high_resolution_clock::now();
 	}
 
 }
