@@ -22,25 +22,24 @@ namespace Anvil
         void SetRotation(float yaw, float pitch);
         void Move(const glm::vec3& offset);
         void Rotate(float yawOffset, float pitchOffset);
-        void SetPlains(float near = 1.f, float far = 20.f);
+        void SetPlains(float near, float far);
         void SetProjectionType(ProjType _ty);
 
+        void updateCameraVectors();
 
         glm::vec3 position;
+        // X: Pitch, Y: Yaw
+        glm::vec3 rotation;
         glm::vec3 front;
         glm::vec3 up;
         glm::vec3 right;
         glm::vec3 worldUp;
 
-        float yaw;
-        float pitch;
+
         float FOV;
-        float Near, Far;
-
+        float Near;
+        float Far;
         ProjType pType;
-
-    private:
-        void updateCameraVectors();
     };
 }
 
