@@ -21,7 +21,11 @@ private:
     SceneManager& scManager;
     SCENE activeScene;
 
+    Anvil::Ref<Anvil::Canvas> canvas;
+    Anvil::Ref<UI_TEXT> pos;
+    Anvil::Ref<UI_TEXT> rot;
+
     Anvil::Camera& camera;
-    Anvil::CamController cController;
+    Anvil::CameraController cController;
 };
 
