@@ -64,6 +64,7 @@ namespace Anvil
 		glm::vec3 scale;
 
 		TransformComponent() : position(0.0f), rotation(0.0f), scale(1.0f) {}
+		TransformComponent(glm::vec3 _p, glm::vec3 _r, glm::vec3 _s) : position(_p), rotation(_r), scale(_s) {}
 
 		glm::mat4 GetModelMatrix() const {
 			glm::mat4 model = glm::mat4(1.0f);
