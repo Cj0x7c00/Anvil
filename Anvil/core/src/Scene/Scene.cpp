@@ -26,6 +26,11 @@ namespace Anvil
         return CreateRef<Entity>(m_Registry, _name);
     }
 
+    Ref<Entity> Scene::CreateEntity(std::string _name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+    {
+        return CreateRef<Entity>(m_Registry, _name, position, rotation, scale);
+    }
+
     Ref<Canvas> Scene::CreateCanvas()
     {
         auto& entity = CreateEntity("Canvas");

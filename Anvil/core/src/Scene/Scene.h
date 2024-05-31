@@ -19,6 +19,9 @@ namespace Anvil
 		Scene(std::string _name);
 
 		Ref<Entity> CreateEntity(std::string _name="New Object");
+
+		Ref<Entity> CreateEntity(std::string _name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
+
 		Ref<Canvas> CreateCanvas();
 
 		
