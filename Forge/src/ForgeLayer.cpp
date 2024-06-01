@@ -14,7 +14,13 @@ ForgeLayer::ForgeLayer(SceneManager& manager)
 
 void ForgeLayer::Attach()
 {
-	std::filesystem::current_path();
+	//std::filesystem::current_path();
+
+	Quad1 = activeScene->CreateEntity("Quad1", glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 1.f });
+	Quad1->AddComponent<Anvil::SpriteComponent>();
+
+	Quad1 = activeScene->CreateEntity("Quad2", glm::vec3{ 1, 1, 1 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 4.f });
+	Quad1->AddComponent<Anvil::SpriteComponent>();
 
 	camera.SetPosition({0, 1, 3});
 	camera.SetRotation(-90.f, 0.f);
@@ -25,14 +31,16 @@ void ForgeLayer::Attach()
 	cController.SetMovementSpeed(2.3f);
 
 	canvas = activeScene->CreateCanvas();
+	canvas->AddItem<UI_TEXT>("Position", Vec2(50, 35));
 	pos = canvas->AddItem<UI_TEXT>(glm::to_string(camera.position), Vec2(50, 50));
-	rot = canvas->AddItem<UI_TEXT>(glm::to_string(camera.rotation), Vec2(50, 65));
+	canvas->AddItem<UI_TEXT>("Rotation", Vec2(50, 65));
+	rot = canvas->AddItem<UI_TEXT>(glm::to_string(camera.rotation), Vec2(50, 80));
 
-	canvas->AddItem<UI_TEXT>("Controls", Vec2(50, 90));
-	canvas->AddItem<UI_TEXT>("W-A-S-D : Move along X Z", Vec2(50, 102));
-	canvas->AddItem<UI_TEXT>("Q-E : Move along Y", Vec2(50, 114));
-	canvas->AddItem<UI_TEXT>("Arrow Keys : look arround", Vec2(50, 126));
-	canvas->AddItem<UI_TEXT>("T : Unlock Mouse", Vec2(50, 138));
+	canvas->AddItem<UI_TEXT>("Controls", Vec2(50, 110));
+	canvas->AddItem<UI_TEXT>("W-A-S-D : Move along X Z", Vec2(50, 125));
+	canvas->AddItem<UI_TEXT>("Q-E : Move along Y", Vec2(50, 140));
+	canvas->AddItem<UI_TEXT>("T : Unlock Mouse", Vec2(50, 155));
+	canvas->AddItem<UI_TEXT>("Arrow Keys : look arround", Vec2(50, 170));
 
 }
 

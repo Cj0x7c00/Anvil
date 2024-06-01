@@ -27,5 +27,8 @@ private:
 
     Anvil::Camera& camera;
     Anvil::CameraController cController;
+
+    ENTITY Quad1;
+    ENTITY Quad2;
 };
 

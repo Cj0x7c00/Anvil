@@ -7,10 +7,6 @@
 class Forge : public Anvil::AnvilApplication
 {
 public:
-	SCENE  Scene;
-	ENTITY Quad;
-	ENTITY Quad2;
-	ENTITY Quad3;
 
 	Forge(Anvil::AppProperties _p) : AnvilApplication(_p)
 	{
