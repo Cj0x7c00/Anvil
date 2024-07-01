@@ -15,14 +15,14 @@ Anvil Engine is my life long software project that i use to **study and learn** 
 
 ## Whats New 
 - scene system and rendering 
-- UI (Limited) 
+- UI (Limited)
+- Cameras
 
 ***Working On:***
 - [ ] Textures
-- [ ] Cameras
 - [ ] Materials
 - [ ] Python Scripting
-- [ ] Linux/Mac Ports
+- [ ] Linux port
 
 ## Build
 navigate to the *Setup* folder, then run "Setup.bat"
