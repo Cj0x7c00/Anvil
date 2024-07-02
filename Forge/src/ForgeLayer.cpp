@@ -12,6 +12,18 @@ ForgeLayer::ForgeLayer(SceneManager& manager)
 	activeScene = scManager.GetActiveScene();
 }
 
+void CreateEntity()
+{
+	static int move_pos = 1;
+
+	auto& Entity = Anvil::SceneManager::GetActiveScene()->CreateEntity("New Entity" + std::to_string(move_pos), 
+		{move_pos, move_pos, move_pos}, {0, 0, 0}, {1, 1, 1});
+
+	Entity->AddComponent<SpriteComponent>();
+
+	move_pos++;
+}
+
 void ForgeLayer::Attach()
 {
 	//std::filesystem::current_path();
@@ -19,8 +31,8 @@ void ForgeLayer::Attach()
 	Quad1 = activeScene->CreateEntity("Quad1", glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 1.f });
 	Quad1->AddComponent<Anvil::SpriteComponent>();
 
-	Quad1 = activeScene->CreateEntity("Quad2", glm::vec3{ 1, 1, 1 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 4.f });
-	Quad1->AddComponent<Anvil::SpriteComponent>();
+	Quad2 = activeScene->CreateEntity("Quad2", glm::vec3{ 1, 1, 1 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 4.f });
+	Quad2->AddComponent<Anvil::SpriteComponent>();
 
 	camera.SetPosition({0, 1, 3});
 	camera.SetRotation(-90.f, 0.f);
@@ -31,6 +43,8 @@ void ForgeLayer::Attach()
 	cController.SetMovementSpeed(2.3f);
 
 	canvas = activeScene->CreateCanvas();
+
+	canvas->AddItem<Anvil::UI_Window>("New Entity")->DrawElement<UI_BUTTON>("CreateEntity", Vec2(0, 0), Vec2(70, 20), CreateEntity);
 	canvas->AddItem<UI_TEXT>("Position", Vec2(50, 35));
 	pos = canvas->AddItem<UI_TEXT>(glm::to_string(camera.position), Vec2(50, 50));
 	canvas->AddItem<UI_TEXT>("Rotation", Vec2(50, 65));
