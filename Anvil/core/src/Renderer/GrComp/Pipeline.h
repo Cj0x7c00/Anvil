@@ -11,14 +11,28 @@ namespace Anvil
     struct PipelineInfo
     {
 
+        VkVertexInputBindingDescription    vertexBindingDesc;
+        std::array<VkVertexInputAttributeDescription, 2> vertexAttrDesc;
+
+        VkPipelineVertexInputStateCreateInfo    vertexInputInfo;
+        VkPipelineInputAssemblyStateCreateInfo  asmInputInfo;
+        VkPipelineViewportStateCreateInfo       viewportInfo;
+        VkPipelineRasterizationStateCreateInfo  rasterizerInfo;
+        VkPipelineMultisampleStateCreateInfo    multisampleInfo;
+        VkPipelineColorBlendStateCreateInfo     colorBlendInfo;
+        VkPipelineDynamicStateCreateInfo        dynamicInfo;
+
+        std::vector<VkPushConstantRange> PushConstantRanges;
+        std::vector<VkDescriptorSetLayoutBinding> DstSetLayoutBindings;
+
     };
 
     class ANV_API Pipeline
     {
     public:
-        static Ref<Pipeline> Create(std::vector<Ref<Shader>> _shaders);
+        static Ref<Pipeline> Create(std::vector<Ref<Shader>> _shaders, const PipelineInfo& _pi);
 
-        Pipeline(std::vector<Ref<Shader>> _shaders);
+        Pipeline(std::vector<Ref<Shader>> _shaders, const PipelineInfo& _pi);
 
         ~Pipeline();
 
@@ -28,8 +42,8 @@ namespace Anvil
 
     private:
         void process_shaders(std::vector<Ref<Shader>> _shaders);
-        void create_descriptor_layout();
-        void create_pipeline_layout();
+        //void create_descriptor_layout();
+        void create_vk_pipeline(const PipelineInfo& _pi);
 
     private:
         VkPipeline       m_Pipeline;

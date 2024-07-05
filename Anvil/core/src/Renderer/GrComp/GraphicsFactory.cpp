@@ -5,9 +5,9 @@
 
 namespace Anvil
 {
-	Ref<Pipeline> GraphicsFactory::CreatePipeline(std::vector<Ref<Shader>> _shaders)
+	Ref<Pipeline> GraphicsFactory::CreatePipeline(std::vector<Ref<Shader>> _shaders, const PipelineInfo& _pi)
 	{
-		return Pipeline::Create(_shaders);
+		return Pipeline::Create(_shaders, _pi);
 	}
 
 	Ref<Shader> GraphicsFactory::CreateShader(const char* _file_path, ShaderType _t, const char* _od)
