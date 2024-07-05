@@ -6,7 +6,18 @@ namespace Anvil {
         : camera(cam), movementSpeed(2.5f), rotationSpeed(90.0f) {} // rotationSpeed is in degrees per second
 
     void CameraController::ProcessKeyboard(float deltaTime) {
+
+        if (Input::IsKeyPressed(ANV_KEY_SPACE))
+        {
+            movementSpeed = 5.f;
+        }
+        else if (!Input::IsKeyPressed(ANV_KEY_SPACE))
+        {
+            movementSpeed = 2.5f;
+        }
+
         float velocity = movementSpeed * deltaTime;
+
         if (Input::IsKeyPressed(ANV_KEY_W)) {
             camera.Move(camera.front * velocity);
         }
