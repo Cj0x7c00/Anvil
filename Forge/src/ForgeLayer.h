@@ -1,7 +1,9 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Anvil.hpp"
-#include "pannels/SceneView.h"
+#include <Anvil.hpp>
+
+using namespace Anvil;
+
 
 class ForgeLayer :
     public Anvil::AnvilLayer
@@ -9,6 +11,8 @@ class ForgeLayer :
 public:
 
     ForgeLayer(SceneManager& manager);
+
+    static void CreateSprite();
 
     void Attach() override;
     void Update() override;
@@ -19,7 +23,7 @@ public:
 
 private:
     SceneManager& scManager;
-    SCENE activeScene;
+    static SCENE activeScene;
 
     Anvil::Ref<Anvil::Canvas> canvas;
     Anvil::Ref<UI_TEXT> pos;
@@ -28,7 +32,8 @@ private:
     Anvil::Camera& camera;
     Anvil::CameraController cController;
 
-    ENTITY Quad1;
-    ENTITY Quad2;
+    static ENTITY Quad1;
+    static ENTITY Quad2;
+
 };
 

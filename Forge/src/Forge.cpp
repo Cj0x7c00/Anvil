@@ -3,7 +3,6 @@
 
 void Forge::Awake() 
 {
-
 	PushLayer(new ForgeLayer(m_SceneManager));
 }
 

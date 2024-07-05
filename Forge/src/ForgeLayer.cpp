@@ -2,6 +2,10 @@
 #include <filesystem>
 #include <glm/gtx/string_cast.hpp>
 
+SCENE ForgeLayer::activeScene = nullptr;
+ENTITY ForgeLayer::Quad1 = nullptr;
+ENTITY ForgeLayer::Quad2 = nullptr;
+
 ForgeLayer::ForgeLayer(SceneManager& manager)
 	: scManager{ manager },
 	camera{ scManager.GetActiveScene()->GetActiveCamera()->GetComponent<Camera>() }, 
@@ -12,25 +16,40 @@ ForgeLayer::ForgeLayer(SceneManager& manager)
 	activeScene = scManager.GetActiveScene();
 }
 
+void ForgeLayer::CreateSprite()
+{
+	static int count = 1;
+
+	auto newsprite = activeScene->CreateEntity("Sprite" + std::to_string(count), glm::vec3(count/2, .5, count/2), glm::vec3(0.f), glm::vec3(1.f, 1.f, 1.f));
+	newsprite->AddComponent<Anvil::SpriteComponent>();
+	auto name = newsprite->GetComponent<Anvil::TagComponent>().Get();
+		
+	ANVIL_INFO("Creating sprite: {}", name);
+
+	++count;
+}
+
 void ForgeLayer::Attach()
 {
 	//std::filesystem::current_path();
 
-	Quad1 = activeScene->CreateEntity("Quad1", glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 1.f });
+	canvas = activeScene->CreateCanvas();
+
+
+	Quad1 = activeScene->CreateEntity("Quad1", glm::vec3{ 0, 0, 0 }, glm::vec3{ 90.f, 0.f, 0.f }, glm::vec3{ 7.f });
 	Quad1->AddComponent<Anvil::SpriteComponent>();
 
-	Quad1 = activeScene->CreateEntity("Quad2", glm::vec3{ 1, 1, 1 }, glm::vec3{ 0, 0, 0 }, glm::vec3{ 4.f });
-	Quad1->AddComponent<Anvil::SpriteComponent>();
+	Quad2 = activeScene->CreateEntity("Quad2", glm::vec3{ 1, 3, 1 }, glm::vec3{ 0 }, glm::vec3{ 1.f });
+	Quad2->AddComponent<Anvil::SpriteComponent>();
 
 	camera.SetPosition({0, 1, 3});
 	camera.SetRotation(-90.f, 0.f);
 
-	Input::SetMouseMode(Anvil::MOUSE_MODE_LOCKED);
+	//Input::SetMouseMode(Anvil::MOUSE_MODE_LOCKED);
 
 	cController.SetRotationSpeed(50);
 	cController.SetMovementSpeed(2.3f);
 
-	canvas = activeScene->CreateCanvas();
 	canvas->AddItem<UI_TEXT>("Position", Vec2(50, 35));
 	pos = canvas->AddItem<UI_TEXT>(glm::to_string(camera.position), Vec2(50, 50));
 	canvas->AddItem<UI_TEXT>("Rotation", Vec2(50, 65));
@@ -42,6 +61,9 @@ void ForgeLayer::Attach()
 	canvas->AddItem<UI_TEXT>("T : Unlock Mouse", Vec2(50, 155));
 	canvas->AddItem<UI_TEXT>("Arrow Keys : look arround", Vec2(50, 170));
 
+	auto w = canvas->AddItem<UI_WINDOW>("Window", Vec2(20, 40), Vec2(0, 0));
+
+	w->DrawElement<UI_BUTTON>("Create Entity", Vec2(100, 20), Vec2(50, 190), CreateSprite);
 }
 
 void ForgeLayer::Update()
@@ -59,6 +81,7 @@ void ForgeLayer::Update()
 
 	pos->text = glm::to_string(camera.position);
 	rot->text = glm::to_string(camera.rotation);
+
 }
 
 void ForgeLayer::OnGUI()
