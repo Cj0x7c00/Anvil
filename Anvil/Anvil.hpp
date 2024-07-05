@@ -1,11 +1,16 @@
 #pragma once
 
 #include "core/src/Base/anvApplication.hpp"
+
 #include "core/src/Input/Input.h"
 #include "core/src/Input/Keys.h"
+
 #include "core/src/Layer/anvLayer.hpp"
+
 #include "core/src/Scene/Scene.h"
+#include "core/src/Scene/Components.h"
 #include "core/src/Scene/Entity.h"
+
 #include "core/src/Util/Time/Time.h"
 #include "core/src/Util/anvLog.hpp"
 
