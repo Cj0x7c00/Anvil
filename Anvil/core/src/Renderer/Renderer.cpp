@@ -94,17 +94,16 @@ namespace Anvil
 
     void Renderer::NewFrame()
     {
-        for (auto& system : m_RenderSystems)
-        {
+        for (auto system : m_RenderSystems) {
             m_FrameInfo.Scene = m_SceneManager->GetActiveScene();
-            vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex], VK_TRUE, UINT64_MAX);
+            vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.FrameIndex], VK_TRUE, UINT64_MAX);
 
             auto result = vkAcquireNextImageKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), UINT64_MAX,
                 m_ImageAvailableSemaphores[m_FrameInfo.FrameIndex], VK_NULL_HANDLE, &m_FrameInfo.ImageIndex);
 
-            m_FrameInfo.CommandBuffer = m_CommandBuffers[m_FrameInfo.ImageIndex];
-
             check_swapchain_suitability(result);
+            m_FrameInfo.CommandBuffer = m_CommandBuffers[m_FrameInfo.FrameIndex];
+
             vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex]);
 
             m_FrameInfo.CommandBuffer->Reset();
@@ -114,12 +113,13 @@ namespace Anvil
                 sys->NewFrame(m_FrameInfo);
             }
 
-            m_FrameInfo.CommandBuffer->EndRecording(m_FrameInfo);
+            EndRenderPass();
+            m_FrameInfo.CommandBuffer->EndRecording();
+            Submit(m_FrameInfo);
 
-           Submit(m_FrameInfo);
+
+            m_FrameInfo.FrameIndex = (m_FrameInfo.FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
         }
-
-        m_FrameInfo.FrameIndex = (m_FrameInfo.FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
     }
 
     void Renderer::WaitIdle()
@@ -183,6 +183,16 @@ namespace Anvil
         create_render_pass();
 
         RenderSystem::WindowWasResized(m_SwapChain);
+    }
+
+    void Renderer::BeginRenderPass()
+    {
+        m_FrameInfo.RenderPass->Begin(m_FrameInfo.CommandBuffer.get(), m_FrameInfo.ImageIndex);
+    }
+
+    void Renderer::EndRenderPass()
+    {
+        m_FrameInfo.RenderPass->End(m_FrameInfo.CommandBuffer.get());
     }
 
     Ref<SwapChain> Renderer::GetSwapChain()

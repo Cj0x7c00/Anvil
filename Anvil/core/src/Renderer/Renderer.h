@@ -139,6 +139,10 @@ namespace Anvil
 		/// <returns>Ref RenderPass</returns>
 		static Ref<RenderPass> GetRenderPass() { return m_FrameInfo.RenderPass; };
 
+		static void BeginRenderPass();
+
+		static void EndRenderPass();
+
 		/// <summary>
 		/// Get the active swap chain
 		/// </summary>
