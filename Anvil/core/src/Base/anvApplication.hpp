@@ -88,9 +88,12 @@ namespace Anvil
         /// <returns></returns>
         static std::string GetLibDir() { return m_DllDir; }
 
+        static std::string GetWorkingDir() { return m_WrkDir; }
+
     private:
-        void set_dll_dir();
+        void set_engine_dirs();
         static std::string m_DllDir;
+        static std::string m_WrkDir;
 
     protected:
         static Ref<Window>    m_Window;
