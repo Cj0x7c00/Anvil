@@ -51,10 +51,6 @@ project "Anvil"
             "vulkan-1"
         }
 
-        postbuildcommands
-        {
-            '{COPYFILE} "%{wks.location}bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}bin/'.. outdir ..'/Forge"'
-        } 
 
         buildoptions { "/MP" }
 

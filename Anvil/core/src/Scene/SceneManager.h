@@ -14,7 +14,7 @@ namespace Anvil
 		}
 
 		static void NewSceneCreated(Ref<Scene> _new);
-		Ref<Scene> GetActiveScene();
+		static Ref<Scene> GetActiveScene();
 		void SetActiveScene(Ref<Scene> _scene);
 
 		static void Emplace(Ref<Scene> _scene);
@@ -22,7 +22,7 @@ namespace Anvil
 
 	private:
 		static int m_InsertIndex;
-		Ref<Scene> m_ActiveScene;
+		static Ref<Scene> m_ActiveScene;
 		static std::vector<Ref<Scene>> m_Scenes;
 	};
 }

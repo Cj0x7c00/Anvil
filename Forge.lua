@@ -10,7 +10,7 @@ project "Forge"
 
         files
         {
-            "Forge/src/**.hpp",
+            "Forge/src/**.h",
             "Forge/src/**.cpp"
         }
 
