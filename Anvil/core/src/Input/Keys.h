@@ -8,6 +8,8 @@ namespace Anvil
 {
 	enum InputKeys
 	{
+		ANV_KEY_SPACE = 32,
+		
 		/* Alpha */
 		ANV_KEY_A = 65,
 		ANV_KEY_B = 66,
