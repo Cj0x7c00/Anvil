@@ -69,9 +69,11 @@ namespace Anvil
 		glm::mat4 GetModelMatrix() const {
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, position);
+
 			model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 			model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 			model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
 			model = glm::scale(model, scale);
 			return model;
 		}
@@ -119,7 +121,7 @@ namespace Anvil
 	/// <summary>
 	/// Sprite component. holds data of the sprite in use for rendering
 	/// </summary>
-	struct SpriteComponent
+	struct ANV_API SpriteComponent
 	{
 		std::vector<vertex>     verts{
 			{{-0.5f , -0.5f}, {0.63, 0.63, 0.63}},
@@ -138,19 +140,16 @@ namespace Anvil
 
 		bool buffersCreatedFlag = false;
 
-		SpriteComponent()
-		{
-
-		}
+		SpriteComponent();
 
 		SpriteComponent(Texture& text)
 		{
 
 		}
 
-		void CreatBuffers();
+		void CreateBuffers();
 
-		void Bind(CommandBuffer* cmdBuffer, Ref<Pipeline> pipeline);
+		void Bind(CommandBuffer* cmdBuffer);
 		void Draw(CommandBuffer* cmdBuffer);
 	};
 
