@@ -80,7 +80,7 @@ def GetDepend():
 def Build():
     print(f"{colorama.Fore.GREEN}== Running Premake =={colorama.Style.RESET_ALL}")
     os.chdir('../..')
-    os.system('.\\vendor\\premake5\\premake5.exe vs2022')
+    os.system('.\\vendor\\premake5\\premake5.exe vs2022 ')
     print(f"{colorama.Fore.GREEN}{colorama.Back.LIGHTWHITE_EX}Setup Complete{colorama.Style.RESET_ALL}")
 
 def main():
