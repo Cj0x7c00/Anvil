@@ -8,11 +8,16 @@ project "Anvil"
         targetdir("bin/" .. outdir .. "/%{prj.name}")
         objdir( "bin-int/" .. outdir .. "/%{prj.name}")
 
+        INSTALL_DIR = os.getcwd() .. "/Anvil/"
+
         defines
         {
             "ANV_BUILD_SHARED",
-            "VULKAN_SDK=\"%{VULKAN_SDK}\""
+            "VULKAN_SDK=\"%{VULKAN_SDK}\"",
+            "ANV_LIB_PATH=\"" .. INSTALL_DIR .. "\""
         }
+
+        print("Install Dir: ", INSTALL_DIR)
 
         files
         {
@@ -57,7 +62,11 @@ project "Anvil"
         filter "configurations:Debug"
             defines "DEBUG"
             optimize "on"
+            linkoptions { "/SUBSYSTEM:CONSOLE" }
+            kind "SharedLib"
 
         filter "configurations:Release"
             defines "RELEASE"
             optimize "on"
+            linkoptions { "/SUBSYSTEM:WINDOWS" }
+            kind "SharedLib"
