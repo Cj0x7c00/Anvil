@@ -23,7 +23,7 @@ project "Forge"
 
         libdirs 
         {
-            "Anvil/build/bin/".. outdir .."/Anvil" -- Anvil.lib path
+            root_dir .. "/build/bin/".. outdir .."/Anvil" -- Anvil.lib path
         }
 
 
@@ -40,9 +40,13 @@ project "Forge"
         end
 
         filter "configurations:Debug"
-        defines "DEBUG"
-        optimize "on"
+            defines "DEBUG"
+            optimize "on"
+            linkoptions { "/SUBSYSTEM:CONSOLE" }
+            kind "ConsoleApp"
 
         filter "configurations:Release"
-        defines "RELEASE"
-        optimize "on"
+            defines "RELEASE"
+            optimize "on"
+            linkoptions { "/SUBSYSTEM:WINDOWS" }
+            kind "WindowedApp"
