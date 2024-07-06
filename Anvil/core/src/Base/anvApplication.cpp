@@ -64,10 +64,11 @@ namespace Anvil{
 
     void AnvilApplication::set_engine_dirs()
     {
-       // TODO: Get Install Dir
-       // std::filesystem::current_path();
-       m_DllDir = "C:\\Users\\seawa\\Desktop\\test-clone\\Anvil-transforms\\Anvil\\Anvil";
+       m_DllDir = ANV_LIB_PATH;
        m_WrkDir = m_Props.wrkdir;
+       
+       std::filesystem::current_path(m_DllDir);
+       ENGINE_DEBUG("\nEngine Install dir {}\nWorking Dir: {}", m_DllDir, m_WrkDir);
     }
 
 }
