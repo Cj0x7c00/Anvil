@@ -19,6 +19,7 @@ namespace Anvil
         VkPipelineViewportStateCreateInfo       viewportInfo;
         VkPipelineRasterizationStateCreateInfo  rasterizerInfo;
         VkPipelineMultisampleStateCreateInfo    multisampleInfo;
+        VkPipelineDepthStencilStateCreateInfo   depthInfo;
         VkPipelineColorBlendStateCreateInfo     colorBlendInfo;
         VkPipelineDynamicStateCreateInfo        dynamicInfo;
 

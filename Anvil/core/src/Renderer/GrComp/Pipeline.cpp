@@ -96,6 +96,7 @@ namespace Anvil
         pipelineInfo.pStages = m_ShaderStages.data();
         pipelineInfo.pVertexInputState = &_pi.vertexInputInfo;
         pipelineInfo.pInputAssemblyState = &_pi.asmInputInfo;
+        pipelineInfo.pDepthStencilState = &_pi.depthInfo;
         pipelineInfo.pViewportState = &_pi.viewportInfo;
         pipelineInfo.pRasterizationState = &_pi.rasterizerInfo;
         pipelineInfo.pMultisampleState = &_pi.multisampleInfo;
