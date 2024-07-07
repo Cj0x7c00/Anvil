@@ -1,15 +1,12 @@
 #version 450
 
 layout(binding = 0) uniform UBO {
-    mat4 model;
     mat4 view;
     mat4 proj;
 } ubo;
 
 layout(push_constant) uniform Push {
     mat4 model;
-    mat4 view;
-    mat4 proj;
     vec3 color;
 } push;
 
