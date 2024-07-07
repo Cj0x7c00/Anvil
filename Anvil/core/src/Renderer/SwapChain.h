@@ -27,7 +27,7 @@ namespace Anvil
 
 		~SwapChain() {}
 
-		void CreateFrameBuffers(VkRenderPass& _rp);
+		void CreateFrameBuffers(VkRenderPass& _rp, VkImageView _depth);
 
 		float  GetAspectRatio() { return (m_SwapChainExtent.width / m_SwapChainExtent.height); }
 		VkFormat GetFormat()						  { return m_SwapChainImageFormat;  }

@@ -41,20 +41,4 @@ namespace Anvil
 		m_SwapChain = _sc;
 	}
 
-    void RenderSystem::create_ubos()
-    {
-
-    }
-
-
-
-    void RenderSystem::create_descriptor_pool()
-    {
-
-    }
-
-    void RenderSystem::create_descriptor_sets()
-    {
-
-    }
 }

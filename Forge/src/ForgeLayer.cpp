@@ -20,9 +20,9 @@ void ForgeLayer::CreateSprite()
 {
 	static int count = 1;
 
-	auto newsprite = activeScene->CreateEntity("Sprite" + std::to_string(count), glm::vec3(count/2, .5, count/2), glm::vec3(0.f), glm::vec3(1.f, 1.f, 1.f));
-	newsprite->AddComponent<Anvil::SpriteComponent>();
-	auto name = newsprite->GetComponent<Anvil::TagComponent>().Get();
+	ENTITY newEntity = activeScene->CreateEntity("Sprite" + std::to_string(count), glm::vec3(count/2, .5, count/2), glm::vec3(0.f), glm::vec3(1.f, 1.f, 1.f));
+	newEntity->AddComponent<Anvil::SpriteComponent>();
+	auto name = newEntity->GetComponent<Anvil::TagComponent>().Get();
 		
 	ANVIL_INFO("Creating sprite: {}", name);
 
@@ -37,15 +37,15 @@ void ForgeLayer::Attach()
 
 
 	Quad1 = activeScene->CreateEntity("Quad1", glm::vec3{ 0, 0, 0 }, glm::vec3{ 90.f, 0.f, 0.f }, glm::vec3{ 7.f });
-	Quad1->AddComponent<Anvil::SpriteComponent>();
+	Quad1->AddComponent<Anvil::SpriteComponent>(glm::vec3{ 0.902, 0.878, 0.733 });
 
 	Quad2 = activeScene->CreateEntity("Quad2", glm::vec3{ 1, 3, 1 }, glm::vec3{ 0 }, glm::vec3{ 1.f });
-	Quad2->AddComponent<Anvil::SpriteComponent>();
+	Quad2->AddComponent<Anvil::SpriteComponent>(glm::vec3{ 1, 0.294, 0 });
 
 	camera.SetPosition({0, 1, 3});
 	camera.SetRotation(-90.f, 0.f);
 
-	//Input::SetMouseMode(Anvil::MOUSE_MODE_LOCKED);
+	Input::SetMouseMode(Anvil::MOUSE_MODE_LOCKED);
 
 	cController.SetRotationSpeed(50);
 	cController.SetMovementSpeed(2.3f);
@@ -59,7 +59,9 @@ void ForgeLayer::Attach()
 	canvas->AddItem<UI_TEXT>("W-A-S-D : Move along X Z", Vec2(50, 125));
 	canvas->AddItem<UI_TEXT>("Q-E : Move along Y", Vec2(50, 140));
 	canvas->AddItem<UI_TEXT>("T : Unlock Mouse", Vec2(50, 155));
-	canvas->AddItem<UI_TEXT>("Arrow Keys : look arround", Vec2(50, 170));
+	canvas->AddItem<UI_TEXT>("SPACE : Move Faster", Vec2(50, 170));
+	canvas->AddItem<UI_TEXT>("B : Create New Entity", Vec2(50, 185));
+	canvas->AddItem<UI_TEXT>("Arrow Keys : look arround", Vec2(50, 200));
 
 	auto w = canvas->AddItem<UI_WINDOW>("Window", Vec2(20, 40), Vec2(0, 0));
 
@@ -77,6 +79,11 @@ void ForgeLayer::Update()
 	if (Input::IsKeyPressed(ANV_KEY_T))
 	{
 		Input::SetMouseMode(MOUSE_MODE_FREE);
+	}
+
+	if (Input::IsKeyPressed(ANV_KEY_B))
+	{
+		CreateSprite();
 	}
 
 	pos->text = glm::to_string(camera.position);

@@ -10,7 +10,7 @@ namespace Anvil {
         worldUp(glm::vec3(0.0f, 1.0f, 0.0f)), // Ensure worldUp is correct
         rotation(glm::vec3(0.0f, 0.0f, 0.0f)),
         FOV(100.f),
-        Near(0.5f),
+        Near(0.01f),
         Far(50.f),
         pType(PROJ_TYPE_PERSPECTIVE) {
         updateCameraVectors();

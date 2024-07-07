@@ -4,7 +4,6 @@
 #include "glm/glm.hpp"
 #include "entt/entt.hpp"
 #include "../Renderer/UBO.h"
-#include "../Renderer/Texture/Texture.h"
 #include <string>
 #include <vector>
 #include <array>
@@ -124,25 +123,26 @@ namespace Anvil
 	struct ANV_API SpriteComponent
 	{
 		std::vector<vertex>     verts{
-			{{-0.5f , -0.5f}, {0.63, 0.63, 0.63}},
-			{{0.5f  , -0.5f}, {0.63, 0.63, 0.63}},
-			{{0.5f  ,  0.5f}, {0.63, 0.63, 0.63}},
-			{{-0.5f ,  0.5f}, {0.63, 0.63, 0.63}}
+			{{-0.5f , -0.5f}, Color},
+			{{0.5f  , -0.5f}, Color},
+			{{0.5f  ,  0.5f}, Color},
+			{{-0.5f ,  0.5f}, Color}
 		};
 		std::vector<uint16_t>   indexs{
 			0, 1, 2, 2, 3, 0
 		};
 
+		glm::vec3 Color{ 0.63, 0.63, 0.63 }; // initialize to basic grey
+
 		VkBuffer vertexBuffer = NULL;
 		VkBuffer indexBuffer  = NULL;
-
-		UniformBufferObject UBO = {};
 
 		bool buffersCreatedFlag = false;
 
 		SpriteComponent();
 
-		SpriteComponent(Texture& text)
+		SpriteComponent(glm::vec3 _col)
+			: Color{_col}
 		{
 
 		}

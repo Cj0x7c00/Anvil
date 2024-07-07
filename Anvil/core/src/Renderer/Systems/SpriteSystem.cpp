@@ -18,6 +18,8 @@
 #include <execution>
 #include <Renderer/Camera.h>
 
+// TODO: Debug Stats
+
 namespace Anvil
 {
 	SpriteSystem::~SpriteSystem()
@@ -29,7 +31,7 @@ namespace Anvil
 	{
 		load_shaders();
 		create_pipeline();
-		create_ubos();
+		create_ubo();
 		create_descriptor_pool();
 		create_descriptor_sets();
 	}
@@ -48,13 +50,12 @@ namespace Anvil
 		frameInfo.CommandBuffer->BeginRecording();
 		Renderer::BeginRenderPass();
 		Renderer::SetViewport(ViewportInfo::Default(), frameInfo.CommandBuffer.get());
-
-		int count = 0;
 		
 		m_Pipeline->Bind(frameInfo.CommandBuffer.get());
+
 		for (auto& sprite : sprites)
 		{
-			auto [sData, tData] = sprites.get<SpriteComponent, TransformComponent>(sprite);
+			auto& [sData, tData] = sprites.get<SpriteComponent, TransformComponent>(sprite);
 
 			if (!sData.buffersCreatedFlag)
 			{
@@ -64,7 +65,6 @@ namespace Anvil
 
 			UniformBufferObject ubo{};
 
-			ubo.model = tData.GetModelMatrix();
 			ubo.view = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetViewMatrix();
 			ubo.proj = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetProjectionMatrix();
 			ubo.proj[1][1] *= -1;
@@ -76,13 +76,7 @@ namespace Anvil
 
 			PushConstantData pcd{};
 			pcd.model = tData.GetModelMatrix(); //m4x4
-			pcd.view = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetViewMatrix(); //m4x4
-			pcd.proj = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetProjectionMatrix(); //m4x4
-			pcd.proj[1][1] *= -1;
-			pcd.color = { 0.63, 0.63, 0.63 }; // v3
-
-			//ENGINE_DEBUG("Push Constant Data:\nmodel: {}\nview: {}\nproj: {}\ncolor: {}\n", glm::to_string(pcd.model), 
-			//	glm::to_string(pcd.view), glm::to_string(pcd.proj), glm::to_string(pcd.color));
+			pcd.color = sData.Color; // v3
 
 			vkCmdPushConstants(frameInfo.CommandBuffer->Get(), 
 				m_Pipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
@@ -90,31 +84,11 @@ namespace Anvil
 
 			sData.Bind(frameInfo.CommandBuffer.get());
 			sData.Draw(frameInfo.CommandBuffer.get());
-			count++;
+			
 		}
-
-		//sprites.each([&](auto entity, SpriteComponent& spriteData, TransformComponent& spriteTrans)
-		//	{
-		//		if (!spriteData.buffersCreatedFlag) {
-		//			spriteData.CreateBuffers();
-		//			spriteData.buffersCreatedFlag = true;
-		//		}
-
-		//		update_ubos(frameInfo, spriteTrans); 
-		//		vkCmdBindDescriptorSets(frameInfo.CommandBuffer->Get(), VK_PIPELINE_BIND_POINT_GRAPHICS, 
-		//			m_Pipeline->GetPipelineLayout(), 0, 1, &m_DescriptorSets[frameInfo.ImageIndex],
-		//			0, nullptr);
-
-		//		spriteData.Bind(frameInfo.CommandBuffer.get(), m_Pipeline);
-		//		spriteData.Draw(frameInfo.CommandBuffer.get());
-		//		/*count++;*/
-		//	});
-
-		//ENGINE_DEBUG("{}", count);
-		count = 0;
 	}
 
-	void SpriteSystem::create_ubos()
+	void SpriteSystem::create_ubo()
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
@@ -136,13 +110,13 @@ namespace Anvil
 
 	void SpriteSystem::update_ubos(NewFrameInfo& frameInfo, TransformComponent& trans)
 	{
-		UniformBufferObject ubo{};
+		//UniformBufferObject ubo{};
 
-		ubo.model = trans.GetModelMatrix();
-		ubo.view = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetViewMatrix();
-		ubo.proj = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetProjectionMatrix();
-		ubo.proj[1][1] *= -1;
-		memcpy(m_UniformBuffersMapped[frameInfo.ImageIndex], &ubo, sizeof(ubo));
+		//ubo.model = trans.GetModelMatrix();
+		//ubo.view = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetViewMatrix();
+		//ubo.proj = frameInfo.Scene->GetActiveCamera()->GetComponent<Camera>().GetProjectionMatrix();
+		//ubo.proj[1][1] *= -1;
+		//memcpy(m_UniformBuffersMapped[frameInfo.ImageIndex], &ubo, sizeof(ubo));
 	}
 
 	void SpriteSystem::create_descriptor_pool()
@@ -237,6 +211,19 @@ namespace Anvil
 		pi.viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		pi.viewportInfo.viewportCount = 1;
 		pi.viewportInfo.scissorCount = 1;
+
+		VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+		pi.depthInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		pi.depthInfo.depthTestEnable = VK_TRUE;
+		pi.depthInfo.depthWriteEnable = VK_TRUE;
+		pi.depthInfo.depthCompareOp = VK_COMPARE_OP_LESS;
+		pi.depthInfo.depthBoundsTestEnable = VK_FALSE;
+		pi.depthInfo.minDepthBounds = 0.0f; // Optional
+		pi.depthInfo.maxDepthBounds = 1.0f; // Optional
+		pi.depthInfo.stencilTestEnable = VK_FALSE;
+		pi.depthInfo.front = {}; // Optional
+		pi.depthInfo.back = {};  // Optional
+
 
 		pi.rasterizerInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		pi.rasterizerInfo.depthClampEnable = VK_FALSE;

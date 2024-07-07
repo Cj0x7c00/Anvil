@@ -26,13 +26,16 @@ namespace Anvil
         void OnCallOnce(CommandBuffer cmdBuffer) override;
         void NewFrame(NewFrameInfo& frameInfo) override;
 
-        void create_descriptor_pool() override;
+        void create_descriptor_pool();
         //void create_descriptor_sets() override;
 
     private:
         void load_anvil_colors();
-    private:
-        UniformBufferObject      m_Ubo{};
+    private:        
+
+        VkDescriptorPool m_DescriptorPool;
+        std::vector<VkDescriptorSet> m_DescriptorSets;
+
         Ref<Pipeline>            m_Pipeline;
         std::vector<Ref<Shader>> m_Shaders;
     };

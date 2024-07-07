@@ -161,20 +161,21 @@ namespace Anvil
 		}
 	}
 
-	void SwapChain::CreateFrameBuffers(VkRenderPass& _rp)
+	void SwapChain::CreateFrameBuffers(VkRenderPass& _rp, VkImageView _depth)
 	{
 		m_SwapChainFramebuffers.resize(m_SwapChainImageViews.size());
 
 		for (size_t i = 0; i < m_SwapChainImageViews.size(); i++) {
-			VkImageView attachments[] = {
-				m_SwapChainImageViews[i]
+			std::vector<VkImageView> attachments {
+				m_SwapChainImageViews[i],
+				_depth
 			};
 
 			VkFramebufferCreateInfo framebufferInfo{};
 			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 			framebufferInfo.renderPass = _rp;
-			framebufferInfo.attachmentCount = 1;
-			framebufferInfo.pAttachments = attachments;
+			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+			framebufferInfo.pAttachments = attachments.data();
 			framebufferInfo.width = m_SwapChainExtent.width;
 			framebufferInfo.height = m_SwapChainExtent.height;
 			framebufferInfo.layers = 1;

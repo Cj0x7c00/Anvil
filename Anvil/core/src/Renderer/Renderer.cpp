@@ -21,6 +21,8 @@ std::vector<VkFence>     Anvil::Renderer::m_InFlightFences           = { VK_NULL
 std::vector<VkSemaphore> Anvil::Renderer::m_ImageAvailableSemaphores = { VK_NULL_HANDLE };
 std::vector<VkSemaphore> Anvil::Renderer::m_RenderFinishedSemaphores = { VK_NULL_HANDLE };
 
+VkImage Anvil::Renderer::m_DepthImage         = VK_NULL_HANDLE;
+VkImageView Anvil::Renderer::m_DepthImageView = VK_NULL_HANDLE;
 
 namespace Anvil
 {
@@ -34,8 +36,9 @@ namespace Anvil
 		m_Devices   = Devices::Init(m_Window);
 
 		m_SwapChain = SwapChain::Create();
+        create_depth_buffer();
         create_render_pass();
-        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get());
+        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get(), m_DepthImageView);
 
         m_SceneManager = _scene_manager;
 
@@ -173,7 +176,7 @@ namespace Anvil
         vkDestroySwapchainKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), nullptr);
 
         m_SwapChain = SwapChain::Create();
-        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get());
+        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get(), m_DepthImageView);
 
     }
 
@@ -209,6 +212,79 @@ namespace Anvil
 	{
         m_FrameInfo.RenderPass = RenderPass::Create(m_SwapChain);
 	}
+
+    void Renderer::create_depth_buffer()
+    {
+        VkResult result;
+
+        std::vector<VkFormat> candidates{
+            VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
+            VK_FORMAT_D24_UNORM_S8_UINT
+        };
+
+        //VkFormat depthFormat;
+
+        //for (VkFormat format : candidates) {
+        //    VkFormatProperties props;
+        //    vkGetPhysicalDeviceFormatProperties(Devices::GetInstance()->GPU(), format, &props);
+
+        //    if (VK_IMAGE_TILING_OPTIMAL == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) 
+        //        == VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) {
+        //        depthFormat = format;
+        //    }
+        //    else if (VK_IMAGE_TILING_OPTIMAL == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) == VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) {
+        //        depthFormat = format;
+        //    }
+        //}
+
+        VkImageCreateInfo depthImageInfo = {};
+        depthImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        depthImageInfo.imageType = VK_IMAGE_TYPE_2D;
+        depthImageInfo.extent.width = m_SwapChain->GetExtent().width;
+        depthImageInfo.extent.height = m_SwapChain->GetExtent().height;
+        depthImageInfo.extent.depth = 1;
+        depthImageInfo.mipLevels = 1;
+        depthImageInfo.arrayLayers = 1;
+        depthImageInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;
+        depthImageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        depthImageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        depthImageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        depthImageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        depthImageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        result = vkCreateImage(Devices::GetInstance()->Device(), &depthImageInfo, nullptr, &m_DepthImage);
+
+        VK_CHECK_RESULT(result, "Failed to create depth image")
+
+        VkMemoryRequirements memRequirements;
+        vkGetImageMemoryRequirements(Devices::GetInstance()->Device(), m_DepthImage, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = Devices::GetInstance()->FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        VkDeviceMemory depthImageMemory;
+        result = vkAllocateMemory(Devices::GetInstance()->Device(), &allocInfo, nullptr, &depthImageMemory);
+        VK_CHECK_RESULT(result, "Failed to allocate depth image memory")
+        result = vkBindImageMemory(Devices::GetInstance()->Device(), m_DepthImage, depthImageMemory, 0);
+        VK_CHECK_RESULT(result, "Failed to bind depth image memory")
+
+        // Create the depth image view
+        VkImageViewCreateInfo depthImageViewInfo = {};
+        depthImageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        depthImageViewInfo.image = m_DepthImage;
+        depthImageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        depthImageViewInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;
+        depthImageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+        depthImageViewInfo.subresourceRange.baseMipLevel = 0;
+        depthImageViewInfo.subresourceRange.levelCount = 1;
+        depthImageViewInfo.subresourceRange.baseArrayLayer = 0;
+        depthImageViewInfo.subresourceRange.layerCount = 1;
+
+        
+        vkCreateImageView(Devices::GetInstance()->Device(), &depthImageViewInfo, nullptr, &m_DepthImageView);
+    }
 
     void Renderer::check_swapchain_suitability(VkResult res)
     {
