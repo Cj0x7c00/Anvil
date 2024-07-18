@@ -1,5 +1,3 @@
-
-
 # Anvil Engine
 Anvil Engine is my life long software project that i use to **study and learn** computer graphics. i figured the best way to do that was creating a game engine.
 
