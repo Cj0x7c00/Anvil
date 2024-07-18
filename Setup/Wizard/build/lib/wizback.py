@@ -19,15 +19,17 @@ eDepends = {
     "VULKANSDK" : os.getenv("VULKAN_SDK")
 }
 
-def Licence():
-    
-    console.PrintMD(licence.licence)
-    b = console.YorN(colorama.Back.LIGHTBLACK_EX + colorama.Fore.GREEN + "Agree? " + colorama.Style.RESET_ALL)
-    if b == True:
+def Licence(agree):
+    if agree == False:
+        console.PrintMD(licence.licence)
+        b = console.YorN(colorama.Back.LIGHTBLACK_EX + colorama.Fore.GREEN + "Agree? " + colorama.Style.RESET_ALL)
+        if b == True:
+            pass
+    elif agree == True:
         pass
     else:
-        print("Nope" + colorama.Style.RESET_ALL)
-
+        print("You must agree with the licence!" + colorama.Style.RESET_ALL)
+        quit()
 #download missing dependencies
 def Get(depend):
     if depend == "VULKANSDK":
@@ -80,10 +82,10 @@ def GetDepend():
 def Build():
     print(f"{colorama.Fore.GREEN}== Running Premake =={colorama.Style.RESET_ALL}")
     os.chdir('../..')
-    os.system('.\\vendor\\premake5\\premake5.exe vs2022 ')
+    os.system('.\\vendor\\premake5\\premake5.exe vs2022')
     print(f"{colorama.Fore.GREEN}{colorama.Back.LIGHTWHITE_EX}Setup Complete{colorama.Style.RESET_ALL}")
 
-def main():
-    Licence()
+def main(agree=False):
+    Licence(agree)
     GetDepend()
     Build()
