@@ -26,10 +26,11 @@ def Licence(agree):
         if b == True:
             pass
     elif agree == True:
-        pass
+        print('"Y" was passed during setup, by continuing you agree to the licence')
     else:
         print("You must agree with the licence!" + colorama.Style.RESET_ALL)
         quit()
+
 #download missing dependencies
 def Get(depend):
     if depend == "VULKANSDK":
