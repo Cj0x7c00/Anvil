@@ -28,4 +28,5 @@ workspace "AnvilEngine"
 
     group "Tools"
         include "Forge.lua"
+        include "Tests.lua"
     group ""
