@@ -8,11 +8,16 @@ project "Anvil"
         targetdir("bin/" .. outdir .. "/%{prj.name}")
         objdir( "bin-int/" .. outdir .. "/%{prj.name}")
 
+        INSTALL_DIR = os.getcwd() .. "/Anvil/"
+
         defines
         {
             "ANV_BUILD_SHARED",
-            "VULKAN_SDK=\"%{VULKAN_SDK}\""
+            "VULKAN_SDK=\"%{VULKAN_SDK}\"",
+            "ANV_LIB_PATH=\"" .. INSTALL_DIR .. "\""
         }
+
+        print("Install Dir: ", INSTALL_DIR)
 
         files
         {
@@ -51,17 +56,17 @@ project "Anvil"
             "vulkan-1"
         }
 
-        postbuildcommands
-        {
-            '{COPYFILE} "%{wks.location}bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}bin/'.. outdir ..'/Forge"'
-        } 
 
         buildoptions { "/MP" }
 
         filter "configurations:Debug"
             defines "DEBUG"
             optimize "on"
+            linkoptions { "/SUBSYSTEM:CONSOLE" }
+            kind "SharedLib"
 
         filter "configurations:Release"
             defines "RELEASE"
             optimize "on"
+            linkoptions { "/SUBSYSTEM:WINDOWS" }
+            kind "SharedLib"

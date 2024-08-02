@@ -7,6 +7,7 @@
 namespace Anvil
 {
 
+	struct PipelineInfo;
 	class Pipeline;
 	class Shader;
 
@@ -23,7 +24,7 @@ namespace Anvil
 		/// </summary>
 		/// <param name="_shaders">vector of anvil shaders</param>
 		/// <returns>Ref of the new pipeline</returns>
-		static Ref<Pipeline> CreatePipeline(std::vector<Ref<Shader>> _shaders);
+		static Ref<Pipeline> CreatePipeline(std::vector<Ref<Shader>> _shaders, const PipelineInfo& _pi);
 
 		/// <summary>
 		/// Create a anvil shader 

@@ -29,11 +29,14 @@ namespace Anvil
 
 	std::array<VkVertexInputAttributeDescription, 2> vertex::GetAttributeDescriptions() {
 		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+
+		// position
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
 		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[0].offset = offsetof(vertex, position);
 
+		// color
 		attributeDescriptions[1].binding = 0;
 		attributeDescriptions[1].location = 1;
 		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -42,7 +45,12 @@ namespace Anvil
 	}
 
 
-	void SpriteComponent::CreatBuffers()
+	SpriteComponent::SpriteComponent()
+	{
+		CreateBuffers();
+	}
+
+	void SpriteComponent::CreateBuffers()
 	{
 		VkDeviceMemory vertexBufferMemory;
 		VkDeviceMemory indexBufferMemory;
@@ -99,7 +107,7 @@ namespace Anvil
 		buffersCreatedFlag = true;
 	}
 
-	void SpriteComponent::Bind(CommandBuffer* cmdBuffer, Ref<Pipeline> pipeline)
+	void SpriteComponent::Bind(CommandBuffer* cmdBuffer)
 	{
 		VkBuffer vertexBuffers[] = { vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
@@ -115,9 +123,8 @@ namespace Anvil
 		}
 		else
 		{
-			vkCmdDrawIndexed(cmdBuffer->Get(), 
-			static_cast<uint32_t>(indexs.size()), 1, 0, 0, 0);
+			vkCmdDrawIndexed(cmdBuffer->Get(),
+				static_cast<uint32_t>(indexs.size()), 1, 0, 0, 0);
 		}
 	}
-
 }

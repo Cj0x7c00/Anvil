@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 std::vector<Anvil::Ref<Anvil::Scene>> Anvil::SceneManager::m_Scenes = {};
+Anvil::Ref<Anvil::Scene> Anvil::SceneManager::m_ActiveScene = nullptr;
 int Anvil::SceneManager::m_InsertIndex = 0;
 
 namespace Anvil

@@ -7,8 +7,6 @@
 class Forge : public Anvil::AnvilApplication
 {
 public:
-	SCENE  Scene;
-	ENTITY Quad;
 
 	Forge(Anvil::AppProperties _p) : AnvilApplication(_p)
 	{
@@ -36,8 +34,8 @@ Anvil::AnvilApplication* Anvil::CreateApplication()
 {
 	AppProperties props;
 	props.win_props.name = "Forge Editor";
-	//props.win_props.width = 1500;
-	//props.win_props.height = 900;
+	//props.win_props.width = 1300;
+	//props.win_props.height = 700;
 	
 	props.win_props.maximized = true;
 

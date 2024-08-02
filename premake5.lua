@@ -2,6 +2,7 @@ workspace "AnvilEngine"
 
     architecture "x64"
     startproject "Forge" -- editor
+    
 
     configurations 
     {

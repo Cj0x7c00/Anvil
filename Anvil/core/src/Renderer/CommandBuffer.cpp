@@ -47,6 +47,7 @@ namespace Anvil
 		vkEndCommandBuffer(m_CommandBuffer);
 	}
 
+	// Also ends a render pass
 	void CommandBuffer::EndRecording(NewFrameInfo& _fi)
 	{
 		_fi.RenderPass->End(this);

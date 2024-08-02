@@ -2,6 +2,7 @@
 #include "Components.h"
 #include <entt/entt.hpp>
 #include "Base/anvApplication.hpp"
+#include "Renderer/Camera.h"
 
 namespace Anvil
 {
@@ -15,12 +16,19 @@ namespace Anvil
     Scene::Scene(std::string _name)
         : m_Name{ _name }
     {
+        m_ActiveCamera = CreateEntity("Main Camera");
+        m_ActiveCamera->AddComponent<Camera>();
         ENGINE_INFO("Created Scene: {}", _name);
     }
 
     Ref<Entity> Scene::CreateEntity(std::string _name)
     {
         return CreateRef<Entity>(m_Registry, _name);
+    }
+
+    Ref<Entity> Scene::CreateEntity(std::string _name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+    {
+        return CreateRef<Entity>(m_Registry, _name, position, rotation, scale);
     }
 
     Ref<Canvas> Scene::CreateCanvas()

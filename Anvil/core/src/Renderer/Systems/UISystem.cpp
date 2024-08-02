@@ -3,6 +3,8 @@
 #include "Renderer/SwapChain.h"
 #include "Renderer/GrComp/Pipeline.h"
 
+#include "Base/anvApplication.hpp"
+
 #include "Scene/Components.h"
 #include "Scene/Scene.h"
 
@@ -41,10 +43,12 @@ namespace Anvil
 
 		ImGui_ImplGlfw_InitForVulkan((GLFWwindow*)Renderer::GetWindow()->Get(), true);
 
-		std::filesystem::current_path("../../../../");
+		std::filesystem::current_path(AnvilApplication::GetLibDir().c_str());
+		
 		std::filesystem::current_path("include/imgui/misc/fonts");
-
 		ImGui::GetIO().Fonts->AddFontFromFileTTF("Roboto-Medium.ttf", 16.0f);
+		
+		std::filesystem::current_path(AnvilApplication::GetWorkingDir());
 
 		auto devices = Devices::GetInstance();
 
@@ -66,7 +70,7 @@ namespace Anvil
 	void UISystem::OnCallOnce(CommandBuffer cmdBuffer)
 	{
 		ImGui_ImplVulkan_CreateFontsTexture(cmdBuffer.Get());
-		ImGui::SetNextWindowPos(ImVec2(50, 50));
+		//ImGui::SetNextWindowPos(ImVec2(50, 50));
 	}
 
 	void UISystem::NewFrame(NewFrameInfo& frameInfo)
@@ -93,25 +97,28 @@ namespace Anvil
 
 		ImGui::Render();
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), frameInfo.CommandBuffer->Get(), NULL);
+
+#ifdef PLATFORM_WIN32
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
+#endif
 	}
 
 	void UISystem::create_descriptor_pool()
 	{
 		VkDescriptorPoolSize pool_sizes[] =
 		{
-			{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+			{ VK_DESCRIPTOR_TYPE_SAMPLER, 100 },
+			{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100 },
+			{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 100 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 100 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 100 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 100 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 100 },
+			{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 100 },
+			{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 100 },
+			{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 100 }
 		};
 
 		VkDescriptorPoolCreateInfo poolInfo{};

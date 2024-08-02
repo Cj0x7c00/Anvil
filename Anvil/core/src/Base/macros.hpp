@@ -19,3 +19,10 @@
 #define ANV_CALL_ONCE(Lambda) \
 static std::once_flag flag; \
 std::call_once(flag, Lambda);
+
+#define VK_CHECK_RESULT(Result, msg) do { \
+        if (Result != 0) { \
+            std::cerr << "\033[31m[VK CHECK RESULT FAILED " << " (" << __FILE__ << ":" << __LINE__ << ")]\n\033[0m" << msg << std::endl; \
+            std::abort(); \
+        } \
+    } while (false);

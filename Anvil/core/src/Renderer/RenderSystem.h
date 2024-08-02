@@ -43,25 +43,17 @@ namespace Anvil
 		/// </summary>
 		/// <param name="frameInfo">All the information needed for frame rendering</param>
 		virtual void NewFrame(NewFrameInfo& frameInfo) = 0;
+		
 
+		/// <summary>
+		/// Define custom behaviour if the window wasresized
+		/// </summary>
+		/// <param name="_sc">Swap Chain</param>
 		static void WindowWasResized(Ref<SwapChain> _sc);
 
-	protected:
-		virtual void create_ubos();
-		virtual void update_ubos(NewFrameInfo& frameInfo);
-		virtual void create_descriptor_pool();
-		virtual void create_descriptor_sets();
 
 	protected:
 		static Ref<SwapChain>  m_SwapChain;
-		
-
-		std::vector<VkBuffer>       m_UniformBuffers;
-		std::vector<void*>          m_UniformBuffersMapped;
-		std::vector<VkDeviceMemory> m_UniformBuffersMemory;
-
-		VkDescriptorPool m_DescriptorPool;
-		std::vector<VkDescriptorSet> m_DescriptorSets;
 
 	private:
 		static std::vector<RenderSystem*> m_SystemsInPlace;

@@ -5,13 +5,17 @@
 
 namespace Anvil{
 
+    Ref<Window> AnvilApplication::m_Window = nullptr;
+
     std::string AnvilApplication::m_DllDir = std::string();
+    std::string AnvilApplication::m_WrkDir = std::string();
 
     AnvilApplication::AnvilApplication(AppProperties& _p) : m_Props{_p}
     {
-        set_dll_dir();
+        set_engine_dirs();
         m_Window = Window::Create(_p.win_props);
         Renderer::Init(m_Window, &m_SceneManager);
+        Renderer::BeginOneTimeOps();
     }
 
     AnvilApplication::~AnvilApplication()
@@ -22,12 +26,13 @@ namespace Anvil{
     void AnvilApplication::Run()
     {
         Awake();
-        Renderer::BeginOneTimeOps();
+        Time::startEngineClock();
         ENGINE_DEBUG("{}", m_Props.wrkdir);
-        std::filesystem::current_path(m_Props.wrkdir.c_str());
         while (!m_Window->ShouldClose()) {
+            Time::update();
 
             m_Window->PollEvents();
+
 			Update();
             
 			Renderer::NewFrame();
@@ -41,11 +46,6 @@ namespace Anvil{
 
         }
 		Renderer::WaitIdle();
-    }
-
-    Ref<Window> AnvilApplication::GetWindow()
-    {
-        return m_Window;
     }
 
     void AnvilApplication::PushLayer(AnvilLayer* _layer)
@@ -62,13 +62,17 @@ namespace Anvil{
         m_LayerStack.PopLayer(_layer);
     }
 
-    void AnvilApplication::set_dll_dir()
+    void AnvilApplication::set_engine_dirs()
     {
-       std::filesystem::current_path("..\\Anvil\\");
-       m_DllDir = std::filesystem::current_path().string();
+       m_DllDir = ANV_LIB_PATH;
+       m_WrkDir = m_Props.wrkdir;
+       
+       std::filesystem::current_path(m_DllDir);
+       ENGINE_DEBUG("\nEngine Install dir {}\nWorking Dir: {}", m_DllDir, m_WrkDir);
     }
 
 }
+
 
 
 

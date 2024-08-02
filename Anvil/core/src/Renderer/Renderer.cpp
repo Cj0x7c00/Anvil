@@ -21,6 +21,8 @@ std::vector<VkFence>     Anvil::Renderer::m_InFlightFences           = { VK_NULL
 std::vector<VkSemaphore> Anvil::Renderer::m_ImageAvailableSemaphores = { VK_NULL_HANDLE };
 std::vector<VkSemaphore> Anvil::Renderer::m_RenderFinishedSemaphores = { VK_NULL_HANDLE };
 
+VkImage Anvil::Renderer::m_DepthImage         = VK_NULL_HANDLE;
+VkImageView Anvil::Renderer::m_DepthImageView = VK_NULL_HANDLE;
 
 namespace Anvil
 {
@@ -34,8 +36,9 @@ namespace Anvil
 		m_Devices   = Devices::Init(m_Window);
 
 		m_SwapChain = SwapChain::Create();
+        create_depth_buffer();
         create_render_pass();
-        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get());
+        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get(), m_DepthImageView);
 
         m_SceneManager = _scene_manager;
 
@@ -94,34 +97,32 @@ namespace Anvil
 
     void Renderer::NewFrame()
     {
-        for (auto& system : m_RenderSystems)
-        {
+        for (auto system : m_RenderSystems) {
             m_FrameInfo.Scene = m_SceneManager->GetActiveScene();
-            vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex], VK_TRUE, UINT64_MAX);
+            vkWaitForFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.FrameIndex], VK_TRUE, UINT64_MAX);
 
             auto result = vkAcquireNextImageKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), UINT64_MAX,
                 m_ImageAvailableSemaphores[m_FrameInfo.FrameIndex], VK_NULL_HANDLE, &m_FrameInfo.ImageIndex);
 
-            m_FrameInfo.CommandBuffer = m_CommandBuffers[m_FrameInfo.ImageIndex];
-
             check_swapchain_suitability(result);
+            m_FrameInfo.CommandBuffer = m_CommandBuffers[m_FrameInfo.FrameIndex];
+
             vkResetFences(m_Devices->Device(), 1, &m_InFlightFences[m_FrameInfo.ImageIndex]);
 
             m_FrameInfo.CommandBuffer->Reset();
-            for (auto& sys : m_RenderSystems)
-            {
-                sys->Update(m_FrameInfo);
-            }
-            m_FrameInfo.CommandBuffer->BeginRecording(m_FrameInfo, nullptr);
+
             for (auto& sys : m_RenderSystems)
             {
                 sys->NewFrame(m_FrameInfo);
             }
-            m_FrameInfo.CommandBuffer->EndRecording(m_FrameInfo);
-           Submit(m_FrameInfo);
-        }
 
-        m_FrameInfo.FrameIndex = (m_FrameInfo.FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
+            EndRenderPass();
+            m_FrameInfo.CommandBuffer->EndRecording();
+            Submit(m_FrameInfo);
+
+
+            m_FrameInfo.FrameIndex = (m_FrameInfo.FrameIndex + 1) % MAX_FRAMES_IN_FLIGHT;
+        }
     }
 
     void Renderer::WaitIdle()
@@ -175,7 +176,7 @@ namespace Anvil
         vkDestroySwapchainKHR(m_Devices->Device(), m_SwapChain->GetSwapChain(), nullptr);
 
         m_SwapChain = SwapChain::Create();
-        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get());
+        m_SwapChain->CreateFrameBuffers(m_FrameInfo.RenderPass->Get(), m_DepthImageView);
 
     }
 
@@ -185,6 +186,16 @@ namespace Anvil
         create_render_pass();
 
         RenderSystem::WindowWasResized(m_SwapChain);
+    }
+
+    void Renderer::BeginRenderPass()
+    {
+        m_FrameInfo.RenderPass->Begin(m_FrameInfo.CommandBuffer.get(), m_FrameInfo.ImageIndex);
+    }
+
+    void Renderer::EndRenderPass()
+    {
+        m_FrameInfo.RenderPass->End(m_FrameInfo.CommandBuffer.get());
     }
 
     Ref<SwapChain> Renderer::GetSwapChain()
@@ -201,6 +212,62 @@ namespace Anvil
 	{
         m_FrameInfo.RenderPass = RenderPass::Create(m_SwapChain);
 	}
+
+    void Renderer::create_depth_buffer()
+    {
+        VkResult result;
+
+        VkFormat DepthFormat = m_SwapChain->GetDepthFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+            VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+
+        VkImageCreateInfo depthImageInfo = {};
+        depthImageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        depthImageInfo.format = DepthFormat;
+        depthImageInfo.imageType = VK_IMAGE_TYPE_2D;
+        depthImageInfo.extent.width = m_SwapChain->GetExtent().width;
+        depthImageInfo.extent.height = m_SwapChain->GetExtent().height;
+        depthImageInfo.extent.depth = 1;
+        depthImageInfo.mipLevels = 1;
+        depthImageInfo.arrayLayers = 1;
+        depthImageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        depthImageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        depthImageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        depthImageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        depthImageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        result = vkCreateImage(Devices::GetInstance()->Device(), &depthImageInfo, nullptr, &m_DepthImage);
+
+        VK_CHECK_RESULT(result, "Failed to create depth image")
+
+        VkMemoryRequirements memRequirements;
+        vkGetImageMemoryRequirements(Devices::GetInstance()->Device(), m_DepthImage, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = Devices::GetInstance()->FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        VkDeviceMemory depthImageMemory;
+        result = vkAllocateMemory(Devices::GetInstance()->Device(), &allocInfo, nullptr, &depthImageMemory);
+        VK_CHECK_RESULT(result, "Failed to allocate depth image memory")
+        result = vkBindImageMemory(Devices::GetInstance()->Device(), m_DepthImage, depthImageMemory, 0);
+        VK_CHECK_RESULT(result, "Failed to bind depth image memory")
+
+        // Create the depth image view
+        VkImageViewCreateInfo depthImageViewInfo = {};
+        depthImageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        depthImageViewInfo.image = m_DepthImage;
+        depthImageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        depthImageViewInfo.format = DepthFormat;
+        depthImageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+        depthImageViewInfo.subresourceRange.baseMipLevel = 0;
+        depthImageViewInfo.subresourceRange.levelCount = 1;
+        depthImageViewInfo.subresourceRange.baseArrayLayer = 0;
+        depthImageViewInfo.subresourceRange.layerCount = 1;
+
+        
+        vkCreateImageView(Devices::GetInstance()->Device(), &depthImageViewInfo, nullptr, &m_DepthImageView);
+    }
 
     void Renderer::check_swapchain_suitability(VkResult res)
     {

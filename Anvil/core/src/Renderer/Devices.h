@@ -107,7 +107,10 @@ namespace Anvil
 
 #ifdef DEBUG
 		std::vector<const char*> m_ValidationLayers = {
-			"VK_LAYER_KHRONOS_validation"
+			"VK_LAYER_KHRONOS_validation",
+			/*"VK_LAYER_LUNARG_api_dump",*/
+			"VK_LAYER_KHRONOS_synchronization2"
+			/*"VK_EXT_debug_utils"*/
 		};
 
 		const bool m_ValidationEnabled = true;

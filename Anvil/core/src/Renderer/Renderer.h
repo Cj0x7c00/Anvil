@@ -26,6 +26,9 @@ typedef struct VkCommandBuffer_T* VkCommandBuffer;
 typedef struct VkSemaphore_T* VkSemaphore;
 typedef struct VkFence_T* VkFence;
 
+typedef struct VkImage_T* VkImage;
+typedef struct VkImageView_T* VkImageView;
+
 enum VkResult;
 
 namespace Anvil
@@ -139,6 +142,10 @@ namespace Anvil
 		/// <returns>Ref RenderPass</returns>
 		static Ref<RenderPass> GetRenderPass() { return m_FrameInfo.RenderPass; };
 
+		static void BeginRenderPass();
+
+		static void EndRenderPass();
+
 		/// <summary>
 		/// Get the active swap chain
 		/// </summary>
@@ -157,6 +164,7 @@ namespace Anvil
 
 	private:
 		static void create_render_pass();
+		static void create_depth_buffer();
 		static void check_swapchain_suitability(VkResult res);
 
 
@@ -177,6 +185,8 @@ namespace Anvil
 		static std::vector<VkSemaphore> m_RenderFinishedSemaphores;
 		static std::vector<VkFence>     m_InFlightFences;
 
+		static VkImage m_DepthImage;
+		static VkImageView m_DepthImageView;
 	};
 }
 

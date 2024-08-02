@@ -4,7 +4,6 @@
 #include "glm/glm.hpp"
 #include "entt/entt.hpp"
 #include "../Renderer/UBO.h"
-#include "../Renderer/Texture/Texture.h"
 #include <string>
 #include <vector>
 #include <array>
@@ -57,6 +56,28 @@ namespace Anvil
 		}
 	};
 
+	struct TransformComponent
+	{
+		glm::vec3 position;
+		glm::vec3 rotation;
+		glm::vec3 scale;
+
+		TransformComponent() : position(0.0f), rotation(0.0f), scale(1.0f) {}
+		TransformComponent(glm::vec3 _p, glm::vec3 _r, glm::vec3 _s) : position(_p), rotation(_r), scale(_s) {}
+
+		glm::mat4 GetModelMatrix() const {
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, position);
+
+			model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+			model = glm::scale(model, scale);
+			return model;
+		}
+	};
+
 	/// <summary>
 	/// Universal Unique Identifire component. used to find a specific entity when 
 	/// looking through the registry
@@ -99,38 +120,36 @@ namespace Anvil
 	/// <summary>
 	/// Sprite component. holds data of the sprite in use for rendering
 	/// </summary>
-	struct SpriteComponent
+	struct ANV_API SpriteComponent
 	{
 		std::vector<vertex>     verts{
-			{{-0.5f , -0.5f}, {0.63, 0.63, 0.63}},
-			{{0.5f  , -0.5f}, {0.63, 0.63, 0.63}},
-			{{0.5f  ,  0.5f}, {0.63, 0.63, 0.63}},
-			{{-0.5f ,  0.5f}, {0.63, 0.63, 0.63}}
+			{{-0.5f , -0.5f}, Color},
+			{{0.5f  , -0.5f}, Color},
+			{{0.5f  ,  0.5f}, Color},
+			{{-0.5f ,  0.5f}, Color}
 		};
 		std::vector<uint16_t>   indexs{
 			0, 1, 2, 2, 3, 0
 		};
 
+		glm::vec3 Color{ 0.63, 0.63, 0.63 }; // initialize to basic grey
+
 		VkBuffer vertexBuffer = NULL;
 		VkBuffer indexBuffer  = NULL;
 
-		UniformBufferObject UBO = {};
-
 		bool buffersCreatedFlag = false;
 
-		SpriteComponent()
+		SpriteComponent();
+
+		SpriteComponent(glm::vec3 _col)
+			: Color{_col}
 		{
 
 		}
 
-		SpriteComponent(Texture& text)
-		{
+		void CreateBuffers();
 
-		}
-
-		void CreatBuffers();
-
-		void Bind(CommandBuffer* cmdBuffer, Ref<Pipeline> pipeline);
+		void Bind(CommandBuffer* cmdBuffer);
 		void Draw(CommandBuffer* cmdBuffer);
 	};
 
