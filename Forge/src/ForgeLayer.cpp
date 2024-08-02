@@ -66,6 +66,7 @@ void ForgeLayer::Attach()
 	auto w = canvas->AddItem<UI_WINDOW>("Window", Vec2(20, 40), Vec2(0, 0));
 
 	w->DrawElement<UI_BUTTON>("Create Entity", Vec2(100, 20), Vec2(50, 190), CreateSprite);
+	w->DrawElement<UI_SlideFloat>("X", 0.0f, 0.0f, 1.0f);
 }
 
 void ForgeLayer::Update()
