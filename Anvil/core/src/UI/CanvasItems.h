@@ -135,6 +135,24 @@ namespace Anvil
 		void Draw() override;
 	};
 
+	class ANV_API UI_SlideFloat : public CanvasItem
+	{
+	public:
+		static std::string item;
+
+		std::string text;
+		float value;
+		float min, max;
+
+		UI_SlideFloat(std::string _name, float _dVal, float _min, float _max)
+			: text{ _name }, value{ _dVal }, min{ _min }, max{ _max }, CanvasItem(item)
+		{
+
+		}
+
+		void Draw() override;
+	};
+
 	class ANV_API UI_Text : public CanvasItem
 	{
 	public:

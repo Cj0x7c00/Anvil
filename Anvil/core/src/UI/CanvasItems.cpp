@@ -8,8 +8,9 @@ namespace Anvil
 	std::string UI_Menue::item  = "Menue";
 	std::string UI_Button::item = "Button";
 	std::string UI_Window::item = "Window";
+	std::string UI_Text::item   = "Text";
 	std::string UI_Selectable::item = "Selectable";
-	std::string UI_Text::item = "Text";
+	std::string UI_SlideFloat::item = "Slide Float";
 
 	void UI_Button::Draw()
 	{
@@ -60,9 +61,7 @@ namespace Anvil
 
 		if (selected)
 		{
-			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
-			ImGui::Button("No");
-			ImGui::PopStyleColor();
+			// TODO: Add Functionality?
 		}
 
 	}
@@ -93,5 +92,11 @@ namespace Anvil
 	{
 		ImGui::SetCursorPos(ImVec2(position.x, position.y));
 		ImGui::Text(text.c_str());
+	}
+
+
+	void UI_SlideFloat::Draw()
+	{
+		ImGui::SliderFloat(text.c_str(), &value, min, max);
 	}
 }
