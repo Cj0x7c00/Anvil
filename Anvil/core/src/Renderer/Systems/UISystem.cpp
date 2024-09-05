@@ -81,9 +81,17 @@ namespace Anvil
 
 		ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 		
+		// NOTE:
+		// Do we even need this as part of the ECS? There will always be ONE canvas for each scene
+		// ECS is for multiple objects 
+		// could just have a canvas as a non entity.
+		// it would be easier to just canvas->Update().
+		// UI doesnt really need arender system. would rather leave that up
+		// to the layers instead;
+		// TODO: Fix
 		auto& Reg = frameInfo.Scene->GetRegistry();
 		auto view = Reg.view<CanvasComponent>();
-		view.each([](CanvasComponent& canComp) {
+		view.each([](CanvasComponent& canComp) { 
 
 			auto& canvas = canComp.Get();
 			canvas->Update();
