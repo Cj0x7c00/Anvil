@@ -26,6 +26,6 @@ workspace "AnvilEngine"
         include "Anvil.lua"
     group ""
 
-    group "Tools"
-        include "Forge.lua"
+    group "YourApp"
+        include "YourApp.lua"
     group ""

@@ -1,5 +1,5 @@
-project "Forge"
-        location "Forge"
+project "YourApp"
+        location "YourApp"
         kind "ConsoleApp"
         language "C++"
         cppdialect "C++17"
@@ -10,8 +10,8 @@ project "Forge"
 
         files
         {
-            "Forge/src/**.h",
-            "Forge/src/**.cpp"
+            "YourApp/src/**.h",
+            "YourApp/src/**.cpp"
         }
 
         includedirs
@@ -35,7 +35,7 @@ project "Forge"
         if os.target() == "windows" then
             postbuildcommands
             {
-                '{COPYFILE} "%{wks.location}bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}bin/'.. outdir ..'/Forge"'
+                '{COPYFILE} "%{wks.location}bin/'.. outdir ..'/Anvil/Anvil.dll" "%{wks.location}bin/'.. outdir ..'/YourApp"'
             }   
         end
 
